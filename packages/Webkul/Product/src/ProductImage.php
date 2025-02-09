@@ -131,11 +131,22 @@ class ProductImage
             ];
         }
 
+        // check the path have http or https
+
+        if (str_contains($path, 'https')) {
+            return [
+                'small_image_url'    => $path,
+                'medium_image_url'   => $path,
+                'large_image_url'    => $path,
+                'original_image_url' => $path,
+            ];
+        }
+
         return [
-            'small_image_url'    =>  $path,
-            'medium_image_url'   => $path,
-            'large_image_url'    =>  $path,
-            'original_image_url' =>  $path,
+            'small_image_url'    => url('cache/small/' . $path),
+            'medium_image_url'   => url('cache/medium/' . $path),
+            'large_image_url'    => url('cache/large/' . $path),
+            'original_image_url' => url('cache/original/' . $path),
         ];
     }
 
