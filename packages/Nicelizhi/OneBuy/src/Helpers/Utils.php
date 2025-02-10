@@ -159,9 +159,13 @@ final class Utils {
         //Log::info($product_id." add to cart --". json_encode($AddcartProduct));
         //Log::info($product['product_id']." add to cart --". json_encode($product));
         $cart = Cart::addProduct($product['product_id'], $AddcartProduct);
+
+        Cart::collectTotals();
+
         $cart = Cart::getCart();
         //清空购车动作
         Cart::deActivateCart();
+
 
         return $cart->grand_total;
 
