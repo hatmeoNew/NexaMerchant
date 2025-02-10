@@ -223,6 +223,10 @@ class CartRule
 
         $appliedRuleIds = [];
 
+        if($item->product->sku == config('onebuy.return_shipping_insurance.product_sku')) {
+            return $appliedRuleIds;
+        }
+
         foreach ($rules = $this->getCartRules() as $rule) {
             if (! $this->canProcessRule($rule)) {
                 continue;
