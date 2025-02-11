@@ -265,6 +265,7 @@ final class Utils {
             foreach($currencies as $k => $currency) {
                 Cache::pull("product_url_".$shopify_id."_".$currency->code);
                 Cache::pull("checkout_v2_".$shopify_id."_".$currency->code);
+                Cache::pull("checkout_v2_cache_".$shopify_id.$currency->code);
                 // shipping_price
                 //Cache::pull("shipping_price_".$currency->code);
             }
