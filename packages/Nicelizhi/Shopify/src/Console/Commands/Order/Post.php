@@ -37,6 +37,9 @@ class Post extends Command
 
     private $customerRepository = null;
 
+    private $product = null;
+    private $product_image = null;
+
     //protected ShopifyOrder $ShopifyOrder,
     //protected ShopifyStore $ShopifyStore,
 
@@ -53,6 +56,8 @@ class Post extends Command
         $this->ShopifyStore = new ShopifyStore();
         $this->customerRepository = app(CustomerRepository::class);
         $this->Order = new Order();
+        $this->product = new \Webkul\Product\Models\Product();
+        $this->product_image = new \Webkul\Product\Models\ProductImage();
 
 
         $this->shopify_store_id = config('shopify.shopify_store_id');
@@ -186,15 +191,28 @@ class Post extends Command
         $q_ty = 0;
         foreach($products as $key=>$product) {
             $sku = $product['additional'];
+            
+            $attributes = "";
 
-            $skuInfo = explode('-', $sku['product_sku']);
-            if(!isset($skuInfo[1])) {
-                $this->error("have error" . $id);
-                return false;
+            if(isset($sku['attributes'])) {
+                foreach($sku['attributes'] as $sku_attribute) {
+                    $attributes .= $sku_attribute['attribute_name'].":".$sku_attribute['option_label'].";";
+                }
             }
+            
+            $variant_id = $sku['selected_configurable_option'];
+            if(isset($sku['product_sku'])) {
+                $skuInfo = explode('-', $sku['product_sku']);
+                if(!isset($skuInfo[1])) {
+                    $this->error("have error" . $id);
+                    return false;
+                }
+                $variant_id = $skuInfo[1];
+            }
+            
 
             $line_item = [];
-            $line_item['variant_id'] = $skuInfo[1];
+            $line_item['variant_id'] = $variant_id;
             $line_item ['quantity'] = $product['qty_ordered'];
             $line_item ['price'] = $product['price'];
             $price_set = [];
@@ -204,11 +222,36 @@ class Post extends Command
             ];
             $line_item['price_set'] = $price_set;
 
+            $line_item['title'] = $product['name'].$product['sku'].$attributes;
+            $line_item['name'] = $product['name'].$product['sku'].$attributes;
+            $variant_sku = $this->product->where('id', $variant_id)->value('sku');
+            $line_item['sku'] = $variant_sku;
+
+            $product_image = $this->product_image->where('product_id', $variant_id)->value('path');
+
+            // add image to line item
+            if(!empty($product_image)) {
+                $line_item['properties'] = [
+                    [
+                        'name' => 'image',
+                        'value' => $product_image
+                    ],
+                    [
+                        'name' => 'product_image',
+                        'value' => $product_image
+                    ]
+                ];
+            }
+
+
+
             $q_ty += $product['qty_ordered'];
             $line_item ['requires_shipping'] = true;
 
             array_push($line_items, $line_item);
         }
+
+        //var_dump($line_items);exit;
 
         $shipping_address = $order->shipping_address;
         $billing_address = $order->billing_address;
