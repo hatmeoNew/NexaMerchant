@@ -8,9 +8,22 @@
         @lang('shop::app.emails.dear', ['customer_name' => $order->customer_full_name]),👋
     </p>
 
+    @php
+
+    use Carbon\Carbon;
+    use Illuminate\Support\Facades\Crypt;
+
+    $data = [
+        'id' => $order->id,
+        'expiry' => Carbon::now()->addHours(24)->toDateTimeString(),
+    ];
+    $key_url = Crypt::encrypt(json_encode($data));
+
+    @endphp
+
     <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">
         {!! __('shop::app.emails.orders.created.greeting', [
-        'order_id' => '<a href="' . config('services.shop.url') .'/view-order/'. $order->id . '" style="color: #2969FF;">#' . $order->increment_id . '</a>',
+        'order_id' => '<a href="' . config('services.shop.url') .'/view-order/'. $key_url . '" style="color: #2969FF;">#' . $order->increment_id . '</a>',
         'created_at' => core()->formatDate($order->created_at, 'Y-m-d H:i:s')
         ])
         !!}

@@ -7,6 +7,7 @@ use Webkul\Shop\Mail\Order\CanceledNotification;
 use Webkul\Shop\Mail\Order\CommentedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class Order extends Base
 {
@@ -29,6 +30,8 @@ class Order extends Base
             ];
             $key = Crypt::encrypt(json_encode($data));
             $order->key = $key;
+
+            Log::info('Order created listener order info: ' . $order);
 
 
             $this->prepareMail($order, new CreatedNotification($order));
