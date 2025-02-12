@@ -10,7 +10,7 @@
 
     <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">
         {!! __('shop::app.emails.orders.created.greeting', [
-        'order_id' => '<a href="' . config('services.shop.url') .'/view-order/'. $order->key . '" style="color: #2969FF;">#' . $order->increment_id . '</a>',
+        'order_id' => '<a href="' . config('services.shop.url') .'/view-order/'. $order->id . '" style="color: #2969FF;">#' . $order->increment_id . '</a>',
         'created_at' => core()->formatDate($order->created_at, 'Y-m-d H:i:s')
         ])
         !!}
