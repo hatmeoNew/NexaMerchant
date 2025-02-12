@@ -31,7 +31,7 @@ class Order extends Base
             $key = Crypt::encrypt(json_encode($data));
             $order->key = $key;
 
-            Log::info('Order created listener order info: ' . $order);
+            //Log::info('Order created listener order info: ' . $order);
 
 
             $this->prepareMail($order, new CreatedNotification($order));
