@@ -6,6 +6,8 @@ namespace Webkul\Shop\Mail\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 
 class CanceledNotification extends Mailable
 {
@@ -17,6 +19,12 @@ class CanceledNotification extends Mailable
      */
     public function __construct(public $order)
     {
+        $data = [
+            'id' => $this->order->id,
+            'expiry' => Carbon::now()->addHours(24)->toDateTimeString(),
+        ];
+        $key = Crypt::encrypt(json_encode($data));
+        $this->order->key =  $key;
     }
 
     public function build()

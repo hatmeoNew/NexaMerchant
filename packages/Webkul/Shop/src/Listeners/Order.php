@@ -5,6 +5,8 @@ namespace Webkul\Shop\Listeners;
 use Webkul\Shop\Mail\Order\CreatedNotification;
 use Webkul\Shop\Mail\Order\CanceledNotification;
 use Webkul\Shop\Mail\Order\CommentedNotification;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 
 class Order extends Base
 {
@@ -20,6 +22,14 @@ class Order extends Base
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_order')) {
                 return;
             }
+
+            $data = [
+                'id' => $order->id,
+                'expiry' => Carbon::now()->addHours(24)->toDateTimeString(),
+            ];
+            $key = Crypt::encrypt(json_encode($data));
+            $order->key = $key;
+
 
             $this->prepareMail($order, new CreatedNotification($order));
         } catch (\Exception $e) {
