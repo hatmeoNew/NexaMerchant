@@ -504,7 +504,6 @@ class Post extends Command
 
             $crm_channel = config('onebuy.crm_channel');
 
-            
             $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$shipping_address->email;
             $res = $this->get_content($url);
             Log::info("post to bm 2 url ".$url." res ".json_encode($res));
@@ -651,8 +650,11 @@ class Post extends Command
             Log::info("post to bm 2 url ".$url." res ".json_encode($res));
 
             // order check
-            Artisan::queue("GooglePlaces:check-order",['--order_id'=>$id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
-
+            // for cod order need check the order
+            if($orderPayment['method']=='codpayment'){
+                Artisan::queue("GooglePlaces:check-order",['--order_id'=>$id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
+            }
+           
         }
 
         echo $id." end post \r\n";
