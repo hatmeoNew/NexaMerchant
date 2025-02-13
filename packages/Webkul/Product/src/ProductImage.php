@@ -33,12 +33,13 @@ class ProductImage
         $images = [];
 
         foreach ($product->images as $image) {
-            if (! Storage::has($image->path)) {
-                continue;
-            }
-
+            // if (! Storage::has($image->path)) {
+            //     continue;
+            // }
             $images[] = $this->getCachedImageUrls($image->path);
         }
+
+        //var_dump($$product->images);exit;
 
         if (
             ! $product->parent_id
@@ -132,7 +133,6 @@ class ProductImage
         }
 
         // check the path have http or https
-
         if (str_contains($path, 'https')) {
             return [
                 'small_image_url'    => $path,
