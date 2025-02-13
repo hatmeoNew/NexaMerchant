@@ -10,7 +10,6 @@ if (window.Worker) {
     swiperUrl: swiperUrl,
     reviewsrUrl: reviewsrUrl,
   };
-  console.log(urlObj, 'urlObj');
   worker.postMessage({ cmd: 'fetchData', url: urlObj });
 
   worker.addEventListener('message', (e) => {
@@ -28,11 +27,17 @@ if (window.Worker) {
   console.log('Your browser does not support Web Workers.');
 }
 
-function swiperDom(data) {
-  console.log(data, '====swiperDom');
+function swiperDom(data) {  
+  const result = Object.entries(window.data.attr.variant_images).map(([key, value]) => ({
+    id: key,
+    src: value[0].large_image_url
+  }));
   var swiperList = '';
-  swiperImgList = data.images;
+  swiperImgList.unshift(...data.images);
+  swiperImgList.push(...result)
+
   var img = data.images;
+  img.push(...result)
   image = img[0].src;
   for (var i = 0; i < img.length; i++) {
     swiperList += `<div class="swiper-slide"><img src="${img[i].src}" width="750" height="750" loading="lazy" alt=""></div>`;
@@ -70,7 +75,6 @@ function swiperDom(data) {
   });
 }
 function shopifyDom(data) {
-  console.log(data, '=====shopifyDom');
   const bodyHtml = data.body_html;
   const skeleton = document.querySelector('.shopify-container');
   const content = document.createElement('div');
@@ -87,12 +91,10 @@ const jumpPageBtn = document.getElementById('jump-page');
 let currentPage = 1;
 let total = 0;
 function reviewImgPreview(imgUrl) {
-  console.log(imgUrl, 'imgUrl');
   $('.size-chart-img-box').show();
   $('.size-chart-img img').attr('src', imgUrl);
 }
 function reviewDom(data) {
-  console.log(data, 'reviewDom');
   let reviewsDom = '';
   for (const key in data.reviews) {
     if (Object.hasOwnProperty.call(data.reviews, key)) {
@@ -154,12 +156,10 @@ async function getReviews(page) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    console.log(data, '===============getReviewsData==============');
     if (data.code == 200) {
       return data.data;
     }
   } catch (error) {
-    console.log(error.message, 'getReviewsData ==== err');
   }
 }
 function updatePaginationInfo(total) {
@@ -168,16 +168,12 @@ function updatePaginationInfo(total) {
 
 async function handlePageChange(page) {
   const data = await getReviews(page);
-  console.log(data, 'handlePageChange');
   reviewDom(data);
   // fetchComments(page).then((data) => {
   currentPage = page;
   updatePaginationInfo(data.total);
   prevPageBtn.disabled = currentPage === 1;
   nextPageBtn.disabled = currentPage === Math.ceil(total / 10);
-  console.log(Math.ceil(total / 10));
-  console.log(nextPageBtn.disabled, 'nextPageBtn.disabled');
-
   // });
 }
 prevPageBtn.addEventListener('click', () => {
@@ -192,7 +188,6 @@ nextPageBtn.addEventListener('click', () => {
 
 jumpPageBtn.addEventListener('click', () => {
   const page = parseInt(pageInput.value, 10);
-  console.log(page, 'page');
   if (isNaN(page) || page < 1 || page > Math.ceil(total / 10)) {
     alert(reviewErrMsg);
     return;
@@ -200,20 +195,16 @@ jumpPageBtn.addEventListener('click', () => {
   handlePageChange(page);
 });
 
-console.log(data.sellPoints, 'data.sellPoints===========');
 let description = '';
 for (const key in data.sellPoints) {
   if (Object.hasOwnProperty.call(data.sellPoints, key)) {
     description += `${key}.${data.sellPoints[key]}`;
   }
 }
-console.log(description);
 
 function shareOnFacebook() {
   const url = window.location.href;
-  console.log(url, '====url');
   const title = document.getElementsByClassName('prod-name').innerText;
-  console.log(title, '====title====');
   const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&description=${encodeURIComponent(
     description
   )}&picture=${encodeURIComponent(image)}`;
@@ -223,7 +214,6 @@ function shareOnFacebook() {
 function shareOnLinkedIn() {
   const url = window.location.href;
   const title = document.getElementsByClassName('prod-name').innerText;
-  console.log(title, '====title====');
   const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(
     title
   )}&summary=${encodeURIComponent(description)}`;
@@ -233,7 +223,6 @@ function shareOnLinkedIn() {
 function shareOnTwitter() {
   const url = window.location.href;
   const title = document.getElementsByClassName('prod-name').innerText;
-  console.log(title, '====title====');
   const shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
   window.open(shareUrl, '_blank');
 }
@@ -241,7 +230,6 @@ function shareOnTwitter() {
 function shareByEmail() {
   const url = window.location.href;
   const title = document.getElementsByClassName('prod-name').innerText;
-  console.log(title, '====title====');
   const subject = `Check out this product: ${title}`;
   const body = `I found this amazing product:\n\n${title}\n\n${description}\n\n${url}`;
   const shareUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

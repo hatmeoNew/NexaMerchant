@@ -1544,7 +1544,7 @@
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/5.0.4/js/swiper.js"></script>
-  <script src="/checkout/v3/js/main.js?v=13"></script>
+  <script src="/checkout/v3/js/main.js?v=21"></script>
   <script>
     $(function() {
       if (countries1 == 'fr' || countries1 == 'es') {
@@ -2632,14 +2632,12 @@
       let swiperToId = ''
       let variantId = ''
       data.attr.attributes.forEach(function(item) {
-        if (item.id == "23") {
-          item.options.forEach(function(opItem) {
-            if (opItem.label == value) {
-              swiperToId = opItem.products[0]
-            }
-          })
+        item.options.forEach(function(opItem) {
+          if (opItem.label == value) {
+            swiperToId = opItem.products[0]
+          }
+        })
 
-        }
       })
       for (const key in data.attr.index) {
         if (Object.hasOwnProperty.call(data.attr.index, key)) {
@@ -2650,7 +2648,7 @@
       }
       if (swiperImgList.length > 0) {
         swiperImgList.forEach(function(item, index) {
-          if (item.variant_ids.includes(Number(variantId))) {
+          if (String(item.id).includes(swiperToId)) {
             index = index + 1
             galleryThumbs.slideTo(index)
             mySwiper.slideTo(index)
