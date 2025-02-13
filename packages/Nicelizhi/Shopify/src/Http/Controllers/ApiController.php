@@ -47,6 +47,7 @@ class ApiController extends Controller
      * @return void
      */
     public function __construct(
+        protected ProductRepository $productRepository
     )
     {
         //XmlResponse::macro();
@@ -64,12 +65,37 @@ class ApiController extends Controller
      * 
      * 
      */
-
     public function ShopifyImages($product_id) {
         $shopifyProductImages = Cache::get("shopify_images_".$product_id);
+
+        $product = $this->productRepository->findBySlug($product_id);
+
+        if(is_null($product)) {
+            return response()->json([
+                "code" => 404,
+                "message" => "product not found"
+            ], 404);
+        }
+        
+
         if(empty($shopifyProductImages)) {
-            $shopifyProductImages = \Nicelizhi\Shopify\Models\ShopifyProduct::where("product_id", $product_id)->select(['images'])->first();
-            Cache::set("shopify_images_".$product_id, $shopifyProductImages);
+
+            $productImages = $product->images()->get();
+
+            //var_dump($productImages);exit;
+
+            foreach($productImages as $image) {
+                $shopifyProductImages['images'][] = [
+                    "product_id" => $image->product_id,
+                    "id" => $image->id,
+                    "src" => $image->path,
+                    "alt" => $image->path,
+                    'position' => $image->position
+                ];
+            }
+
+            //$shopifyProductImages = \Nicelizhi\Shopify\Models\ShopifyProduct::where("product_id", $product_id)->select(['images'])->first();
+            //Cache::set("shopify_images_".$product_id, $shopifyProductImages);
         }
         
         if(is_null($shopifyProductImages)) {
@@ -99,8 +125,32 @@ class ApiController extends Controller
     public function ShopifyFull($product_id) {
         $shopifyProduct = Cache::get("shopify_full_".$product_id);
         if(empty($shopifyProduct)) {
-            $shopifyProduct = \Nicelizhi\Shopify\Models\ShopifyProduct::where("product_id", $product_id)->first();
-            Cache::set("shopify_full_".$product_id, $shopifyProduct);
+
+            $product = $this->productRepository->findBySlug($product_id);
+
+            
+
+            if(is_null($product)) {
+                return response()->json([
+                    "code" => 404,
+                    "message" => "product not found"
+                ], 404);
+            }
+
+            $shopifyProduct = [];
+            $shopifyProduct['id'] = $product->id;
+            $shopifyProduct['product_id'] = $product->id;
+            $shopifyProduct['title'] = $product->name;
+            $shopifyProduct['handle'] = $product->slug;
+            $shopifyProduct['variants'] = $product->variants;
+            $shopifyProduct['images'] = $product->images;
+            $shopifyProduct['body_html'] = $product->description;
+
+            //var_dump($shopifyProduct);exit;
+
+
+            //$shopifyProduct = \Nicelizhi\Shopify\Models\ShopifyProduct::where("product_id", $product_id)->first();
+            //Cache::set("shopify_full_".$product_id, $shopifyProduct);
         }
         
         if(is_null($shopifyProduct)) {
@@ -113,7 +163,7 @@ class ApiController extends Controller
         $redis = Redis::connection('default');
 
         // get product sell points
-        $shopifyProduct->sellPoints = $redis->hgetall("sell_points_".$product_id);
+        $shopifyProduct['sellPoints'] = $redis->hgetall("sell_points_".$product_id);
 
         return response()->json([
             'data' => $shopifyProduct,
