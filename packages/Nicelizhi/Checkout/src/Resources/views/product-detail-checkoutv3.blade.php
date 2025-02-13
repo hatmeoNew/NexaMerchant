@@ -1134,7 +1134,11 @@
   <div class="image-area" id="imageArea"></div>
 
   <div class="footer-box">
-    <p style="font-weight: 700" id="footer-top-text">© 2024 </p>
+    <p style="font-weight: 700" id="footer-top-text">© <span id="currentYear"></span> </p>
+    <script>
+      const currentYear = new Date().getFullYear();
+      document.getElementById('currentYear').textContent = currentYear
+    </script>
     <br class="br" />
     <br class="br" />
     <div class="phone-block"></div>
