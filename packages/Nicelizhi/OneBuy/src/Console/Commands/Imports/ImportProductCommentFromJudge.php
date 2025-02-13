@@ -73,25 +73,26 @@ class ImportProductCommentFromJudge extends Command
 
         $this->info($url);
 
-        // // @link https://judge.me/api/docs#tag/Reviews
-        // try {
-        //     $response = $client->get($url, [
-        //         'http_errors' => true,
-        //         'headers' => [
-        //             'Content-Type' => 'application/json',
-        //             'Accept' => 'application/json',
-        //         ]
-        //     ]);
-        // }catch(ClientException $e) {
+        // @link https://judge.me/api/docs#tag/Reviews
+        try {
+            $response = $client->get($url, [
+                'http_errors' => true,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ]
+            ]);
+        }catch(ClientException $e) {
            
-        // }
+        }
 
-        // $body = json_decode($response->getBody(), true);
+        $body = json_decode($response->getBody(), true);
 
-        // //var_dump($body['count']);exit;
+        //var_dump($body['count']);exit;
 
-        // $count = $body['count'];
-        $count = 300;
+        $count = $body['count'];
+        //var_dump($count);exit;
+        //$count = 3000000;
         $pages = ceil($count / $this->num);
 
         $client = new Client();
