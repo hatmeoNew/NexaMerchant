@@ -38,8 +38,8 @@
             {{-- Email Footer --}}
             <p style="font-size: 16px;color: #202B3C;line-height: 24px;">
                 @lang('shop::app.emails.thanks', [
-                'link' => 'mailto:customer@hatmeo.com',
-                'email' => 'customer@hatmeo.com',
+                'link' => 'mailto:'.config('mail.from.address'),
+                'email' => config('mail.from.address'),
                 'style' => 'color: #2969FF;'
                 ])
             </p>

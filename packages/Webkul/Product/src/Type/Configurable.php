@@ -651,7 +651,7 @@ class Configurable extends AbstractType
 
             if(is_null($option)) {
                 //send message to feishu
-                $message = 'Product ID: ' . $this->product->id . ' - ' . $this->product->name . ' - ' . $attribute->code . ' - ' . $childProduct->{$attribute->code} . ' - ' . $childProduct->id;
+                $message = "Platform: ". config('app.url') .' Product ID: ' . $this->product->id . ' - ' . $this->product->name . ' - ' . $attribute->code . ' - ' . $childProduct->{$attribute->code} . ' - ' . $childProduct->id;
                 \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($message);
                 continue;
             }
