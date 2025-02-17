@@ -137,13 +137,21 @@ class CheckoutV3Controller extends Controller{
 
         $crm_channel = config('onebuy.crm_channel');
 
+        $checkoutItems = \Nicelizhi\Shopify\Helpers\Utils::getAllCheckoutVersion();
+        $customer_config = [];
+        foreach($checkoutItems as $key=>$item) {
+            $cachek_key = "checkout_".$item."_".$slug;
+            $cacheData = $redis->get($cachek_key);
+            $customer_config[$item] = json_decode($cacheData);
+        }
+
         $gtag = config('onebuy.gtag');
 
         $gtm = config('onebuy.gtm');
 
         $data = $this->ProductDetail($slug);
 
-        return view('checkout::product-detail-'.$this->view_prefix_key, compact('slug','comments','faqItems','product','default_country',"payments","payments_default","refer","crm_channel","data","gtag","gtm"));
+        return view('checkout::product-detail-'.$this->view_prefix_key, compact('slug','comments','faqItems','product','default_country',"payments","payments_default","refer","crm_channel","data","gtag","gtm","customer_config"));
     }
 
 
