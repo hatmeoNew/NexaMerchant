@@ -1518,7 +1518,7 @@
       galleryThumbs,
       mySwiper,
       phppackage_products = <?php echo json_encode($data['package_products']); ?>,
-
+      phpcustomer_config = '<?php echo addslashes(json_encode($customer_config)); ?>',
       phpads = '<?php echo addslashes(json_encode($data['ads'])); ?>',
       phpattr = '<?php echo addslashes(json_encode($data['attr'])); ?>',
       phpbrand = '<?php echo $data['brand']; ?>',
@@ -1543,6 +1543,7 @@
       payments_default: phppayments_default,
       paypal_client_id: phppaypal_client_id,
       // product: JSON.parse(phpproduct),
+      customer_config: JSON.parse(phpcustomer_config),
       sku: phpsku,
       sellPoints: JSON.parse(phpsellPoints)
     }
@@ -1720,7 +1721,11 @@
           item.variant_id = ''
         })
       }
-      $('.prod-name').text('<?php echo addslashes($data['product']['name']); ?>')
+      if (data.customer_config.v5 && data.customer_config.v5.title) {
+        $('.prod-name').text(data.customer_config.v5.title)
+      } else {
+        $('.prod-name').text('<?php echo addslashes($data['product']['name']); ?>')
+      }
       $('title').html('<?php echo addslashes($data['product']['name']); ?>')
       $('#buy-select1, #buy-select3, #buy-select4').hide()
       $('#footer-top-text').append(data.brand)
