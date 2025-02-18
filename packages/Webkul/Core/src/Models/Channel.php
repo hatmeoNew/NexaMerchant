@@ -100,6 +100,8 @@ class Channel extends TranslatableModel implements ChannelContract
             return;
         }
 
+        return $this->logo;
+
         return Storage::url($this->logo);
     }
 
@@ -119,6 +121,8 @@ class Channel extends TranslatableModel implements ChannelContract
         if (! $this->favicon) {
             return;
         }
+
+        return $this->favicon;
 
         return Storage::url($this->favicon);
     }

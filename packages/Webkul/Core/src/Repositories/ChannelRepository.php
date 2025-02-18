@@ -74,7 +74,7 @@ class ChannelRepository extends Repository
         $this->saveImages($data, $channel);
 
         // $this->uploadImages($data, $channel, 'favicon');
-        $this->saveImages($data, $channel, 'favicon');
+        $this->saveImages($data, $channel, 'favicon_url');
 
         return $channel;
     }
@@ -106,7 +106,7 @@ class ChannelRepository extends Repository
         }
     }
 
-    public function saveImages($data, $channel, $type = 'logo')
+    public function saveImages($data, $channel, $type = 'logo_url')
     {
         $options = [
             "ssl" => [
