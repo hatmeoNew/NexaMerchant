@@ -701,6 +701,8 @@ class ApiController extends Controller
             $upselling->applyUpselling($cart);
         }
 
+        Cart::collectTotals();
+
 
         try {
             $order = $this->smartButton->createOrder($this->buildRequestBody($input));

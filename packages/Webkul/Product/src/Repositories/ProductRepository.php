@@ -235,10 +235,18 @@ class ProductRepository extends Repository
                         ->where('product_price_indices.customer_group_id', $customerGroup->id);
                 });
 
+            if(!empty($params['category_url'])) {
+                // Get category id from url
+                $category_id = DB::table('category_translations')->where('slug', $params['category_url'])->value('category_id');
+                $params['category_id'] = $category_id;
+            }
+
             if (! empty($params['category_id'])) {
                 $qb->leftJoin('product_categories', 'product_categories.product_id', '=', 'products.id')
                     ->whereIn('product_categories.category_id', explode(',', $params['category_id']));
             }
+
+
 
             if (! empty($params['type'])) {
                 $qb->where('products.type', $params['type']);
