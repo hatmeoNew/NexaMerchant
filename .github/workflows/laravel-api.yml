@@ -1,0 +1,35 @@
+name: Prod
+
+on:
+  push:
+    branches:
+      - 'main-api'
+    paths-ignore:
+      - 'README.md'
+      - .github/**
+      - docs/**
+      - 'Dockerfile'
+  pull_request:
+    branches:
+      - 'main-api'
+    paths-ignore:
+      - 'README.md'
+      - 'Dockerfile'
+      - .github/**
+      - docs/**
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Sync to Server 2 and Do it
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA_X: ${GITHUB_SHA}
+      with:
+        host: ${{ secrets.SSH_HOST_US }}  
+        username: ${{ secrets.SSH_USERNAME_US }}
+        key: ${{ secrets.DEPLOY_KEY_US }}
+        port: ${{secrets.SSH_PORT_US }}
+        script: |
+          cd /www/wwwroot/shell && ./batch_shell_composer.sh
+          
