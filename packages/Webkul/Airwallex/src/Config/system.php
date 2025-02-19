@@ -13,6 +13,7 @@ return [
                 'type'          => 'text',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.clientEmail',
             ],
             [
                 'name'          => 'clientPassword',
@@ -21,6 +22,7 @@ return [
                 'info'          => 'airwallex::app.system.clientPassword',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.clientPassword',
             ],
             [
                 'name'          => 'accountId',
@@ -29,6 +31,7 @@ return [
                 'info'          => 'airwallex::app.system.accountId',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.accountId',
             ],
             [
                 'name'          => 'clientId',
@@ -38,6 +41,7 @@ return [
                 'info'          => 'airwallex::app.system.clientId',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.clientId',
             ],
             [
                 'name'          => 'apiKey',
@@ -47,6 +51,7 @@ return [
                 'info'          => 'airwallex::app.system.apiKey',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.apiKey',
             ],
             [
                 'name'          => 'paDC',
@@ -55,6 +60,7 @@ return [
                 'info'          => 'airwallex::app.system.paDC',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.paDC',
             ],
             [
                 'name'          => 'accountDC',
@@ -63,6 +69,7 @@ return [
                 'info'          => 'airwallex::app.system.accountDC',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.accountDC',
             ],
             [
                 'name'          => 'production',
@@ -70,6 +77,7 @@ return [
                 'type'          => 'boolean',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.production',
             ],
             [
                 'name'          => 'active',
@@ -77,6 +85,7 @@ return [
                 'type'          => 'boolean',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.airwallex.active',
             ]
         ]
     ]

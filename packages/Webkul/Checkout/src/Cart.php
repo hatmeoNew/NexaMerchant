@@ -219,7 +219,7 @@ class Cart
                 $this->collectTotals();
             }
 
-            throw new \Exception($cartProducts);
+            throw new \Exception($cartProducts. $productId. '--'. json_encode($data));
         } else {
             $parentCartItem = null;
 

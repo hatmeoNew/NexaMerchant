@@ -564,6 +564,7 @@ return [
                 'name'  => 'verification',
                 'title' => 'admin::app.configuration.index.customer.settings.email.email-verification',
                 'type'  => 'boolean',
+                'value' => config('emails.general.notifications.verification'),
             ],
         ],
     ], [
@@ -629,6 +630,7 @@ return [
                 'validation'    => 'required|max:50',
                 'channel_based' => true,
                 'default_value' => config('mail.from.name'),
+                'value_key'     => 'emails.configure.email_settings.sender_name',
             ], [
                 'name'          => 'shop_email_from',
                 'title'         => 'admin::app.configuration.index.email.email-settings.shop-email-from',
@@ -637,6 +639,7 @@ return [
                 'validation'    => 'required|email',
                 'channel_based' => true,
                 'default_value' => config('mail.from.address'),
+                'value_key'     => 'emails.configure.email_settings.shop_email_from',
             ], [
                 'name'          => 'admin_name',
                 'title'         => 'admin::app.configuration.index.email.email-settings.admin-name',
@@ -645,6 +648,7 @@ return [
                 'validation'    => 'required|max:50',
                 'channel_based' => true,
                 'default_value' => config('mail.admin.name'),
+                'value_key'     => 'emails.configure.email_settings.admin_name',
             ], [
                 'name'          => 'admin_email',
                 'title'         => 'admin::app.configuration.index.email.email-settings.admin-email',
@@ -653,6 +657,7 @@ return [
                 'validation'    => 'required|email',
                 'channel_based' => true,
                 'default_value' => config('mail.admin.address'),
+                'value_key'     => 'emails.configure.email_settings.admin_email',
             ],
         ],
     ], [
@@ -671,46 +676,57 @@ return [
                 'name'  => 'emails.general.notifications.verification',
                 'title' => 'admin::app.configuration.index.email.notifications.verification',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.verification',
             ], [
                 'name'  => 'emails.general.notifications.registration',
                 'title' => 'admin::app.configuration.index.email.notifications.registration',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.registration',
             ], [
                 'name'  => 'emails.general.notifications.customer_registration_confirmation_mail_to_admin',
                 'title' => 'admin::app.configuration.index.email.notifications.customer-registration-confirmation-mail-to-admin',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.customer_registration_confirmation_mail_to_admin',
             ], [
                 'name'  => 'emails.general.notifications.customer',
                 'title' => 'admin::app.configuration.index.email.notifications.customer',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.customer',
             ], [
                 'name'  => 'emails.general.notifications.new_order',
                 'title' => 'admin::app.configuration.index.email.notifications.new-order',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.new_order',
             ], [
                 'name'  => 'emails.general.notifications.new_admin',
                 'title' => 'admin::app.configuration.index.email.notifications.new-admin',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.new_admin',
             ], [
                 'name'  => 'emails.general.notifications.new_invoice',
                 'title' => 'admin::app.configuration.index.email.notifications.new-invoice',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.new_invoice',
             ], [
                 'name'  => 'emails.general.notifications.new_refund',
                 'title' => 'admin::app.configuration.index.email.notifications.new-refund',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.new_refund',
             ], [
                 'name'  => 'emails.general.notifications.new_shipment',
                 'title' => 'admin::app.configuration.index.email.notifications.new-shipment',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.new_shipment',
             ], [
                 'name'  => 'emails.general.notifications.new_inventory_source',
                 'title' => 'admin::app.configuration.index.email.notifications.new-inventory-source',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.new_inventory_source',
             ], [
                 'name'  => 'emails.general.notifications.cancel_order',
                 'title' => 'admin::app.configuration.index.email.notifications.cancel-order',
                 'type'  => 'boolean',
+                'value_key' => 'emails.general.notifications.emails.general.notifications.cancel_order',
             ],
         ],
     ],
@@ -897,18 +913,21 @@ return [
                 'validation'    => 'required_if:active,1',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.payment_methods.cashondelivery.title',
             ], [
                 'name'          => 'description',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.description',
                 'type'          => 'textarea',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.payment_methods.cashondelivery.description',
             ], [
                 'name'          => 'instructions',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.instructions',
                 'type'          => 'textarea',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.payment_methods.cashondelivery.instructions',
             ], [
                 'name'          => 'generate_invoice',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.generate-invoice',
@@ -916,6 +935,7 @@ return [
                 'default_value' => false,
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.cashondelivery.generate_invoice',
             ], [
                 'name'          => 'invoice_status',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.set-invoice-status',
@@ -933,6 +953,7 @@ return [
                 'info'          => 'admin::app.configuration.index.sales.payment-methods.set-order-status',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.cashondelivery.invoice_status',
             ], [
                 'name'          => 'order_status',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.set-order-status',
@@ -952,12 +973,14 @@ return [
                 'info'          => 'admin::app.configuration.index.sales.payment-methods.generate-invoice-applicable',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.cashondelivery.order_status',
             ], [
                 'name'          => 'active',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.status',
                 'type'          => 'boolean',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.cashondelivery.active',
             ], [
                 'name'    => 'sort',
                 'title'   => 'admin::app.configuration.index.sales.payment-methods.sort-order',
@@ -977,6 +1000,7 @@ return [
                         'value' => 4,
                     ],
                 ],
+                'value_key' => 'sales.payment_methods.cashondelivery.sort',
             ],
         ],
     ], [
@@ -1149,12 +1173,14 @@ return [
                 'validation'    => 'required_if:active,1',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.payment_methods.paypal_smart_button.title',
             ], [
                 'name'          => 'description',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.description',
                 'type'          => 'textarea',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.payment_methods.paypal_smart_button.description',
             ], [
                 'name'          => 'client_id',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.client-id',
@@ -1164,6 +1190,7 @@ return [
                 'validation'    => 'required_if:active,true',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.paypal_smart_button.client_id',
             ], [
                 'name'          => 'client_secret',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.client-secret',
@@ -1173,6 +1200,7 @@ return [
                 'validation'    => 'required_if:active,1',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.paypal_smart_button.client_secret',
             ], [
                 'name'          => 'accepted_currencies',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.accepted-currencies',
@@ -1182,18 +1210,21 @@ return [
                 'validation'    => 'required_if:active,1',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.paypal_smart_button.accepted_currencies',
             ], [
                 'name'          => 'active',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.status',
                 'type'          => 'boolean',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.paypal_smart_button.active',
             ], [
                 'name'          => 'sandbox',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.sandbox',
                 'type'          => 'boolean',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.paypal_smart_button.sandbox',
             ], [
                 'name'    => 'sort',
                 'title'   => 'admin::app.configuration.index.sales.payment-methods.sort-order',
