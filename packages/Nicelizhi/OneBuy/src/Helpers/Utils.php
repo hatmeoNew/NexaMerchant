@@ -145,7 +145,7 @@ final class Utils {
             }
             if(empty($super_attribute)) {
                 //send msg to the feisu
-                \Nicelizhi\Shopify\Helpers\Utils::sendFeishu('product_id:'.$product_id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
+                \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config('onebuy.brand').'  product_id:'.$product_id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
                 return 0;
             }
     

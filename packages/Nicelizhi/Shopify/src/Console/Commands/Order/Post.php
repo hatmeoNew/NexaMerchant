@@ -191,6 +191,8 @@ class Post extends Command
         $q_ty = 0;
         foreach($products as $key=>$product) {
             $sku = $product['additional'];
+
+            var_dump($sku);
             
             $attributes = "";
 
@@ -209,12 +211,17 @@ class Post extends Command
                 }
                 $variant_id = $skuInfo[1];
             }
+
+            if(!is_numeric($variant_id)) {
+                $variant_id = $sku['selected_configurable_option'];
+            }
             
 
             $line_item = [];
             $line_item['variant_id'] = $variant_id;
             $line_item ['quantity'] = $product['qty_ordered'];
             $line_item ['price'] = $product['price'];
+            $line_item ['product_id'] = $variant_id;
             $price_set = [];
             $price_set['shop_money'] = [
                 'amount' => $product['price'],
@@ -226,6 +233,9 @@ class Post extends Command
             $line_item['name'] = $product['name'].$product['sku'].$attributes;
             $variant_sku = $this->product->where('id', $variant_id)->value('sku');
             $line_item['sku'] = $variant_sku;
+            if(empty($variant_sku)) {
+                $line_item['sku'] = $sku['product_sku'];
+            }
 
             $product_image = $this->product_image->where('product_id', $variant_id)->value('path');
 
@@ -427,7 +437,7 @@ class Post extends Command
          * 
          */
 
-        //$postOrder['send_receipt'] = false; 
+        $postOrder['send_receipt'] = false; 
         //$postOrder['send_receipt'] = true; 
 
         // $postOrder['discount_codes'] = $discount_codes;
