@@ -114,7 +114,7 @@
         border-spacing: 0;width: 100%">
         <thead>
             <tr style="color: #121A26;border-top: 1px solid #CBD5E1;border-bottom: 1px solid #CBD5E1;">
-                @foreach (['sku', 'name', 'price', 'qty'] as $item)
+                @foreach (['image', 'name', 'price', 'qty'] as $item)
                 <th style="text-align: left;padding: 15px">
                     @lang('shop::app.emails.orders.' . $item)
                 </th>
@@ -125,7 +125,10 @@
         <tbody style="font-size: 16px;font-weight: 400;color: #384860;">
             @foreach ($order->items as $item)
             <tr>
-                <td style="text-align: left;padding: 15px">{{ $item->getTypeInstance()->getOrderedItem($item)->sku }}</td>
+                <td style="text-align: left;padding: 15px">
+                    <img src="{{ $item->getTypeInstance()->getBaseImageUrl() }}" alt="{{ $item->name }}"
+                        style="width: 60px" />
+                </td>
 
                 <td style="text-align: left;padding: 15px">
                     {{ $item->name }}
