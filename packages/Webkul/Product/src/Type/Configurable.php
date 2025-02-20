@@ -381,6 +381,18 @@ class Configurable extends AbstractType
 
         $variant->update(['sku' => $data['sku']]);
 
+        //Log::info('updateVariant fillableTypes: '.json_encode($this->fillableTypes));
+
+        $superAttributes = [];
+        $superAttribute = $variant->parent->super_attributes;
+        //Log::info('superAttribute: '.json_encode($superAttribute));
+
+        // add super attributes code to fillableTypes
+        foreach ($superAttribute as $attribute) {
+            $this->fillableTypes[] = $attribute->code;
+        }
+
+
         foreach ($this->fillableTypes as $attributeCode) {
             if (! isset($data[$attributeCode])) {
                 continue;
@@ -417,6 +429,10 @@ class Configurable extends AbstractType
                         ->first();
                 }
             }
+
+            // Log::info('productAttributeValue: '.json_encode($productAttributeValue));
+            // Log::info('attribute: '.json_encode($attribute));
+            // Log::info('data: '.json_encode($data));
 
             if (! $productAttributeValue) {
                 $this->attributeValueRepository->create([

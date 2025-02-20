@@ -159,8 +159,7 @@ final class Utils {
 
         $cart = Cart::getCart();
 
-
-        $cart = Cart::getCart();
+        Cart::collectTotals();
 
         //清空购车动作
         Cart::deActivateCart();

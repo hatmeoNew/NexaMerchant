@@ -74,6 +74,8 @@ class ApiController extends Controller
             core()->setCurrentCurrency($currency_get);
         }
 
+        $clean_cache = $request->input('clean_cache');
+
       
 
         //var_dump($currency);exit;
@@ -89,7 +91,10 @@ class ApiController extends Controller
         // $paypal_id_token = "";
         // $paypal_access_token = "";
         // $paypal_id_token ="";
-
+        // debug the cache
+        if($slug==$clean_cache){
+            $data = [];
+        }
         if(empty($data)) {
         //if(true) {
             $product = $this->productRepository->findBySlug($slug);
@@ -132,6 +137,8 @@ class ApiController extends Controller
                 //var_dump($index);
 
             }
+
+            //var_dump($product->id, $attributes);exit;
     
             $package_products = [];
             $package_products = \Nicelizhi\OneBuy\Helpers\Utils::makeProducts($product, [2,1,3,4]);
@@ -140,6 +147,8 @@ class ApiController extends Controller
             $data['package_products'] = $package_products;
             $data['sku'] = $product->sku;
             $data['attr'] = $attributes;
+            $data['family_id'] = $product->attribute_family_id;
+            
     
             $countries = config("countries");
     
