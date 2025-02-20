@@ -124,47 +124,47 @@ final class Utils {
 
         $attributes = $productViewHelper->getConfigurationConfig($product);
 
-        if($product_id)
-
-        if($productType=="simple") {
-
-        }
-
-        if($product_id==3692) {
-            //Log::info($product_id."--". json_encode($attributes));
-            //exit;
-        }
-
         if($productType=='configurable') {
             $product_variant_id = 0;
             $super_attribute = [];
             //var_dump($attributes);exit;
+            // foreach($attributes['attributes'] as $key=>$attribute) {
+                
+            //     Log::info($product_id."--". json_encode($attribute));
+            //     if(!isset($attribute['options'][0]['id'])) continue;
+            //     $super_attribute[$attribute['id']] = isset($attribute['options'][0]['id']) ? $attribute['options'][0]['id'] : 0 ;
+            //     $product_variant_id = isset($attribute['options'][0]['products'][0]) ? $attribute['options'][0]['products'][0] : 0 ;
+                
+            // }
+            // get product variant first
+            $product_variant_id = $product->variants->first()->id;
+            $super_attribute = [];
             foreach($attributes['attributes'] as $key=>$attribute) {
-                Log::info($product_id."--". json_encode($attribute));
                 if(!isset($attribute['options'][0]['id'])) continue;
-                $super_attribute[$attribute['id']] = isset($attribute['options'][0]['id']) ? $attribute['options'][0]['id'] : 0 ;
-                $product_variant_id = isset($attribute['options'][0]['products'][0]) ? $attribute['options'][0]['products'][0] : 0 ;
+                $super_attribute[$attribute['id']] = $attribute['options'][0]['id'];
+            }
+            if(empty($super_attribute)) {
+                //send msg to the feisu
+                \Nicelizhi\Shopify\Helpers\Utils::sendFeishu('product_id:'.$product_id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
+                return 0;
             }
     
             $AddcartProduct['selected_configurable_option'] = $product_variant_id;
             $AddcartProduct['super_attribute'] = $super_attribute;
             $AddcartProduct['attribute_family_id'] = $product->attribute_family_id;
+
         }
-        //var_dump($attributes);exit;
-        //var_dump($product['product_id']);exit;
-        if($product_id==3692) {
-            //Log::info($product_id."--". json_encode($AddcartProduct));
-            //exit;
-        }
-        //Log::info($product_id." add to cart --". json_encode($AddcartProduct));
-        //Log::info($product['product_id']." add to cart --". json_encode($product));
+
         $cart = Cart::addProduct($product['product_id'], $AddcartProduct);
 
-        Cart::collectTotals();
+        $cart = Cart::getCart();
+
 
         $cart = Cart::getCart();
+
         //清空购车动作
         Cart::deActivateCart();
+
 
 
         return $cart->grand_total;

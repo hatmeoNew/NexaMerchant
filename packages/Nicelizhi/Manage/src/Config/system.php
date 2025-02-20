@@ -828,18 +828,21 @@ return [
                 'validation'    => 'required_if:active,1',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.carriers.free.title',
             ], [
                 'name'          => 'description',
                 'title'         => 'admin::app.configuration.index.sales.shipping-methods.free-shipping.description',
                 'type'          => 'textarea',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.carriers.free.description',
             ], [
                 'name'          => 'active',
                 'title'         => 'admin::app.configuration.index.sales.shipping-methods.free-shipping.status',
                 'type'          => 'boolean',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.carriers.free.active',
             ],
         ],
     ], [
@@ -856,12 +859,14 @@ return [
                 'validation'    => 'required_if:active,1',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.carriers.flatrate.title',
             ], [
                 'name'          => 'description',
                 'title'         => 'admin::app.configuration.index.sales.shipping-methods.flat-rate-shipping.description',
                 'type'          => 'textarea',
                 'channel_based' => true,
                 'locale_based'  => true,
+                'value_key'     => 'sales.carriers.flatrate.description',
             ], [
                 'name'          => 'default_rate',
                 'title'         => 'admin::app.configuration.index.sales.shipping-methods.flat-rate-shipping.rate',
@@ -870,6 +875,7 @@ return [
                 'validation'    => 'required_if:active,1',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.carriers.flatrate.default_rate',
             ], [
                 'name'    => 'type',
                 'title'   => 'admin::app.configuration.index.sales.shipping-methods.flat-rate-shipping.type',
@@ -885,12 +891,14 @@ return [
                 ],
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.carriers.flatrate.type',
             ], [
                 'name'          => 'active',
                 'title'         => 'admin::app.configuration.index.sales.shipping-methods.flat-rate-shipping.status',
                 'type'          => 'boolean',
                 'channel_based' => true,
                 'locale_based'  => false,
+                'value_key'     => 'sales.carriers.flatrate.active',
             ],
         ],
     ], [
