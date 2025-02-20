@@ -21,7 +21,7 @@ class Base
 
         $objectFirstItem = $object->items->first();
 
-        return $objectFirstItem->additional['locale'] ?? 'en';
+        return $objectFirstItem->additional['locale'] ?? config('app.locale');
     }
 
     /**
