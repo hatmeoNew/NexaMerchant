@@ -3,7 +3,7 @@
 
 <head>
   <title></title>
-  <link rel="icon prefetch" id="favicon-icon" href="/checkout/v2/images/favicon_de.webp" type="image/png" sizes="16x16" />
+  <link rel="icon prefetch" id="favicon-icon" href="/storage/favicon.ico" type="image/png" sizes="16x16" />
   <meta charset="utf-8" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="base-url" content="{{ url()->to('/') }}">
@@ -22,11 +22,8 @@
   <meta name="color-scheme" content="light only" />
   <link rel="stylesheet" href="/checkout/v2/css/v3.css?v=2">
   <link rel="stylesheet prefetch" type="text/css" href="/checkout/v2/css/checkout.css?v=12" />
-  <link rel="prefetch" href="/checkout/v2/images/favicon_de.webp">
-  <link rel="prefetch" href="/checkout/v2/images/favicon.webp">
   <link rel="prefetch" href="/checkout/v2/images/googlePay.webp">
   <link rel="prefetch" href="/checkout/v2/images/applePay.webp">
-  <link rel="prefetch" href="/checkout/v2/images/logo_{{ app()->getLocale() }}.webp">
   <!-- <link href="https://cdn.jsdelivr.net/npm/flag-icon-css@4.1.7/css/flag-icons.min.css" rel="stylesheet" /> -->
   <!-- <link href="https://cdn.jsdelivr.net/npm/jquery-colorbox@1.6.4/example1/colorbox.min.css" rel="stylesheet" /> -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icon-css@4.1.7/css/flag-icons.min.css" media="none" onload="if(media!='all')media='all'">
@@ -108,6 +105,14 @@
         'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
       f.parentNode.insertBefore(j, f);
     })(window, document, 'script', 'dataLayer', 'GTM-NS5CFS68');
+  </script>
+  <script>
+    // 获取当前时间戳，确保每次加载时 URL 都不一样，避免缓存
+    const timestamp = new Date().getTime();
+
+    // 获取 <link> 标签，并为其 href 添加时间戳
+    const favicon = document.getElementById('favicon-icon');
+    favicon.href = `/storage/favicon.ico?timestamp=${timestamp}`;
   </script>
   <!-- End Google Tag Manager -->
   <style>
@@ -391,7 +396,17 @@
   <div class="header-container">
     <div class="container">
       <div class="herder-content">
-        <img src="/checkout/v2/images/logo_<?php echo strtolower($default_country); ?>.webp" width="100" height="50" alt="" />
+        <img id="logo1" src="/storage/logo.webp" width="100" height="50" alt="" />
+        <script>
+          // 获取当前时间戳
+          const timestamp1 = new Date().getTime();
+
+          // 获取 <img> 标签
+          const logo1 = document.getElementById('logo');
+
+          // 给图片的 src 添加时间戳
+          logo1.src = `/storage/logo.webp?timestamp=${timestamp}`;
+        </script>
         <div class="top-left-button">
           <!-- <p class="header-text-hide">@lang('checkout::app.v3.Description')</p> -->
           <a class="header-text-hide" onclick="reviewToggle()" id="header-text" href="#shopify-title-item1">@lang('checkout::app.v3.Reviews')</a>
@@ -1563,10 +1578,6 @@
       }
       if (countries1 == 'de' || countries1 == 'fr') {
         $('.terms-block-last').show()
-      }
-      if (countries1 == 'us' || countries1 == 'gb') {
-        var favicon = '/checkout/v2/images/favicon.webp'
-        $('#favicon-icon').attr('href', favicon)
       }
       payTypeShow = data.payments
       var attrList = data.attr.attributes
