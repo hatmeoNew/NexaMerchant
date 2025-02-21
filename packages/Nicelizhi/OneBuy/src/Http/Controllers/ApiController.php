@@ -1181,7 +1181,12 @@ class ApiController extends Controller
         $lineItems = [];
 
         foreach ($cart->items as $item) {
-            if(empty($item->name)) $item->name = "Product";
+            if(empty($item->name)) {
+                $item->name = "Product";
+            }else{
+                $item->name = str_replace(["\r\n", "\r", "\n"], ' ', $item->name);
+                $item->name = mb_substr($item->name, 0, 50);
+            }
             $lineItems[] = [
                 'unit_amount' => [
                     'currency_code' => $cart->cart_currency_code,
