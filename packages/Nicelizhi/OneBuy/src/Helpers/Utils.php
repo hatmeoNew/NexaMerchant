@@ -63,7 +63,7 @@ final class Utils {
                 $package_product['amount'] = $i;
                 //$package_product['old_price'] = $productPrice['regular']['price'] * $i;
                 $price = self::getCartProductPrice($product,$product->id, $i);
-                $priceV2 = self::getCartProductPriceV2($product,$product->id, $i);
+                //$priceV2 = self::getCartProductPriceV2($product,$product->id, $i);
                 $package_product['old_price'] = round($source_price * $i, 2); 
                 //$old_price_format = core()->convertPrice($package_product['old_price']);
                 //$package_product['new_price'] = "3.23" * $i;
@@ -88,7 +88,7 @@ final class Utils {
                 $popup_info['new_price'] = null;
                 $popup_info['img'] = null;
                 $package_product['popup_info'] = $popup_info;
-                $package_product['priceV2'] = $priceV2;
+                //$package_product['priceV2'] = $priceV2;
                 $package_products[] = $package_product;
             }
 
