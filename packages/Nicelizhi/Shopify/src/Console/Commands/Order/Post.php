@@ -245,10 +245,6 @@ class Post extends Command
                     [
                         'name' => 'image',
                         'value' => $product_image
-                    ],
-                    [
-                        'name' => 'product_image',
-                        'value' => $product_image
                     ]
                 ];
             }
