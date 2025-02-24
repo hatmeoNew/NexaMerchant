@@ -32,10 +32,5 @@ jobs:
         port: ${{secrets.SSH_PORT }}
         script: |
           cd /www/wwwroot/shell
-<<<<<<< HEAD
-          nohup ./batch_shell_composer.sh $GITHUB_SHA_X > /dev/null 2>&1 &
-          disown
-=======
           ./batch_shell_composer.sh $GITHUB_SHA_X > output.log 2>&1 &
           echo "Script started in the background. Check output.log for details."   
->>>>>>> 5b715e7264737843fe06f5f1e3db27f4bda92b53
