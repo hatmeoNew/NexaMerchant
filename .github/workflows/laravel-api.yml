@@ -31,4 +31,6 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         port: ${{secrets.SSH_PORT }}
         script: |
-          cd /www/wwwroot/shell && nohup ./batch_shell_composer.sh $GITHUB_SHA_X > /dev/null 2>&1 &       
+          cd /www/wwwroot/shell 
+          nohup ./batch_shell_composer.sh $GITHUB_SHA_X > /dev/null 2>&1 &
+          disown    
