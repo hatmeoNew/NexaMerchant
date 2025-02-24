@@ -127,16 +127,7 @@ final class Utils {
         if($productType=='configurable') {
             $product_variant_id = 0;
             $super_attribute = [];
-            //var_dump($attributes);exit;
-            // foreach($attributes['attributes'] as $key=>$attribute) {
-                
-            //     Log::info($product_id."--". json_encode($attribute));
-            //     if(!isset($attribute['options'][0]['id'])) continue;
-            //     $super_attribute[$attribute['id']] = isset($attribute['options'][0]['id']) ? $attribute['options'][0]['id'] : 0 ;
-            //     $product_variant_id = isset($attribute['options'][0]['products'][0]) ? $attribute['options'][0]['products'][0] : 0 ;
-                
-            // }
-            // get product variant first
+            
             $product_variant_id = $product->variants->first()->id;
             $super_attribute = [];
             foreach($attributes['attributes'] as $key=>$attribute) {

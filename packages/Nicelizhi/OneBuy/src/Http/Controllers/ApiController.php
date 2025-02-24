@@ -494,6 +494,24 @@ class ApiController extends Controller
             $data['order'] = $order;
             if ($order) {
                 $orderId = $order->id;
+                
+                // save utm for order
+                $utm_source = $request->input("utm_source");
+                $utm_medium = $request->input("utm_medium");
+                $utm_campaign = $request->input("utm_campaign");
+                $utm_term = $request->input("utm_term");
+                $utm_content = $request->input("utm_content");
+
+                // insert utm info to order_utm table
+                $order_utm = [];
+                $order_utm['order_id'] = $order->id;
+                $order_utm['utm_source'] = $utm_source;
+                $order_utm['utm_medium'] = $utm_medium;
+                $order_utm['utm_campaign'] = $utm_campaign;
+                $order_utm['utm_term'] = $utm_term;
+                $order_utm['utm_content'] = $utm_content;
+
+                \NexaMerchant\Apps\Apis\Models\OrderUtm::create($order_utm);
 
                 //customer id
                 $cus_id = isset($input['cus_id']) ? trim($input['cus_id']) : null;
@@ -913,6 +931,24 @@ class ApiController extends Controller
 
             // get order transaction info
             $order = $this->orderRepository->find($orderRes->id);
+
+            // save utm for order
+            $utm_source = $request->input("utm_source");
+            $utm_medium = $request->input("utm_medium");
+            $utm_campaign = $request->input("utm_campaign");
+            $utm_term = $request->input("utm_term");
+            $utm_content = $request->input("utm_content");
+
+            // insert utm info to order_utm table
+            $order_utm = [];
+            $order_utm['order_id'] = $orderRes->id;
+            $order_utm['utm_source'] = $utm_source;
+            $order_utm['utm_medium'] = $utm_medium;
+            $order_utm['utm_campaign'] = $utm_campaign;
+            $order_utm['utm_term'] = $utm_term;
+            $order_utm['utm_content'] = $utm_content;
+
+            \NexaMerchant\Apps\Apis\Models\OrderUtm::create($order_utm);
 
             $data = [];
             $data['order'] = $order;

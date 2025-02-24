@@ -894,6 +894,7 @@ return [
             'shipping-handling' => 'Shipping Handling',
             'tracking-number'   => 'Tracking Number : :tracking_number',
             'tax'               => 'Tax',
+            'image'             => 'Image',
         ],
     ],
 ];
