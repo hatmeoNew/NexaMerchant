@@ -511,7 +511,7 @@ class ApiController extends Controller
                 $order_utm['utm_term'] = $utm_term;
                 $order_utm['utm_content'] = $utm_content;
 
-                \NexaMerchant\Apps\Apis\Models\OrderUtm::create($order_utm);
+                \NexaMerchant\Apis\Models\OrderUtm::create($order_utm);
 
                 //customer id
                 $cus_id = isset($input['cus_id']) ? trim($input['cus_id']) : null;
@@ -948,7 +948,7 @@ class ApiController extends Controller
             $order_utm['utm_term'] = $utm_term;
             $order_utm['utm_content'] = $utm_content;
 
-            \NexaMerchant\Apps\Apis\Models\OrderUtm::create($order_utm);
+            \NexaMerchant\Apis\Models\OrderUtm::create($order_utm);
 
             $data = [];
             $data['order'] = $order;
