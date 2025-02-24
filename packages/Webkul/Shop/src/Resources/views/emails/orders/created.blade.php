@@ -126,8 +126,11 @@
             @foreach ($order->items as $item)
             <tr>
                 <td style="text-align: left;padding: 15px">
-                    <img src="{{ $item->getTypeInstance()->getBaseImageUrl() }}" alt="{{ $item->name }}"
-                        style="width: 60px" />
+                   @php
+                        $image = $item->product->images->first();
+                    @endphp
+                    <img src="{{ $image->path }}" alt="{{ $item->name }}" width="60" height="60" />
+
                 </td>
 
                 <td style="text-align: left;padding: 15px">
