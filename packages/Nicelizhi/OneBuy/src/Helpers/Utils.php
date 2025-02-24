@@ -8,6 +8,8 @@ use Webkul\Product\Models\ProductAttributeValue;
 use Illuminate\Support\Facades\Cache;
 use Webkul\Checkout\Facades\Cart;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
+use Webkul\CartRule\Repositories\CartRuleRepository;
 
 final class Utils {
 
@@ -61,6 +63,7 @@ final class Utils {
                 $package_product['amount'] = $i;
                 //$package_product['old_price'] = $productPrice['regular']['price'] * $i;
                 $price = self::getCartProductPrice($product,$product->id, $i);
+                $priceV2 = self::getCartProductPriceV2($product,$product->id, $i);
                 $package_product['old_price'] = round($source_price * $i, 2); 
                 //$old_price_format = core()->convertPrice($package_product['old_price']);
                 //$package_product['new_price'] = "3.23" * $i;
@@ -85,6 +88,7 @@ final class Utils {
                 $popup_info['new_price'] = null;
                 $popup_info['img'] = null;
                 $package_product['popup_info'] = $popup_info;
+                $package_product['priceV2'] = $priceV2;
                 $package_products[] = $package_product;
             }
 
@@ -110,6 +114,9 @@ final class Utils {
      * 
      */
     private static function getCartProductPrice($product, $product_id, $qty) {
+
+        return self::getCartProductPriceV2($product, $product_id, $qty);
+
         //清空购车动作
         Cart::deActivateCart();
         //添加对应的商品到购物车中
@@ -158,6 +165,31 @@ final class Utils {
 
 
         return $cart->grand_total;
+
+    }
+
+    /**
+     * 
+     * 
+     * 计算商品在具体的数量的时候的价格，主要是考虑到会有购物车折扣的情况下
+     * 
+     * @param int $product_id
+     * @param int $qty
+     * 
+     * @return float price
+     * 
+     */
+    private static function getCartProductPriceV2($product, $product_id, $qty) {
+        $prices = Redis::zRange('product-quantity-price-'.$product_id, 0, -1, 'WITHSCORES');
+        $rules = Redis::smembers('product-quantity-rules-'.$product_id);
+        // CartRuleRepository
+        $cartRuleRepository = app(CartRuleRepository::class);
+
+        $rules = $cartRuleRepository->findWhereIn('id', $rules);
+
+        sort($prices);
+
+        return isset($prices[$qty-1]) ? $prices[$qty-1] : 0;
 
     }
 
