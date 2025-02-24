@@ -13,7 +13,7 @@ class ChangeProductRule extends Command
     {
         $this->info('Change product rule');
         
-        $products = \Webkul\Product\Models\Product::where('type', 'configurable')->get();
+        $products = \Webkul\Product\Models\Product::where('type', 'configurable')->where("id", 1805)->get();
         foreach ($products as $product) {
             
             $rulesId = [];
@@ -23,6 +23,9 @@ class ChangeProductRule extends Command
             $rules = Redis::smembers('product-quantity-rules-'.$product_id);
 
             $this->info('Product Slug: '.$slug);
+            $this->info('Attr Family ID: '.$product->attribute_family_id);
+
+            //exit;
 
             foreach ($rules as $rule) {
                 
@@ -37,9 +40,19 @@ class ChangeProductRule extends Command
                     if ($condition['attribute'] == 'cart_item|quantity') {
                         $condition['attribute'] = "cart|items_qty";
                     }
+
+                    if ($condition['value'] != $product->attribute_family_id && $condition['attribute'] == 'product|attribute_family_id') {
+                        var_dump($condition['value']);
+                        $condition['value'] = $product->attribute_family_id;
+                    }
+
+
                     $conditionsNew[] = $condition;
                 }
                 $ruleDb->conditions = $conditionsNew;
+
+                //var_dump($ruleDb->conditions);
+                //exit;
 
                 $ruleDb->save();
                 $this->info('Rule ID: '.$rule);
