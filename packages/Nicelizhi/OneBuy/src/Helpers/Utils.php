@@ -189,7 +189,14 @@ final class Utils {
 
         sort($prices);
 
-        return isset($prices[$qty-1]) ? $prices[$qty-1] : 0;
+        $price = isset($prices[$qty-1]) ? $prices[$qty-1] : 0;
+
+        if($price == 0) {
+            // send msg to the feishu
+            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config('onebuy.brand').' price is eq 0  product_id:'.$product_id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
+        }
+
+        return $price;
 
     }
 
