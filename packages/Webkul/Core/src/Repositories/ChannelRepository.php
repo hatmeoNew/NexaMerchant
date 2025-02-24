@@ -118,28 +118,29 @@ class ChannelRepository extends Repository
         $context = stream_context_create($options);
 
         if (isset($data['logo_url'])) {
-            // save logo url to channel
 
-            //$channel->logo = $data['logo']->store('channel/' . $channel->id);
-            $channel->logo = $data['logo_url'];
-            //download logo
-            $logo = file_get_contents($channel->logo, false, $context);
-            $ext = pathinfo($channel->logo, PATHINFO_EXTENSION);
-            $path = storage_path('app/public/logo.' . $ext);
-            file_put_contents($path, $logo);
+            if(!empty($data['logo_url'])) {
+                $channel->logo = $data['logo_url'];
+                $logo = file_get_contents($channel->logo, false, $context);
+                $ext = pathinfo($channel->logo, PATHINFO_EXTENSION);
+                $path = storage_path('app/public/logo.' . $ext);
+                file_put_contents($path, $logo);
+    
+                $channel->save();
+            }
 
-            $channel->save();
         }
 
         if (isset($data['favicon_url'])) {
-            //$channel->favicon = $data['favicon']->store('channel/' . $channel->id);
-            $channel->favicon = $data['favicon_url'];
-            //download favicon
-            $favicon = file_get_contents($channel->favicon, false, $context);
-            $path = storage_path('app/public/favicon.ico');
-            file_put_contents($path, $favicon);
-
-            $channel->save();
+            if(!empty($data['favicon_url'])) {
+                $channel->favicon = $data['favicon_url'];
+                $favicon = file_get_contents($channel->favicon, false, $context);
+                $ext = pathinfo($channel->favicon, PATHINFO_EXTENSION);
+                $path = storage_path('app/public/favicon.' . $ext);
+                file_put_contents($path, $favicon);
+    
+                $channel->save();
+            }
         }
     }
 
