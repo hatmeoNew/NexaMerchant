@@ -300,7 +300,7 @@ class CheckoutV1Controller extends Controller{
                 $tip2_price = round($package_product['new_price'] / $i, 2);
                 $package_product['tip2'] = "$".$tip2_price;
                 $package_product['per_product_price'] = $tip2_price;
-                $shipping_fee = 9.99;
+                $shipping_fee = core()->getConfigData('sales.carriers.flatrate.default_rate');
                 // if($i==4) $shipping_fee = '0.00'; 先不开启免费
                 $package_product['shipping_fee'] = $shipping_fee;
                 $package_product['amount'] = round($package_product['new_price']+$shipping_fee, 2);
