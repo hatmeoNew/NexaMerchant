@@ -1,0 +1,12 @@
+[
+    {
+        "countryName": "Japan",
+        "countryCode": "JP",
+        "countryNameLocalized": "Japan",
+        "currencyCode": "JPY",
+        "currencyName": "Japanese Yen",
+        "currencySign": "¥",
+        "region": "Asia",
+        "postalCodeRegex": "\\d{3}-\\d{4}"
+    }
+]
