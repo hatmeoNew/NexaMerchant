@@ -64,6 +64,10 @@ final class Utils {
 
         //echo $url."\r\n";
 
+        // add the app url to the text
+        $text = $text."\r\n".config("app.url");
+
+
         $argc = [];
         $argc['msg_type'] = "text";
         $argc['content'] = [
