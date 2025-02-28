@@ -13,7 +13,7 @@ class ChangeProductRule extends Command
     {
         $this->info('Change product rule');
         
-        $products = \Webkul\Product\Models\Product::where('type', 'configurable')->where("id", 1805)->get();
+        $products = \Webkul\Product\Models\Product::where('type', 'configurable')->get();
         foreach ($products as $product) {
             
             $rulesId = [];
