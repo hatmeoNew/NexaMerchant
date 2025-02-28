@@ -13,7 +13,8 @@ class ChangeProductSku extends Command
         $this->info('Change product sku id');
         
         
-        $products = \Webkul\Product\Models\Product::where('type', 'configurable')->get();
+        $products = \Webkul\Product\Models\Product::where('type', 'configurable')->get(); // for product
+        //$products = \Webkul\Product\Models\Product::where('id', '1671')->get(); // for test
 
         // product variant
         foreach ($products as $product) {
