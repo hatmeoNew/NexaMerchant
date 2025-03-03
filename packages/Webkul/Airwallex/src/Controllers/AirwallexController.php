@@ -114,7 +114,8 @@ class AirwallexController extends Controller
                         }
 
                         // send order to shopify
-                        Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('redis')->onQueue('commands');
+                        $queue = config('app.name').':orders';
+                        Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection("rabbitmq")->onQueue($queue);
 
                         if ($order->canInvoice()) {
                             request()->merge(['can_create_transaction' => 1]);

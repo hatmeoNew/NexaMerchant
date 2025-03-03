@@ -220,7 +220,8 @@ class OrderController extends Controller
         //add data to post to shopify
 
         // send order to shopify
-        Artisan::queue("shopify:order:post", ['--order_id'=> $order->id])->onConnection('redis')->onQueue('commands');
+        $queue = config('app.name'). ':orders';
+        Artisan::queue("shopify:order:post", ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
 
         return redirect()->route('admin.sales.orders.abnormal');
 
@@ -230,8 +231,8 @@ class OrderController extends Controller
         $order = $this->orderRepository->findOrFail($id);
         
         if($order->status!='processing') exit(1);
-
-        Artisan::queue("shopify:order:post", ['--order_id'=> $order->id])->onConnection('redis')->onQueue('commands');
+        $queue = config('app.name'). ':orders';
+        Artisan::queue("shopify:order:post", ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
 
         return redirect()->route('admin.sales.orders.unpost');
     }

@@ -45,7 +45,9 @@ class Refund extends Base
 
         if($refund->is_refund_money == "0") {
 
-            Artisan::queue("shopify:refund:post", ['--order_id'=>$order->id,'--refund_id'=> $refund->id])->onConnection('redis')->onQueue('shopify-refund'); // add shopify refund queue
+            $queue = config('app.name').':shopify-refund';
+
+            Artisan::queue("shopify:refund:post", ['--order_id'=>$order->id,'--refund_id'=> $refund->id])->onConnection('rabbitmq')->onQueue($queue); // add shopify refund queue
 
             return;
         }
@@ -126,7 +128,9 @@ class Refund extends Base
             }  
         }
 
-        Artisan::queue("shopify:refund:post", ['--order_id'=>$order->id,'--refund_id'=> $refund->id])->onConnection('redis')->onQueue('shopify-refund'); // add shopify refund queue
+        $queue = config('app.name').':shopify-refund';
+
+        Artisan::queue("shopify:refund:post", ['--order_id'=>$order->id,'--refund_id'=> $refund->id])->onConnection('rabbitmq')->onQueue($queue); // add shopify refund queue
 
 
     }

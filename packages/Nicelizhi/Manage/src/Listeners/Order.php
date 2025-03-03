@@ -22,7 +22,8 @@ class Order extends Base
     public function afterCreated($order)
     {
         // send order to shopify
-        Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('redis')->onQueue('commands');
+        $queue = config('app.name').':orders';
+        Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
         
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_order')) {
