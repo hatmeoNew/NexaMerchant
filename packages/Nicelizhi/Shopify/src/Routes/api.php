@@ -44,11 +44,22 @@ Route::group(['middleware' => ['api'], 'prefix' => 'shopify'], function () {
             Route::post('customers/update', 'customers_update')->name('shopify.webhook.v1.customers_update');
         });
 
-        Route::controller(ApiController::class)->prefix('api')->group(function () {
-            Route::get('images/{product_id}', 'shopifyImages')->name('shopify.api.v1.shopify.images');
-            Route::get('full/{product_id}', 'ShopifyFull')->name('shopify.api.v1.shopify.full');
-            Route::get('products/feeds', 'feeds')->name('shopify.api.v1.shopify.feeds');
-            
+        // add cache response middleware
+        // Route::middleware('cache.response')->group(function () {
+        //     Route::controller(ApiController::class)->prefix('api')->group(function () {
+        //         Route::get('images/{product_id}', 'shopifyImages')->name('shopify.api.v1.shopify.images');
+        //         Route::get('full/{product_id}', 'ShopifyFull')->name('shopify.api.v1.shopify.full');
+        //         Route::get('products/feeds', 'feeds')->name('shopify.api.v1.shopify.feeds');
+                
+        //     });
+        // });
+        Route::middleware('cache.response')->group(function () {
+            Route::controller(ApiController::class)->prefix('api')->group(function () {
+                Route::get('images/{product_id}', 'shopifyImages')->name('shopify.api.v1.shopify.images');
+                Route::get('full/{product_id}', 'ShopifyFull')->name('shopify.api.v1.shopify.full');
+                Route::get('products/feeds', 'feeds')->name('shopify.api.v1.shopify.feeds');
+                
+            });
         });
 
     });
