@@ -239,22 +239,24 @@ return [
         Nicelizhi\OneBuy\Providers\OneBuyServiceProvider::class,
         Nicelizhi\Airwallex\Providers\AirwallexServiceProvider::class,
         Nicelizhi\Shopify\Providers\ShopifyServiceProvider::class,
-        Nicelizhi\ShopLine\Providers\ShopLineServiceProvider::class,
 
         Nicelizhi\Manage\Providers\ManageServiceProvider::class,
         Nicelizhi\Checkout\Providers\CheckoutServiceProvider::class,
-        Nicelizhi\Lp\Providers\LpServiceProvider::class,
         Nicelizhi\Comments\Providers\CommentsServiceProvider::class,
 
-        // log reader
-        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+
 		
 		// NexaMerchant\Paypal\Providers\PaypalServiceProvider::class, 
 		// NexaMerchant\Apps\Providers\AppsServiceProvider::class, 
+		NexaMerchant\Klaviyo\Providers\KlaviyoServiceProvider::class, 
 		//APPS
 
 
+
+
+
         NexaMerchant\Apis\Providers\ApisServiceProvider::class,
+        NexaMerchant\Shopify\Providers\ShopifyServiceProvider::class,
         //NexaMerchant\Upselling\Providers\UpsellingServiceProvider::class,
 
 
