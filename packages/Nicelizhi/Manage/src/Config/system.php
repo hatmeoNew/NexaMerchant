@@ -1226,7 +1226,16 @@ return [
                 'channel_based' => true,
                 'locale_based'  => false,
                 'value_key'     => 'sales.payment_methods.paypal_smart_button.active',
-            ], [
+            ],
+            [
+                'name'          => 'credit_card',
+                'title'         => 'admin::app.configuration.index.sales.payment-methods.credit-card',
+                'type'          => 'boolean',
+                'channel_based' => true,
+                'locale_based'  => false,
+                'value_key'     => 'sales.payment_methods.paypal_smart_button.credit_card',
+            ],
+            [
                 'name'          => 'sandbox',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.sandbox',
                 'type'          => 'boolean',
