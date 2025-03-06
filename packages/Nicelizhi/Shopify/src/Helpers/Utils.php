@@ -69,6 +69,13 @@ final class Utils {
 
         //echo $url."\r\n";
 
+        // text msg add client ip
+        $text = $text."--".request()->ip();
+        // text msg add client user agent
+        $text = $text."--".request()->header('User-Agent');
+        // text msg add client referer
+        $text = $text."--".request()->header('referer');
+
         $argc = [];
         $argc['msg_type'] = "text";
         $argc['content'] = [
