@@ -1,5 +1,10 @@
 <?php
 
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Sentry\Laravel\Integration;
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -40,6 +45,15 @@ $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
+
+// Sentry integration for Laravel
+$app->singleton(
+    Integration::class,
+    function () use ($app) {
+        return new Integration($app);
+    }
+);
+
 
 /*
 |--------------------------------------------------------------------------
