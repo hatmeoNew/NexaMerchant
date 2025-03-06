@@ -279,6 +279,11 @@ class WebhooksController extends Controller
 
         foreach($products as $key=>$product) {
             $sku = $product['additional'];
+            if(!iset($sku['product_sku'])) {
+                // send msg to feishu 
+                Nicelizhi\Shopify\Helpers\Utils::sendFeishu("sku is null: " . $product['id']." ".$product['name']." ".json_decode($product)." Order:".$shopify_order_id);
+                return false;
+            }
             $skuInfo = explode('-', $sku['product_sku']);
             if(!isset($skuInfo[1])) {
                 $this->error("have error");

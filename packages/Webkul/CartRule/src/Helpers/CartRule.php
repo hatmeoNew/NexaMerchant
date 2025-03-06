@@ -70,7 +70,7 @@ class CartRule
         // if cart is have sku 8868666671334-45435838038246
         // then don't apply cart rules and quantity - 1
         foreach ($cart->items as $item) {
-            Log::info('Item sku: ' . $item->product->sku);
+            //Log::info('Item sku: ' . $item->product->sku);
             if ($item->product->sku == config('onebuy.return_shipping_insurance.product_sku')) {
                 //$item->quantity = 1;
                 $cart->items_qty = $cart->items_qty - 1;
