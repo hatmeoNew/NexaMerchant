@@ -582,6 +582,7 @@ class ApiController extends Controller
 
 
         $refer = isset($input['refer']) ? trim($input['refer']) : "";
+        $paypal_credit_card = isset($input['paypal_credit_card']) ? trim($input['paypal_credit_card']) : 0;
 
         $products = $request->input("products");
         Log::info("products". json_encode($products));
@@ -929,6 +930,8 @@ class ApiController extends Controller
 
             $orderRes = $this->saveOrder();
 
+            //return response()->json($orderRes);
+
             // get order transaction info
             $order = $this->orderRepository->find($orderRes->id);
 
@@ -961,6 +964,13 @@ class ApiController extends Controller
 
         } catch (\Exception $e) {
             Log::info("paypal pay exception". json_encode($e->getMessage()));
+            $error = [];
+            $error['error'] = $e->getMessage();
+            $error['code'] = 400;
+            $error['line'] = $e->getLine();
+            $error['file'] = $e->getFile();
+            $error['trace'] = $e->getTrace();
+            return response()->json($error);
             return response()->json($e->getMessage());
             return response()->json(json_decode($e->getMessage()), 400);
         }
@@ -1060,8 +1070,14 @@ class ApiController extends Controller
                 'success' => true,
             ]);
         } catch (\Exception $e) {
+            $error = [];
+            $error['error'] = $e->getMessage();
+            $error['code'] = 400;
+            $error['line'] = $e->getLine();
+            $error['file'] = $e->getFile();
+            $error['trace'] = $e->getTrace();
 
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json($error, 400);
         }
     }
 
@@ -1090,6 +1106,8 @@ class ApiController extends Controller
     protected function buildRequestBody($input)
     {
         $cart = Cart::getCart();
+
+        $paypal_credit_card = isset($input['paypal_credit_card']) ? $input['paypal_credit_card'] : 0;
 
 
         $billingAddressLines = $this->getAddressLines($cart->billing_address->address1);
@@ -1172,7 +1190,28 @@ class ApiController extends Controller
         $paypal_vault_id = isset($input['paypal_vault_id']) ? $input['paypal_vault_id'] : "";
         if($input['payment_vault']=='1') {
              // for vault
-                if(empty($paypal_vault_id)) {
+                // for credit card
+                if($paypal_credit_card=="1") {
+                    // create a empty card object
+                    $card = new \stdClass();
+                    $data["payment_source"] = [
+                        'card' => $card,
+                        'experience_context' => [
+                            'return_url' => $input['payment_return_url'],
+                            'cancel_url' => $input['payment_cancel_url'],
+                        ]
+                    ];
+                }elseif(!empty($paypal_vault_id)) {
+                    $data["payment_source"] = [
+                        "paypal" => [
+                            "vault_id" => $paypal_vault_id,
+                            "experience_context" => [
+                                "return_url" => $input['payment_return_url'],
+                                'cancel_url' => $input['payment_cancel_url'],
+                            ]
+                        ]
+                    ];
+                }else{
                     $data["payment_source"] = [
                         "paypal" => [
                             "attributes" => [
@@ -1188,19 +1227,10 @@ class ApiController extends Controller
                             ]
                         ]
                     ];
-                }else{
-                    $data["payment_source"] = [
-                        "paypal" => [
-                            "vault_id" => $paypal_vault_id,
-                            "experience_context" => [
-                                "return_url" => $input['payment_return_url'],
-                                'cancel_url' => $input['payment_cancel_url'],
-                            ]
-                        ]
-                    ];
-                }             
+                }           
         }
 
+        Log::info("paypal pay data ". json_encode($data));
         //var_dump($data);exit;
 
         return $data;
