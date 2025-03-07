@@ -574,7 +574,7 @@ class ApiController extends Controller
         //$last_order_id = "ddddd";
         $force = $request->input("force");
 
-        Log::info("last order id " . $last_order_id);
+        //Log::info("last order id " . $last_order_id);
 
         if(!empty($last_order_id) && $force !="1") {
             return response()->json(['error' => 'You Have already placed order, if you want to place another order please confirm your order','code'=>'202'], 400);
@@ -668,7 +668,7 @@ class ApiController extends Controller
             ], Response::HTTP_FORBIDDEN);
         }
 
-        Cart::collectTotals();
+        //Cart::collectTotals();
 
         $payment = [];
         $payment['description'] = "PayPal-".$refer;
