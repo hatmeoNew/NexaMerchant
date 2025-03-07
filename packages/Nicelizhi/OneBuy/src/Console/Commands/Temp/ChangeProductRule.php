@@ -13,9 +13,9 @@ class ChangeProductRule extends Command
     {
         $this->info('Change product rule');
 
-        $this->checkRules();
-        return;
-        
+        $this->editRulesV2();
+        return false;
+
         $products = \Webkul\Product\Models\Product::where('type', 'configurable')->get();
 
         $family_ids = [];
@@ -98,110 +98,120 @@ class ChangeProductRule extends Command
 
         }
 
-        //var_dump($family_ids);
-        sort($family_ids);
-        var_dump($rules_familys);
     }
 
-    public function validateRules($family_id)
-    {
+    /**
+     * 
+     * 
+     * Edit the product and create new rules for the product
+     * 
+     * 
+     */
+    public function editRulesV2() {
+        // get all products rules price
+        $keys = Redis::keys('product-quantity-price-*');
 
-        $rules = $this->getRules();
-
-        exit;
-
-        var_dump($rules);exit;
-
-        $rules = \Webkul\CartRule\Models\CartRule
-                    ::where('conditions', 'like', '%"value": '.$family_id.',%')
-                    ->get();
+        $redis_temp_price_cache_key = 'temp_price_cache_key';
         
-        $count = count($rules);
-        if($count != 4) {
+        foreach ($keys as $key) {
+            $product_id = str_replace("product-quantity-price-", "", $key);
             
+            $prices = Redis::zRange('product-quantity-price-'.$product_id, 0, -1, 'WITHSCORES');
             
-            $this->error('Family ID: '.$family_id.' - '.$count);
-            
-            foreach ($rules as $rule) {
-                
-            }
-
+            // add the price to the temp cache key
+            Redis::zadd($redis_temp_price_cache_key, $product_id, json_encode($prices));
 
         }
 
-        return $rules;
-    }
+        // 
+        $rules = Redis::zRange($redis_temp_price_cache_key, 0, -1, 'WITHSCORES');
+        //exit;
+        $client = new \GuzzleHttp\Client();
 
-    // check the rules have the same faimly id
-    public function checkRules()
-    {
-        $rules = \Webkul\CartRule\Models\CartRule::all();
-        $rules = $rules->map(function($rule){
-            $conditions = $rule->conditions;
-            foreach ($conditions as $condition) {
-                if ($condition['attribute'] == 'product|attribute_family_id') {
-                    $family_id = $condition['value'];
-                    //$this->info('Rule ID: '.$rule->id.' - Family ID: '.$family_id);
+        $token = "";
 
-                    $products = \Webkul\Product\Models\Product::where('attribute_family_id', $family_id)->get();
-                    if(count($products) == 0) {
-                        $this->error('Rule ID: '.$rule->id.' - Family ID: '.$family_id);
-                    }
+        foreach($rules as $key=> $rule) {
 
-                    // check the family id in rules
-                    $rules = \Webkul\CartRule\Models\CartRule::where('conditions', 'like', '%"value": '.$family_id.',%')
-                        ->get();
-                    if(count($rules) != 4) {
-                        $this->error('Rule ID: '.$rule->id.' - Family ID: '.$family_id.' - '.count($rules));
-                    }
-                }
-            }
-        });
-    }
-
-    // get all rules from redis
-    public function getRules()
-    {
-        $rules = Redis::keys('product-quantity-price-*');
-        $rules = array_map(function($rule){
-
-            $product_id = explode('-', $rule);
-            $product_id = end($product_id);
-            $product = \Webkul\Product\Models\Product::where('id', $product_id)->first();
-            if(!$product) {
-                $this->error('Product ID: '.$product_id);
-                exit;
-                return;
-            }
-            $family_id = $product->attribute_family_id;
-            $this->info('Family ID: '.$family_id);
-            $this->info('Product ID: '.$product_id);
-            $this->info('Rule: '.$rule);
-            
-            $data = Redis::zRange($rule, 0, -1, 'WITHSCORES');
-            foreach ($data as $key => $value) {
-                $this->error('Rule ID: '.$key);
-                $ruleDb = \Webkul\CartRule\Models\CartRule
-                    ::where('id', $key)
-                    ->first();
-                $conditions = $ruleDb->conditions;
-                foreach ($conditions as $condition) {
-
-                    if ($condition['attribute'] == 'product|attribute_family_id') {
-                        if($condition['value'] != $family_id) {
-                            $this->error('Rule ID: '.$key.' - '.$condition['value']);
-                            exit;
-                        }
-                    }
-                }
-
+            // if the product has been processed
+            if(Redis::get('product-quantity-prices-'.$rule.'-done')) {
+                continue;
             }
 
+            // delete the redis key
+            Redis::del('product-quantity-price-'.$rule);
+            Redis::del('product-quantity-rules-'.$key);
             
+            $url =config('app.url')."/api/v1/admin/promotions/cart-rules/".$rule."/product-quantity-rules";
+            $this->info($url);
+            $ruleInfo = json_decode($key, true);
+            //exit;
+
+            $product = \Webkul\Product\Models\Product::where('id', $rule)->first();
+            $this->info('Product ID: '.$rule);
+            
+            /**
+             * 
+             {"product_id":1207,
+             "rules":[
+             {"id":109,"price":1299,"action_type":"by_fixed","attributes":[{"value":"1","operator":"==","attribute":"cart|items_qty","attribute_type":"integer"},{"value":875,"operator":"==","attribute":"product|attribute_family_id","attribute_type":"integer"}]},{"id":110,"price":2078.4,"action_type":"by_fixed","attributes":[{"value":"2","operator":"==","attribute":"cart|items_qty","attribute_type":"integer"},{"value":875,"operator":"==","attribute":"product|attribute_family_id","attribute_type":"integer"}]},{"id":111,"price":2727.9,"action_type":"by_fixed","attributes":[{"value":"3","operator":"==","attribute":"cart|items_qty","attribute_type":"integer"},{"value":875,"operator":"==","attribute":"product|attribute_family_id","attribute_type":"integer"}]},{"id":112,"price":3117.6,"action_type":"by_fixed","attributes":[{"value":"4","operator":"==","attribute":"cart|items_qty","attribute_type":"integer"},{"value":875,"operator":"==","attribute":"product|attribute_family_id","attribute_type":"integer"}]}]}
+             * 
+             */
+            $postRules = [];
+            $i = 1;
+            foreach($ruleInfo as $price) {
+                
+                $attributes = [
+                    [
+                        "value"=> $i,
+                        "operator"=> "==",
+                        "attribute"=> "cart|items_qty",
+                        "attribute_type"=> "integer"
+                    ],
+                    [
+                        "value"=> $product->attribute_family_id,
+                        "operator"=> "==",
+                        "attribute"=> "product|attribute_family_id",
+                        "attribute_type"=> "integer"
+                    ]
+                ];
+                $postRules[] = [
+                    "id"=> 0,
+                    "price"=> round($price, 2),
+                    "action_type"=> 'by_fixed',
+                    "attributes"=> $attributes
+                ];
+                $i++;
+            }
+            $postData = [
+                "product_id"=> $rule,
+                "rules"=> $postRules
+            ];
+
+            // var_dump($postData);
+            // exit;
+
+            $response = $client->request('POST', $url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer '.$token
+                ],
+                'json' => $postData
+            ]);
+
+            $this->info($response->getBody());
+
+            // add a mark for the product
+            Redis::set('product-quantity-prices-'.$rule.'-done', 1);
+
+
+
+            exit;
+
             
 
-        }, $rules);
+        }
 
-        return $rules;
     }
+
+    
 }
