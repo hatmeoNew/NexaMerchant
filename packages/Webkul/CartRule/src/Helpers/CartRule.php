@@ -131,13 +131,21 @@ class CartRule
             return $this->cartRules;
         }
 
-        $this->cartRules = $this->getCartRuleQuery()
-            ->with([
-                'cart_rule_customer_groups',
-                'cart_rule_channels',
-                'cart_rule_coupon',
-            ])
-            ->get();
+
+
+        // Use Laravel's cache to store cart rules
+        $cacheKey = 'cart_rules_' . ($this->cart->customer_group_id ?? 'guest');
+        $cacheTTL = config('cache.ttl.cart_rules', 60); // 60 minutes default
+        
+        $this->cartRules = cache()->remember($cacheKey, $cacheTTL, function () {
+            return $this->getCartRuleQuery()
+                ->with([
+                    'cart_rule_customer_groups',
+                    'cart_rule_channels',
+                    'cart_rule_coupon',
+                ])
+                ->get();
+        });
 
         return $this->cartRules;
     }
