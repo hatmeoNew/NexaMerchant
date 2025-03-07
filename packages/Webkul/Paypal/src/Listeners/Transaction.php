@@ -50,6 +50,10 @@ class Transaction
 
 
                 if ($transactionDetails['statusCode'] == 200) {
+                    $insertData = [];
+                    $insertData['purchase_units'] = $transactionDetails['result']['purchase_units'];
+                    $insertData['payer'] = isset($transactionDetails['result']['payer']) ? $transactionDetails['result']['payer'] : null;
+                    $insertData['paypal_vault'] = $paypal_vault;
                     $this->orderTransactionRepository->create([
                         'transaction_id' => $transactionDetails['result']['id'],
                         'captures_id'    => isset($transactionDetails['result']['purchase_units'][0]['payments']['captures'][0]['id']) ? $transactionDetails['result']['purchase_units'][0]['payments']['captures'][0]['id'] : null,
@@ -60,11 +64,7 @@ class Transaction
                         'order_id'       => $invoice->order->id,
                         'invoice_id'     => $invoice->id,
                         'data'           => json_encode(
-                            array_merge(
-                                $transactionDetails['result']['purchase_units'],
-                                $transactionDetails['result']['payer'],
-                                $paypal_vault
-                            )
+                            $insertData
                         ),
                     ]);
 
