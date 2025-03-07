@@ -82,11 +82,11 @@ class SmartButton extends Paypal
         //$request->prefer('return=representation');
         $request->body = $body;
 
-        Log::info("create order request ". json_encode($request));
+        //Log::info("create order request ". json_encode($request));
 
         $result = $this->client()->execute($request);
 
-        Log::info("create order result ". json_encode($result));
+        //Log::info("create order result ". json_encode($result));
 
         return $result;
     }
