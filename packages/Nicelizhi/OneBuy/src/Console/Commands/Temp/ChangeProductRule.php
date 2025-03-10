@@ -139,7 +139,7 @@ class ChangeProductRule extends Command
 
             // delete the redis key
             Redis::del('product-quantity-price-'.$rule);
-            Redis::del('product-quantity-rules-'.$key);
+            Redis::del('product-quantity-rules-'.$rule);
             
             $url =config('app.url')."/api/v1/admin/promotions/cart-rules/".$rule."/product-quantity-rules";
             $this->info($url);
@@ -205,7 +205,7 @@ class ChangeProductRule extends Command
 
 
 
-            exit;
+            sleep(2);
 
             
 
