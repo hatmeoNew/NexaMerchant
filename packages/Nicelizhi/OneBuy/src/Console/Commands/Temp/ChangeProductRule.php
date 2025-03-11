@@ -210,7 +210,7 @@ class ChangeProductRule extends Command
 
 
 
-            exit;
+            sleep(2);
 
             
 
