@@ -137,9 +137,14 @@ class ChangeProductRule extends Command
                 continue;
             }
 
+            $product = \Webkul\Product\Models\Product::where('id', $rule)->first();
+            if(is_null($product)) {
+                continue;
+            }
+
             // delete the redis key
             Redis::del('product-quantity-price-'.$rule);
-            Redis::del('product-quantity-rules-'.$key);
+            Redis::del('product-quantity-rules-'.$rule);
             
             $url =config('app.url')."/api/v1/admin/promotions/cart-rules/".$rule."/product-quantity-rules";
             $this->info($url);
