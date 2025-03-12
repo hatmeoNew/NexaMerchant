@@ -95,7 +95,7 @@ class Toolbar
             return collect($pages);
         }
 
-        return collect([12, 24, 36, 48]);
+        return collect([8, 12, 24, 36, 48]);
     }
 
     /**
