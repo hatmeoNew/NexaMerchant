@@ -663,6 +663,33 @@ class Post extends Command
            
         }
 
+        // post the order to odoo erp
+        if(config('OdooApi.enable')) {
+            $odoo_url = config('OdooApi.host');
+
+            $odoo_url = $odoo_url."/api/nexamerchant/order?api_key=".config('OdooApi.api_key');
+
+            try{
+                $response = $client->post($odoo_url, [
+                    'http_errors' => true,
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($pOrder)
+                ]);
+            }catch(ClientException $e) {
+                //var_dump($e);
+                var_dump($e->getMessage());
+                Log::error(json_encode($e->getMessage()));
+                \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage().'--' .$id. " fix check it ");
+                echo $e->getMessage()." post failed";
+                //continue;
+                return false;
+            }
+        }
+        
+
         echo $id." end post \r\n";
     }
 
