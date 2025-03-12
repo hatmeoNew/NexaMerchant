@@ -66,9 +66,9 @@ class Channel extends TranslatableModel implements ChannelContract
     /**
      * Get the channel countries.
      */
-    public function countries(): BelongsToMany
+    public function countries()
     {
-        return $this->belongsToMany(ChannelCountries::class, 'channel_countries');
+        return $this->hasMany(ChannelCountries::class, 'channel_id');
     }
 
     /**
