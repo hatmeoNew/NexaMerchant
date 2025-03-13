@@ -94,6 +94,7 @@ class OneBuyServiceProvider extends ServiceProvider
                 \Nicelizhi\OneBuy\Console\Commands\Imports\ImportProductComments::class,
                 \Nicelizhi\OneBuy\Console\Commands\Imports\ImportProductCommentFromJudge::class,
                 \Nicelizhi\OneBuy\Console\Commands\Imports\ImportProductCommentFromJudgeAll::class,
+                \Nicelizhi\OneBuy\Console\Commands\Imports\ImportCountry::class,
                 \Nicelizhi\OneBuy\Console\Commands\Temp\ChangeProductRule::class,
                 \Nicelizhi\OneBuy\Console\Commands\Temp\ChangeProductSku::class,
                 \Nicelizhi\OneBuy\Console\Commands\Temp\PushMsgToRabbitMq::class,
