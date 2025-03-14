@@ -75,7 +75,7 @@
         "maatwebsite/excel": "^3.1.46",
         "nexa-merchant/apis": "dev-main",
         "nexa-merchant/apps": "^1.0",
-        "nexa-merchant/checkoutcod": "^1.1",
+        "nexa-merchant/checkoutcod": "dev-main",
         "nexa-merchant/feeds": "dev-main",
         "nexa-merchant/googleplaces": "^1.0",
         "nexa-merchant/klaviyo": "dev-main",
@@ -156,6 +156,7 @@
             "NexaMerchant\\Shopify\\": "packages\/Apps\/Shopify\/src",
             "NexaMerchant\\Feeds\\": "packages\/Apps\/Feeds\/src",
             "NexaMerchant\\GoogleAdsense\\": "packages\/Apps\/GoogleAdsense\/src",
+            "NexaMerchant\\CheckoutCod\\": "packages\/Apps\/CheckoutCod\/src",
             "NexaMerchant\\Klaviyo\\": "packages\/Apps\/Klaviyo\/src"
         }
     },
