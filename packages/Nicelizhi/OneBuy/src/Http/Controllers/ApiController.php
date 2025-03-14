@@ -88,10 +88,6 @@ class ApiController extends Controller
         $paypal_access_token = $paypal_id_token->result->access_token;
         $paypal_id_token = $paypal_id_token->result->id_token;
 
-        // $paypal_id_token = "";
-        // $paypal_access_token = "";
-        // $paypal_id_token ="";
-        // debug the cache
         if($slug==$clean_cache){
             $data = [];
         }
@@ -244,6 +240,8 @@ class ApiController extends Controller
 
             $data['paypal_id_token'] = $paypal_id_token;
             $data['paypal_access_token'] = $paypal_access_token;
+
+            $data['date'] = date("Y-m-d H:i:s");
 
 
 

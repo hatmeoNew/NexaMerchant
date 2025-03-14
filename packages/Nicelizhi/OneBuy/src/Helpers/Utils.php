@@ -85,7 +85,7 @@ final class Utils {
                 $tip2_price = round($package_product['new_price'] / $i, 2);
                 $package_product['tip2'] = core()->currency($tip2_price);
                 $package_product['shipping_fee'] = core()->convertPrice($shipping_price); // shipping price
-                $package_product['return_fee'] = core()->convertPrice(2.99); // return price
+                $package_product['return_fee'] = core()->convertPrice(config('onebuy.return_fee'));
                 $popup_info['name'] = null;
                 $popup_info['old_price'] = null;
                 $popup_info['new_price'] = null;
@@ -207,6 +207,8 @@ final class Utils {
 
     public static function getCurrencyByCountry($country) {
 
+        return config('app.currency');
+
         $channel = core()->getCurrentChannel();
 
         //Log::info("channel: ".json_encode($channel));
@@ -219,6 +221,8 @@ final class Utils {
         //Log::info("currencies: ".json_encode($currencies));
 
         $currencies = core()->getChannelBaseCurrency();
+
+        return $currencies;
 
         //Log::info("channel currencies: ".json_encode($currencies));
 

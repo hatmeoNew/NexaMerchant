@@ -12,6 +12,7 @@ return [
     'crm_channel' => env('CRM_CHANNEL'),
     'crm_url' => env('CRM_URL',''),
     'paypal_rt' => env('ONEBUY_PAYPAL_RT'),
+    'return_fee' => env('ONEBUY_RETURN_FEE', 2.99),
     'airwallex' => [
             'method' => [
                 'card',

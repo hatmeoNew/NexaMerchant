@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Webkul\Attribute\Models\AttributeOption;
 use Webkul\Attribute\Models\AttributeOptionTranslation;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 final class Utils {
 
@@ -234,6 +235,8 @@ final class Utils {
 
     // clear cache
     public static function clearCache($pid, $shopify_id=0){
+
+        Log::info("clear cache". $pid . ' shopify id'. $shopify_id);
 
         $currencies = core()->getAllCurrencies();
 
