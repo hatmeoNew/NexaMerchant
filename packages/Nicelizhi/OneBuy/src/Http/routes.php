@@ -32,8 +32,7 @@ Route::group(['middleware' => ['locale', 'theme', 'currency'], 'prefix' => 'api'
 Route::group(['middleware' => ['locale', 'theme', 'currency','web']], function () {
 
     Route::get('onebuy/{slug}', [ProductController::class, 'detail'])
-        ->name('onebuy.product.page')
-        ->middleware('cacheResponse');
+        ->name('onebuy.product.page');
     
     Route::any("onebuy/order/add/sync", [ProductController::class, "order_add_sync"])
         ->name("onebuy.order.add.sync");
