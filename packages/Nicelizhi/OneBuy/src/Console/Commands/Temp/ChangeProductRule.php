@@ -108,6 +108,14 @@ class ChangeProductRule extends Command
      * 
      */
     public function editRulesV2() {
+
+        $token = "";
+
+        if(empty($token)) {
+            $this->error('Token is empty');
+            return false;
+        }
+
         // get all products rules price
         $keys = Redis::keys('product-quantity-price-*');
 
@@ -127,8 +135,6 @@ class ChangeProductRule extends Command
         $rules = Redis::zRange($redis_temp_price_cache_key, 0, -1, 'WITHSCORES');
         //exit;
         $client = new \GuzzleHttp\Client();
-
-        $token = "";
 
         foreach($rules as $key=> $rule) {
 

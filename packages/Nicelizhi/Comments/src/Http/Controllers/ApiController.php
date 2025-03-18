@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Webkul\Product\Repositories\ProductRepository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use NexaMerchant\Apis\Enum\ApiCacheKey;
 
 class ApiController extends Controller {
 
@@ -69,7 +70,11 @@ class ApiController extends Controller {
 
         $reviewHelper = app('Webkul\Product\Helpers\Review');
 
-        $reviews = Cache::get("product_comment_".$product['id']."_".$page."_".$per_page);
+        $cacheKey = "product_comment_".$product['id']."_".$page."_".$per_page;
+
+        //$reviews = Cache::get("product_comment_".$product['id']."_".$page."_".$per_page);
+
+        $reviews = Cache::tags(ApiCacheKey::API_SHOP_PRODUCTS_COMMENTS)->get($cacheKey);
 
         if(empty($reviews)) {
             // skip and take when order by is not working
@@ -84,7 +89,8 @@ class ApiController extends Controller {
                 return $review;
             });
 
-            Cache::set("product_comment_".$product['id']."_".$page."_".$per_page, $reviews, 3600);
+            //Cache::set("product_comment_".$product['id']."_".$page."_".$per_page, $reviews, 3600);
+            Cache::tags(ApiCacheKey::API_SHOP_PRODUCTS_COMMENTS)->put($cacheKey, $reviews, 3600);
         }
 
         //$reviews = $product->reviews->where('status', 'approved')->skip($page*$per_page)->take($per_page);
