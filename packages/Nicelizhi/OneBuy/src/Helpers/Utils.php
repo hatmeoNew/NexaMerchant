@@ -52,7 +52,7 @@ final class Utils {
             $source_price = core()->convertPrice($source_price);
             if(empty($source_price)) {
                 // send msg to the feishu
-                \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config('onebuy.brand').' source price is eq 0  product_id:'.$product->id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
+                //\Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config('onebuy.brand').' source price is eq 0  product_id:'.$product->id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
                 return false;
                 return abort(404);
             }
