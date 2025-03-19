@@ -1,4 +1,5 @@
 <?php
+
 namespace Nicelizhi\Checkout\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -25,7 +26,8 @@ use Illuminate\Support\Facades\Redis;
 use Webkul\Sales\Repositories\OrderTransactionRepository;
 
 
-class CheckoutV3Controller extends Controller{
+class CheckoutV3Controller extends Controller
+{
 
     private $cache_prefix_key = "checkout_v1_";
     private $cache_ttl = "360000";
@@ -35,7 +37,7 @@ class CheckoutV3Controller extends Controller{
 
     private $faq_cache_key = "faq";
 
-      /**
+    /**
      * Create a new controller instance.
      *
      * @param  \Webkul\Attribute\Repositories\OrderRepository  $orderRepository
@@ -54,21 +56,20 @@ class CheckoutV3Controller extends Controller{
         protected CmsRepository $cmsRepository,
         protected OrderTransactionRepository $orderTransactionRepository,
         protected ThemeCustomizationRepository $themeCustomizationRepository
-    )
-    {
-    }
+    ) {}
 
     /**
      * Show product or category view. If neither category nor product matches, abort with code 404.
      *
      * @return \Illuminate\View\View|\Exception
      */
-    public function detail($slug, Request $request) {
+    public function detail($slug, Request $request)
+    {
         $slugOrPath = $slug;
         $currency = core()->getCurrentCurrencyCode();
-        $cache_key = "product_url_".$slugOrPath."_".$currency;
+        $cache_key = "product_url_" . $slugOrPath . "_" . $currency;
         $product = Cache::get($cache_key);
-        if(empty($product)) {
+        if (empty($product)) {
             $product = $this->productRepository->findBySlug($slugOrPath);
             Cache::put($cache_key, $product);
         }
@@ -83,13 +84,13 @@ class CheckoutV3Controller extends Controller{
 
         $refer = $request->input("refer");
 
-        if(!empty($refer)) { 
+        if (!empty($refer)) {
             $request->session()->put('refer', $refer);
-            $request->session()->put('refer_'.$slug, $refer);
-        }else{
+            $request->session()->put('refer_' . $slug, $refer);
+        } else {
             $refer = $request->session()->get('refer');
         }
-        
+
         //var_dump($slug);
 
         //$slug = $slug;
@@ -101,21 +102,19 @@ class CheckoutV3Controller extends Controller{
         //$comments = $redis->hgetall($this->cache_prefix_key."product_comments_".$product['id']);
 
 
-        $comments = Cache::get("product_comment_".$product['id']);
-        if(empty($comments)) {
+        $comments = Cache::get("product_comment_" . $product['id']);
+        if (empty($comments)) {
 
-            $comments = \Webkul\Product\Models\ProductReview::where("status","approved")->where("product_id", $product['id'])->orderBy("sort","desc")->limit(10)->get();
+            $comments = \Webkul\Product\Models\ProductReview::where("status", "approved")->where("product_id", $product['id'])->orderBy("sort", "desc")->limit(10)->get();
 
-            $comments = $comments->map(function($comments) {
+            $comments = $comments->map(function ($comments) {
                 $comments->customer = $comments->customer;
                 $comments->images;
                 return $comments;
             });
 
             //var_dump($comments);
-            Cache::set("product_comment_".$product['id'], $comments, 36000);
-
-
+            Cache::set("product_comment_" . $product['id'], $comments, 36000);
         }
 
         // $comments = Cache::remember('product_review'.$product['id'], 36000, function ($product) {
@@ -139,8 +138,8 @@ class CheckoutV3Controller extends Controller{
 
         $checkoutItems = \Nicelizhi\Shopify\Helpers\Utils::getAllCheckoutVersion();
         $customer_config = [];
-        foreach($checkoutItems as $key=>$item) {
-            $cachek_key = "checkout_".$item."_".$slug;
+        foreach ($checkoutItems as $key => $item) {
+            $cachek_key = "checkout_" . $item . "_" . $slug;
             $cacheData = $redis->get($cachek_key);
             $customer_config[$item] = json_decode($cacheData);
         }
@@ -151,83 +150,86 @@ class CheckoutV3Controller extends Controller{
 
         $data = $this->ProductDetail($slug);
 
-        return view('checkout::product-detail-'.$this->view_prefix_key, compact('slug','comments','faqItems','product','default_country',"payments","payments_default","refer","crm_channel","data","gtag","gtm","customer_config"));
+        // enabled the  paypal credit card
+        $paypal_credit_card = core()->getConfigData('sales.payment_methods.paypal_smart_button.credit_card');
+        return view('checkout::product-detail-' . $this->view_prefix_key, compact('slug', 'comments', 'faqItems', 'product', 'default_country', "payments", "payments_default", "refer", "crm_channel", "data", "gtag", "gtm", "customer_config", "paypal_credit_card"));
     }
 
 
-   
-    public function ProductDetail($slug) {
+
+    public function ProductDetail($slug)
+    {
         $currency = core()->getCurrentCurrencyCode();
-        $data = Cache::get($this->checkout_v2_cache_key.$slug.'_'.$currency);
+        $data = Cache::get($this->checkout_v2_cache_key . $slug . '_' . $currency);
         $env = config("app.env");
         // when the env is pord use cache
-        if(empty($data)) {
-        //if(true) {
+        if (empty($data)) {
+            //if(true) {
             $product = $this->productRepository->findBySlug($slug);
             $data = [];
             $productViewHelper = new \Webkul\Product\Helpers\ConfigurableOption();
             $attributes = $productViewHelper->getConfigurationConfig($product);
 
-    
-            $redis = Redis::connection('default');
-    
-            foreach($attributes['attributes'] as $key=>$attribute) {
 
-                $product_attr_sort_cache_key = "product_attr_sort_".$attribute['id']."_".$product->id;
+            $redis = Redis::connection('default');
+
+            foreach ($attributes['attributes'] as $key => $attribute) {
+
+                $product_attr_sort_cache_key = "product_attr_sort_" . $attribute['id'] . "_" . $product->id;
                 $product_attr_sort = $redis->hgetall($product_attr_sort_cache_key); // get sku sort
                 $attributes['attributes'][$key]['attr_sort'] = $product_attr_sort;
             }
 
-            foreach($attributes['index'] as $key=>$index) {
-                
+            foreach ($attributes['index'] as $key => $index) {
+
                 $sku_products = $this->productRepository->where("id", $key)->select(['sku'])->first();
                 $attributes['index'][$key]['sku'] = $sku_products->sku;
                 $index2 = "";
                 $total = count($index);
                 $i = 0;
-                foreach($index as $key2=>$ind) {
+                foreach ($index as $key2 => $ind) {
                     $i++;
-                    if(empty($index2)) {
-                        $index2=$key2."_".$ind;
+                    if (empty($index2)) {
+                        $index2 = $key2 . "_" . $ind;
                     } else {
-                        $index2=$index2.",".$key2."_".$ind;
+                        $index2 = $index2 . "," . $key2 . "_" . $ind;
                     }
-                    if($i==$total) $attributes['index2'][$index2] = [$key,$sku_products->sku];
+                    if ($i == $total) $attributes['index2'][$index2] = [$key, $sku_products->sku];
                 }
                 //var_dump($index);
 
             }
-    
+
             $package_products = [];
-            $package_products = \Nicelizhi\OneBuy\Helpers\Utils::makeProducts($product, [2,1,3,4]);
+            $package_products = \Nicelizhi\OneBuy\Helpers\Utils::makeProducts($product, [2, 1, 3, 4]);
             $product = new ProductResource($product);
             $data['product'] = $product;
             $data['package_products'] = $package_products;
             $data['sku'] = $product->sku;
             $data['attr'] = $attributes;
-    
+
             $countries = config("countries");
-    
+
             $default_country = config('onebuy.default_country');
-    
+
             $airwallex_method = config('onebuy.airwallex.method');
-    
+
             $payments = config('onebuy.payments'); // config the payments status
-    
+
             $payments_default = config('onebuy.payments_default');
             $brand = config('onebuy.brand');
-    
+
             $gtag = config('onebuy.gtag');
-    
+
             $fb_ids = config('onebuy.fb_ids');
             $ob_adv_id = config('onebuy.ob_adv_id');
-    
+
             $crm_channel = config('onebuy.crm_channel');
-    
+
             $quora_adv_id = config('onebuy.quora_adv_id');
-    
+
             $paypal_client_id = core()->getConfigData('sales.payment_methods.paypal_smart_button.client_id');
-    
+
             $data['countries'] = $countries;
             $data['default_country'] = $default_country;
             $data['airwallex_method'] = $airwallex_method;
@@ -241,45 +243,37 @@ class CheckoutV3Controller extends Controller{
             $data['quora_adv_id'] = $quora_adv_id;
             $data['paypal_client_id'] = $paypal_client_id;
             $data['env'] = config("app.env");
-            $data['sellPoints'] = $redis->hgetall("sell_points_".$slug);
-    
+            $data['sellPoints'] = $redis->hgetall("sell_points_" . $slug);
+
             $ads = []; // add ads
-            
+
             $productBgAttribute = $this->productAttributeValueRepository->findOneWhere([
                 'product_id'   => $product->id,
                 'attribute_id' => 29,
             ]);
-    
-    
+
+
             $productBgAttribute_mobile = $this->productAttributeValueRepository->findOneWhere([
                 'product_id'   => $product->id,
                 'attribute_id' => 30,
             ]);
-    
+
             $productSizeImage = $this->productAttributeValueRepository->findOneWhere([
                 'product_id'   => $product->id,
                 'attribute_id' => 32,
             ]);
-    
-            $ads['pc']['img'] = isset($productBgAttribute->text_value) ? $productBgAttribute->text_value : config("app.url")."/checkout/onebuy/banners/".$default_country."_pc.jpg";
-            $ads['mobile']['img'] = isset($productBgAttribute_mobile->text_value) ? $productBgAttribute_mobile->text_value : config("app.url")."/checkout/onebuy/banners/".$default_country."_mobile.jpg";
+
+            $ads['pc']['img'] = isset($productBgAttribute->text_value) ? $productBgAttribute->text_value : config("app.url") . "/checkout/onebuy/banners/" . $default_country . "_pc.jpg";
+            $ads['mobile']['img'] = isset($productBgAttribute_mobile->text_value) ? $productBgAttribute_mobile->text_value : config("app.url") . "/checkout/onebuy/banners/" . $default_country . "_mobile.jpg";
             $ads['size']['img'] = isset($productSizeImage->text_value) ? $productSizeImage->text_value : "";
-    
+
             $data['ads'] = $ads;
 
-            Cache::put($this->checkout_v2_cache_key.$slug, json_encode($data));
+            Cache::put($this->checkout_v2_cache_key . $slug, json_encode($data));
 
             return $data;
-
-        }else{
-            return json_decode($data,true);
+        } else {
+            return json_decode($data, true);
         }
-
-
-
-
     }
-
-
-
 }

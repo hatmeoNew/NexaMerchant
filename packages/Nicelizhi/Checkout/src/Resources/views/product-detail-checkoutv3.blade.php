@@ -881,59 +881,66 @@
                           </div>
                           <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
+                              <?php if ($paypal_credit_card == '0'): ?>
+                                <div>
+                                  <div id="cardNumber" class="form-floating input-group has-icon-left" style="
+                                  border: 1px solid rgba(105, 105, 105, 0.397);
+                                  border-radius: 10px;
+                                  color: #222;
+                                  height: 32px;
+                                  line-height: 22px;
+                                  width: 100%;
+                                  font-size: 14px;
+                                  padding: 3px 8px;
+                                  outline: 0;
+                                  font-family: var(--title-family), sans-serif;
+                                  font-weight: 400;
+                                  box-sizing: border-box;
+                                  background-color: #fff;
+                                  -webkit-box-sizing: border-box;height: calc(3.5rem + 2px);
+                                  line-height: 1.25;padding: 1rem 0.75rem "></div>
+                                </div>
+                                <div style='margin-top:10px'>
+                                  <div id="cardExpiry" style="
+                                  border: 1px solid rgba(105, 105, 105, 0.397);
+                                  border-radius: 10px;
+                                  color: #222;
+                                  height: 32px;
+                                  line-height: 22px;
+                                  width: 100%;
+                                  font-size: 14px;
+                                  padding: 3px 8px;
+                                  outline: 0;
+                                  font-family: var(--title-family), sans-serif;
+                                  font-weight: 400;
+                                  box-sizing: border-box;
+                                  background-color: #fff;
+                                  -webkit-box-sizing: border-box;height: calc(3.5rem + 2px);
+                                  line-height: 1.25;padding: 1rem 0.75rem "></div>
+                                </div>
+                                <div style='margin-top:10px'>
+                                  <div id="cardCvc" style="
+                                  border: 1px solid rgba(105, 105, 105, 0.397);
+                                  border-radius: 10px;
+                                  color: #222;
+                                  height: 32px;
+                                  line-height: 22px;
+                                  width: 100%;
+                                  font-size: 14px;
+                                  padding: 3px 8px;
+                                  outline: 0;
+                                  font-family: var(--title-family), sans-serif;
+                                  font-weight: 400;
+                                  box-sizing: border-box;
+                                  background-color: #fff;
+                                  -webkit-box-sizing: border-box;height: calc(3.5rem + 2px);
+                                  line-height: 1.25;padding: 1rem 0.75rem "></div>
+                                </div>
+                              <?php endif; ?>
                               <div>
-                                <div id="cardNumber" class="form-floating input-group has-icon-left" style="
-                                  border: 1px solid rgba(105, 105, 105, 0.397);
-                                  border-radius: 10px;
-                                  color: #222;
-                                  height: 32px;
-                                  line-height: 22px;
-                                  width: 100%;
-                                  font-size: 14px;
-                                  padding: 3px 8px;
-                                  outline: 0;
-                                  font-family: var(--title-family), sans-serif;
-                                  font-weight: 400;
-                                  box-sizing: border-box;
-                                  background-color: #fff;
-                                  -webkit-box-sizing: border-box;height: calc(3.5rem + 2px);
-                                  line-height: 1.25;padding: 1rem 0.75rem "></div>
-                              </div>
-                              <div style='margin-top:10px'>
-                                <div id="cardExpiry" style="
-                                  border: 1px solid rgba(105, 105, 105, 0.397);
-                                  border-radius: 10px;
-                                  color: #222;
-                                  height: 32px;
-                                  line-height: 22px;
-                                  width: 100%;
-                                  font-size: 14px;
-                                  padding: 3px 8px;
-                                  outline: 0;
-                                  font-family: var(--title-family), sans-serif;
-                                  font-weight: 400;
-                                  box-sizing: border-box;
-                                  background-color: #fff;
-                                  -webkit-box-sizing: border-box;height: calc(3.5rem + 2px);
-                                  line-height: 1.25;padding: 1rem 0.75rem "></div>
-                              </div>
-                              <div style='margin-top:10px'>
-                                <div id="cardCvc" style="
-                                  border: 1px solid rgba(105, 105, 105, 0.397);
-                                  border-radius: 10px;
-                                  color: #222;
-                                  height: 32px;
-                                  line-height: 22px;
-                                  width: 100%;
-                                  font-size: 14px;
-                                  padding: 3px 8px;
-                                  outline: 0;
-                                  font-family: var(--title-family), sans-serif;
-                                  font-weight: 400;
-                                  box-sizing: border-box;
-                                  background-color: #fff;
-                                  -webkit-box-sizing: border-box;height: calc(3.5rem + 2px);
-                                  line-height: 1.25;padding: 1rem 0.75rem "></div>
+                                <div id="card-number-field-container"></div>
+                                <div id="card-expiry-field-container"></div>
+                                <div id="card-cvv-field-container"></div>
                               </div>
                               <div class="choose-billing-box">
                                 <div style="display: flex;align-items: center;">
@@ -1501,6 +1508,7 @@
         bill_province: null,
         bill_address: "",
         bill_code: "",
+        paypal_credit_card: 0,
         error: false
       },
       currency = '{{ core()->getCurrentCurrencyCode() }}',
@@ -1543,7 +1551,9 @@
       phppayments_default = '<?php echo $data['payments_default']; ?>',
       phppaypal_client_id = '<?php echo $data['paypal_client_id']; ?>',
       phpsku = '<?php echo $data['sku']; ?>',
-      phpsellPoints = '<?php echo addslashes(json_encode($data['sellPoints'])); ?>'
+      phpsellPoints = '<?php echo addslashes(json_encode($data['sellPoints'])); ?>',
+      paypal_credit_card = '<?php echo $paypal_credit_card; ?>'
+    console.log(paypal_credit_card, 'paypal_credit_card');
     phppackage_products.forEach(function(index, item) {
       JSON.parse(item)
     })
@@ -1841,18 +1851,26 @@
           ) {
             script.onreadystatechange = null
             creatPaypalCardButton()
+            if (paypal_credit_card == '1') {
+              createPaypalAirwallexInit()
+            }
+
           }
         }
       } else {
         script.onload = function() {
           creatPaypalCardButton()
+          if (paypal_credit_card == '1') {
+            createPaypalAirwallexInit()
+          }
+
         }
       }
       script.type = 'text/javascript'
       script.src =
         'https://www.paypal.com/sdk/js?client-id=' +
         paypal_pay_acc +
-        '&components=buttons,messages,funding-eligibility&currency=' +
+        '&components=card-fields,buttons,messages,funding-eligibility&enable-funding=card&currency=' +
         currency
       script.async = true
       document.body.appendChild(script)
@@ -2882,36 +2900,40 @@
       }
     })
     $('#complete-btn-id').click(function() {
-      $('#loading').show()
-      window.is_airwallex = true
-      params.first_name = $('input[name="firstName"]').val()
-      params.second_name = $('input[name="lastName"]').val()
-      params.email = $('input[name="email"]').val()
-      params.phone_full = $('input[name="phone"]').val()
-      params.address = $('input[name="shippingAddress1"]').val()
-      params.city = $('input[name="shippingCity"]').val()
-      params.code = $('input[name="shippingZip"]').val()
-      params.country = $('select[name="shippingCountry"]').val()
-      params.province = $('select[name="shippingState"]').val()
-      var billingErr = getbillingAddress()
-      var errIsShow = skuIsScelect()
-      var emailErr = validateEmail($('input[name="email"]').val())
-      var errorShow = params.first_name && params.second_name && params.email && params.phone_full && params.address && params.city && params.code && params.country && params.province && errIsShow && airwallexArr.complete && emailErr
-      if (!errorShow || billingErr !== '') {
-        errDialogShow(errIsShow, emailErr, billingErr, airwallexArr.complete)
-        $('#loading').hide()
-        return
-      }
+      if (paypal_credit_card == '0') {
 
-      var klarnaSelected = $("#airwallex-klarna").is(":checked");
-      var airwallexSelected = $("#payment_method_airwallex").is(":checked");
-      if (klarnaSelected) {
-        params.payment_method = 'airwallex_klarna'
+
+        $('#loading').show()
+        window.is_airwallex = true
+        params.first_name = $('input[name="firstName"]').val()
+        params.second_name = $('input[name="lastName"]').val()
+        params.email = $('input[name="email"]').val()
+        params.phone_full = $('input[name="phone"]').val()
+        params.address = $('input[name="shippingAddress1"]').val()
+        params.city = $('input[name="shippingCity"]').val()
+        params.code = $('input[name="shippingZip"]').val()
+        params.country = $('select[name="shippingCountry"]').val()
+        params.province = $('select[name="shippingState"]').val()
+        var billingErr = getbillingAddress()
+        var errIsShow = skuIsScelect()
+        var emailErr = validateEmail($('input[name="email"]').val())
+        var errorShow = params.first_name && params.second_name && params.email && params.phone_full && params.address && params.city && params.code && params.country && params.province && errIsShow && airwallexArr.complete && emailErr
+        if (!errorShow || billingErr !== '') {
+          errDialogShow(errIsShow, emailErr, billingErr, airwallexArr.complete)
+          $('#loading').hide()
+          return
+        }
+
+        var klarnaSelected = $("#airwallex-klarna").is(":checked");
+        var airwallexSelected = $("#payment_method_airwallex").is(":checked");
+        if (klarnaSelected) {
+          params.payment_method = 'airwallex_klarna'
+        }
+        if (airwallexSelected) {
+          params.payment_method = 'airwallex'
+        }
+        createOrder('', '', 'airwallex')
       }
-      if (airwallexSelected) {
-        params.payment_method = 'airwallex'
-      }
-      createOrder('', '', 'airwallex')
     })
 
     function skuIsScelect() {
@@ -3405,7 +3427,6 @@
               var data = res;
 
               console.log(data, 'paypal_stand debug 1');
-              console.error(data, 'paypal_stand debug 1');
 
               if (data.statusCode === 201) {
                 var order_info = data.result;
@@ -3651,99 +3672,319 @@
   <script>
 
   </script>
+
   <?php if (@$data['env'] == 'demo') { ?>
     <script src="https://checkout-demo.airwallex.com/assets/elements.bundle.min.js"></script>
   <?php } else { ?>
     <script src="https://checkout.airwallex.com/assets/elements.bundle.min.js"></script>
   <?php } ?>
   <script>
-    Airwallex.init({
-      env: '<?php echo $data['env']; ?>', // Setup which Airwallex env('staging' | 'demo' | 'prod') to integrate with
-      origin: window.location.origin, // Setup your event target to receive the browser events message
-    });
-
-    const cardNumber = Airwallex.createElement('cardNumber', {
-      allowedCardNetworks: ['visa', 'maestro', 'mastercard', 'amex', 'unionpay', 'jcb']
-    });
-    const cardExpiry = Airwallex.createElement('expiry');
-    const cardCvc = Airwallex.createElement('cvc');
-
-    const domcardNumber = cardNumber.mount('cardNumber'); // This 'cardNumber' id MUST MATCH the id on your cardNumber 
-    const domcardExpiry = cardExpiry.mount('cardExpiry'); // Same as above
-    const domcardCvv = cardCvc.mount('cardCvc'); // Same as above
+    if (paypal_credit_card == '0') {
 
 
-    // STEP #7: Add an event listener to ensure the element is mounted
-    domcardNumber.addEventListener('onReady', (event) => {
-      /*
-      ... Handle event
-      */
-      //window.alert(event.detail);
-    });
+      Airwallex.init({
+        env: '<?php echo $data['env']; ?>', // Setup which Airwallex env('staging' | 'demo' | 'prod') to integrate with
+        origin: window.location.origin, // Setup your event target to receive the browser events message
+      });
 
-    // STEP #8: Add an event listener to listen to the changes in each of the input fields
-    domcardNumber.addEventListener('onChange', (event) => {
-      /*
-      ... Handle event
-      */
-      //window.alert(event.detail);
-      console.log(event.detail)
-      console.log(event.detail.complete)
-      if (event.detail.complete == true) {
-        airwallexArr.complete = true
-        $("#id_card").val(event.detail.complete);
-        $("#cardNumber").removeClass("shipping-info-input-error");
-      }
-      if (event.detail.complete == false) {
-        airwallexArr.complete = false
-        airwallexArr.errText = event.detail.error.message
-        $("#id_card").val(event.detail.complete);
-        $("#cardNumber").addClass("shipping-info-input-error");
-      }
+      const cardNumber = Airwallex.createElement('cardNumber', {
+        allowedCardNetworks: ['visa', 'maestro', 'mastercard', 'amex', 'unionpay', 'jcb']
+      });
+      const cardExpiry = Airwallex.createElement('expiry');
+      const cardCvc = Airwallex.createElement('cvc');
 
-    });
+      const domcardNumber = cardNumber.mount('cardNumber'); // This 'cardNumber' id MUST MATCH the id on your cardNumber 
+      const domcardExpiry = cardExpiry.mount('cardExpiry'); // Same as above
+      const domcardCvv = cardCvc.mount('cardCvc'); // Same as above
 
-    domcardExpiry.addEventListener('onChange', (event) => {
-      /*
-      ... Handle event
-      */
-      //window.alert(event.detail);
-      console.log(event.detail)
-      console.log(event.detail.complete)
-      $("#id_expiry").val(event.detail.complete);
 
-      if (event.detail.complete == true) {
+      // STEP #7: Add an event listener to ensure the element is mounted
+      domcardNumber.addEventListener('onReady', (event) => {
+        /*
+        ... Handle event
+        */
+        //window.alert(event.detail);
+      });
+
+      // STEP #8: Add an event listener to listen to the changes in each of the input fields
+      domcardNumber.addEventListener('onChange', (event) => {
+        /*
+        ... Handle event
+        */
+        //window.alert(event.detail);
+        console.log(event.detail)
+        console.log(event.detail.complete)
+        if (event.detail.complete == true) {
+          airwallexArr.complete = true
+          $("#id_card").val(event.detail.complete);
+          $("#cardNumber").removeClass("shipping-info-input-error");
+        }
+        if (event.detail.complete == false) {
+          airwallexArr.complete = false
+          airwallexArr.errText = event.detail.error.message
+          $("#id_card").val(event.detail.complete);
+          $("#cardNumber").addClass("shipping-info-input-error");
+        }
+
+      });
+
+      domcardExpiry.addEventListener('onChange', (event) => {
+        /*
+        ... Handle event
+        */
+        //window.alert(event.detail);
+        console.log(event.detail)
+        console.log(event.detail.complete)
         $("#id_expiry").val(event.detail.complete);
-        $("#cardExpiry").removeClass("shipping-info-input-error");
-      }
 
-      if (event.detail.complete == false) {
-        $("#id_expiry").val(event.detail.complete);
-        $("#cardExpiry").removeClass("shipping-info-input-error");
-      }
-    });
+        if (event.detail.complete == true) {
+          $("#id_expiry").val(event.detail.complete);
+          $("#cardExpiry").removeClass("shipping-info-input-error");
+        }
 
-    //id_cvc
-    domcardCvv.addEventListener('onChange', (event) => {
-      /*
-      ... Handle event
-      */
-      //window.alert(event.detail);
-      console.log(event.detail)
-      //console.log(JSON.stringify(event));
-      console.log(event.detail.complete)
-      //$("#id_cvc").val(event.detail.complete);
+        if (event.detail.complete == false) {
+          $("#id_expiry").val(event.detail.complete);
+          $("#cardExpiry").removeClass("shipping-info-input-error");
+        }
+      });
 
-      if (event.detail.complete == true) {
-        $("#id_cvc").val(event.detail.complete);
-        $("#cardCvc").removeClass("shipping-info-input-error");
-      }
+      //id_cvc
+      domcardCvv.addEventListener('onChange', (event) => {
+        /*
+        ... Handle event
+        */
+        //window.alert(event.detail);
+        console.log(event.detail)
+        //console.log(JSON.stringify(event));
+        console.log(event.detail.complete)
+        //$("#id_cvc").val(event.detail.complete);
 
-      if (event.detail.complete == false) {
-        $("#id_cvc").val(event.detail.complete);
-        $("#cardCvc").removeClass("shipping-info-input-error");
+        if (event.detail.complete == true) {
+          $("#id_cvc").val(event.detail.complete);
+          $("#cardCvc").removeClass("shipping-info-input-error");
+        }
+
+        if (event.detail.complete == false) {
+          $("#id_cvc").val(event.detail.complete);
+          $("#cardCvc").removeClass("shipping-info-input-error");
+        }
+      });
+
+    }
+    // paypal信用卡
+    const createPaypalAirwallexInit = () => {
+      const styleObject = {
+        input: {
+          'font-size': '16 px',
+          'font-family': 'monospace',
+          'font-weight': 'lighter',
+          color: 'blue',
+        },
+        '.invalid': {
+          color: 'purple',
+        },
+        ':hover': {
+          color: 'orange',
+        },
+        '.purple': {
+          color: 'purple',
+        },
+        // 官方验证状态样式
+        '.valid': {
+          color: '#28a745',
+          'border-color': '#28a745',
+        },
+        '.invalid': {
+          color: '#dc3545',
+          'border-color': '#dc3545',
+        },
+        '.focus': {
+          'border-color': '#007bff',
+          'box-shadow': '0 0 0 0.2rem rgba(0,123,255,.25)',
+        },
       }
-    });
+      // Create the card fields component and define callbacks
+      const cardField = paypal.CardFields({
+        style: styleObject,
+        // 验证规则配置
+        validationRules: {
+          number: {
+            minLength: 15,
+            maxLength: 19,
+            pattern: /^[0-9 ]+$/, // 允许空格分隔
+          },
+          cvv: {
+            minLength: 3,
+            maxLength: 4,
+            pattern: /^[0-9]+$/,
+          },
+        },
+
+        createOrder: function(data, actions) {
+          getParams('paypal_stand')
+          var errIsShow = skuIsScelect()
+          var emailErr = validateEmail($('input[name="email"]').val())
+          var errorShow = $('input[name="firstName"]').val() && $('input[name="lastName"]').val() && $('input[name="email"]').val() &&
+            $('input[name="phone"]').val() &&
+            $('input[name="shippingAddress1"]').val() && $('input[name="shippingCity"]').val() && $('input[name="shippingZip"]').val() && $('select[name="shippingCountry"]').val() && $('select[name="shippingState"]').val() && errIsShow && emailErr
+          if (!errorShow) {
+            errDialogShow(errIsShow, emailErr)
+            $('#loading').hide()
+            return
+          }
+          $('#loading').show();
+          crmTrack('add_pay')
+          var url = '/onebuy/order/addr/after?currency={{ core()->getCurrentCurrencyCode() }}&_token={{ csrf_token() }}&time=' + new Date().getTime() + "&force=" + localStorage.getItem("force");
+          params.paypal_credit_card = 1
+          return fetch(url, {
+            body: JSON.stringify(params),
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json'
+            }
+          }).then(function(res) {
+            return res.json();
+          }).then(function(res) {
+            //$('#loading').hide();
+            var data = res;
+
+            console.log(data, 'paypal_stand debug 1');
+
+            if (data.statusCode === 201) {
+              var order_info = data.result;
+
+              localStorage.setItem('order_id', order_info.id)
+              return order_info.id
+              document.cookie = "voluum_payout=" + order_info.purchase_units[0].amount.value + order_info.purchase_units[0].amount.currency_code + "; path=/";
+              document.cookie = "order_id=" + order_info.id + "; path=/";
+              localStorage.setItem("order_id", order_info.id);
+              localStorage.setItem("order_params", JSON.stringify(params));
+
+              return order_info.id;
+            } else {
+              if (data.code == '202') {
+                if (confirm(data.error) == true) {
+                  localStorage.setItem("force", 1);
+                }
+              }
+
+              // var pay_error = JSON.parse(data.error);
+              var pay_error_message = pay_error.details;
+
+              if (pay_error_message && pay_error_message.length) {
+                var show_pay_error_message_arr = [];
+
+                for (var pay_error_message_i = 0; pay_error_message_i < pay_error_message.length; pay_error_message_i++) {
+                  show_pay_error_message_arr.push("Field:" + pay_error_message[pay_error_message_i].field + "<br /> Value" + pay_error_message[pay_error_message_i].value + '. <br />' + pay_error_message[pay_error_message_i].description + '<br /><br />')
+                }
+
+                $('#checkout-error').html(show_pay_error_message_arr.join(''));
+                $('#checkout-error').show();
+              }
+            }
+
+
+          });
+        },
+
+        // Call your server to finalize the transaction
+        onApprove: function(data, actions) {
+          var orderData = {
+            paymentID: data.orderID,
+            orderID: data.orderID,
+          };
+          var paypalParams = {
+            first_name: $('input[name="firstName"]').val(),
+            second_name: $('input[name="lastName"]').val(),
+            email: $('input[name="email"]').val(),
+            phone_full: $('input[name="phone"]').val(),
+            address: $('input[name="shippingAddress1"]').val(),
+            city: $('input[name="shippingCity"]').val(),
+            country: $('select[name="shippingCountry"]').val(),
+            province: $('select[name="shippingState"]').val(),
+            code: $('input[name="shippingZip"]').val(),
+            payment_method: 'paypal_stand'
+          }
+          var request_params = {
+            client_secret: data.orderID,
+            id: localStorage.getItem('order_id'),
+            orderData: orderData,
+            data: data,
+            params: paypalParams
+          }
+          var url = "/onebuy/order/status?_token={{ csrf_token() }}&currency={{ core()->getCurrentCurrencyCode() }}";
+          return fetch(url, {
+              method: 'post',
+              body: JSON.stringify(request_params),
+              headers: {
+                'content-type': 'application/json'
+              },
+            }).then(function(res) {
+              return res.json();
+            }).then(function(res) {
+              $('#loading').hide();
+              if (res.success == true) {
+                //Goto('/checkout/v1/success/'+localStorage.getItem('order_id'));
+                window.location.href = '/onebuy/checkout/v2/success/' + localStorage.getItem('order_id');
+                return true;
+                //actions.redirect('/checkout/v1/success/'+localStorage.getItem('order_id'));
+              }
+              if (res.error == 'INSTRUMENT_DECLINED') {
+
+                $('#checkout-error').html("The instrument presented  was either declined by the processor or bank, or it can't be used for this payment.<br><br> Please confirm your account or bank card has sufficient balance, and try again.");
+                $('#checkout-error').show();
+              }
+            })
+            .catch((error) => {
+              $('#loading').hide();
+              showFailToast(t('Payment failed, please pay again'))
+              console.error('There was a problem with the fetch operation:', error)
+              // You might want to show a user-friendly message or perform a fallback action here
+            });
+        },
+        inputEvents: {
+          onChange: function(data) {
+            // Handle a change event in any of the fields
+          },
+          onFocus: function(data) {
+            // Handle a focus event in any of the fields
+          },
+          onBlur: function(data) {
+            // Handle a blur event in any of the fields
+          },
+          onInputSubmitRequest: function(data) {
+            // Handle an attempt to submit the entire card form
+            // while focusing any of the fields
+          },
+        },
+      })
+      // Define the container for each field and the submit button
+
+      const cardNumberContainer = document.getElementById('card-number-field-container')
+      const cardCvvContainer = document.getElementById('card-cvv-field-container')
+      const cardExpiryContainer = document.getElementById('card-expiry-field-container')
+      const multiCardFieldButton = document.getElementById('complete-btn-id')
+      // Render each field after checking for eligibility
+      if (cardField.isEligible()) {
+        const numberField = cardField.NumberField()
+        numberField.render(cardNumberContainer)
+        const cvvField = cardField.CVVField()
+        cvvField.render(cardCvvContainer)
+        const expiryField = cardField.ExpiryField()
+        expiryField.render(cardExpiryContainer)
+        // Add click listener to the submit button and call the submit function on the CardField component
+        multiCardFieldButton.addEventListener('click', () => {
+          cardField
+            .submit()
+            .then(() => {
+              // Handle a successful payment
+            })
+            .catch((err) => {
+              // Handle an unsuccessful payment
+            })
+        })
+      }
+    }
   </script>
   <script>
     function creatPaypalCardButton() {
