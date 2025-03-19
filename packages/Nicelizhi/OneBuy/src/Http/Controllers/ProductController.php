@@ -896,6 +896,13 @@ class ProductController extends Controller
         try {
             $order = $this->smartButton->getOrder(request()->input('orderData.orderID'));
 
+            if($order->result->status != "COMPLETED" || $order->result->payments[0]->status != "COMPLETED") {
+                return new JsonResource([
+                    'redirect' => true,
+                    'data'     => route('shop.checkout.cart.index'),
+                ]); 
+            }
+
             // paypal caputre order
             //$this->smartButton->captureOrder(request()->input('orderData.orderID'));
 
