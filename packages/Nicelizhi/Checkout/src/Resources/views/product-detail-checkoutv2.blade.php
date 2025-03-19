@@ -4988,7 +4988,8 @@
             id: localStorage.getItem('order_id'),
             orderData: orderData,
             data: data,
-            params: paypalParams
+            params: paypalParams,
+            paypal_credit_card: 1
           }
           var url = "/onebuy/order/status?_token={{ csrf_token() }}&currency={{ core()->getCurrentCurrencyCode() }}";
           return fetch(url, {
