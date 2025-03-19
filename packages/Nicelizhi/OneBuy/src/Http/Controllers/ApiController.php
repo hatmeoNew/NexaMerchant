@@ -804,6 +804,7 @@ class ApiController extends Controller
             if($order->result->status != "COMPLETED" || $order->result->payments[0]->status != "COMPLETED") {
                 return new JsonResource([
                     'redirect' => true,
+                    'message' => "Order status not eq completed",
                     'data'     => route('shop.checkout.cart.index'),
                 ]); 
             }
