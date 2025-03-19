@@ -1886,7 +1886,7 @@
                           </div>
                           <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
-                              <?php if ($paypal_credit_card == '0'): ?>
+                              <?php if (empty($paypal_credit_card) || $paypal_credit_card !== '1'): ?>
                                 <div>
                                   <div id="cardNumber" class="form-floating input-group has-icon-left" style="
                                   border: 1px solid rgba(105, 105, 105, 0.397);
@@ -2108,6 +2108,10 @@
           <div class="order-summary-item">
             <div>@lang('checkout::app.v2.Shipping'):</div>
             <div id="summary-total3" style="font-weight:bold;"></div>
+          </div>
+          <div class="order-summary-item">
+            <div>@lang('checkout::app.v2.Return Insurance'):</div>
+            <div id="summary-total5" style="font-weight:bold;"></div>
           </div>
           <!-- <div class="order-summary-item">
             <div>@lang('checkout::app.v2.Shipping Method'):</div>
@@ -2583,6 +2587,7 @@
         bill_address: "",
         bill_code: "",
         paypal_credit_card: 0,
+        return_insurance: 1,
         error: false
       },
       currency = '{{ core()->getCurrentCurrencyCode() }}',
@@ -2620,7 +2625,6 @@
       phppaypal_client_id = '<?php echo $data['paypal_client_id']; ?>',
       phpsku = '<?php echo $data['sku']; ?>',
       paypal_credit_card = '<?php echo $paypal_credit_card; ?>'
-    console.log(paypal_credit_card, 'paypal_credit_card');
     phppackage_products.forEach(function(index, item) {
       JSON.parse(item)
     })
@@ -2716,12 +2720,13 @@
       }
       $('#summary-total1').text(data.package_products[0].old_price_format)
       var shippingFee = currencySymbol + data.package_products[0].shipping_fee
+      var returnInsurance = currencySymbol + data.package_products[0].return_fee
+      $('#summary-total5').text(returnInsurance)
       $('#summary-total3').text(shippingFee)
-
       var discount = Number(data.package_products[0].old_price) - Number(data.package_products[0].new_price)
       discount = "-" + currencySymbol + discount.toFixed(2)
       $('#summary-total2').text(discount)
-      var total = Number(data.package_products[0].new_price) + Number(data.package_products[0].shipping_fee)
+      var total = Number(data.package_products[0].new_price) + Number(data.package_products[0].shipping_fee) + Number(data.package_products[0].return_fee)
       total = currencySymbol + total.toFixed(2)
       $('#summary-total4').text(total)
       $('.product-name').text(data.package_products[0].name)
@@ -3898,12 +3903,14 @@
       $('#product1').addClass('choose-p')
       $('#summary-total1').text(data.package_products[1].old_price_format)
       var shippingFee = currencySymbol + data.package_products[1].shipping_fee
+      var returnInsurance = currencySymbol + data.package_products[0].return_fee
+      $('#summary-total5').text(returnInsurance)
       $('#summary-total3').text(shippingFee)
 
       var discount = Number(data.package_products[1].old_price) - Number(data.package_products[1].new_price)
       discount = "-" + currencySymbol + discount.toFixed(2)
       $('#summary-total2').text(discount)
-      var total = Number(data.package_products[1].new_price) + Number(data.package_products[1].shipping_fee)
+      var total = Number(data.package_products[1].new_price) + Number(data.package_products[1].shipping_fee) + Number(data.package_products[1].return_fee)
       total = currencySymbol + total.toFixed(2)
       $('#summary-total4').text(total)
       $('.product-name').text(data.package_products[1].name)
@@ -3935,12 +3942,14 @@
       $('#product2').addClass('choose-p')
       $('#summary-total1').text(data.package_products[0].old_price_format)
       var shippingFee = currencySymbol + data.package_products[0].shipping_fee
+      var returnInsurance = currencySymbol + data.package_products[0].return_fee
+      $('#summary-total5').text(returnInsurance)
       $('#summary-total3').text(shippingFee)
 
       var discount = Number(data.package_products[0].old_price) - Number(data.package_products[0].new_price)
       discount = "-" + currencySymbol + discount.toFixed(2)
       $('#summary-total2').text(discount)
-      var total = Number(data.package_products[0].new_price) + Number(data.package_products[0].shipping_fee)
+      var total = Number(data.package_products[0].new_price) + Number(data.package_products[0].shipping_fee) + Number(data.package_products[0].return_fee)
       total = currencySymbol + total.toFixed(2)
       $('#summary-total4').text(total)
       $('.product-name').text(data.package_products[0].name)
@@ -3973,12 +3982,14 @@
       $('#product3').addClass('choose-p')
       $('#summary-total1').text(data.package_products[2].old_price_format)
       var shippingFee = currencySymbol + data.package_products[2].shipping_fee
+      var returnInsurance = currencySymbol + data.package_products[0].return_fee
+      $('#summary-total5').text(returnInsurance)
       $('#summary-total3').text(shippingFee)
 
       var discount = Number(data.package_products[2].old_price) - Number(data.package_products[2].new_price)
       discount = "-" + currencySymbol + discount.toFixed(2)
       $('#summary-total2').text(discount)
-      var total = Number(data.package_products[2].new_price) + Number(data.package_products[2].shipping_fee)
+      var total = Number(data.package_products[2].new_price) + Number(data.package_products[2].shipping_fee) + Number(data.package_products[2].return_fee)
       total = currencySymbol + total.toFixed(2)
       $('#summary-total4').text(total)
       $('.product-name').text(data.package_products[2].name)
@@ -4011,12 +4022,14 @@
       $('#product4').addClass('choose-p')
       $('#summary-total1').text(data.package_products[3].old_price_format)
       var shippingFee = currencySymbol + data.package_products[3].shipping_fee
+      var returnInsurance = currencySymbol + data.package_products[0].return_fee
+      $('#summary-total5').text(returnInsurance)
       $('#summary-total3').text(shippingFee)
 
       var discount = Number(data.package_products[3].old_price) - Number(data.package_products[3].new_price)
       discount = "-" + currencySymbol + discount.toFixed(2)
       $('#summary-total2').text(discount)
-      var total = Number(data.package_products[3].new_price) + Number(data.package_products[3].shipping_fee)
+      var total = Number(data.package_products[3].new_price) + Number(data.package_products[3].shipping_fee) + Number(data.package_products[3].return_fee)
       total = currencySymbol + total.toFixed(2)
       $('#summary-total4').text(total)
       $('.product-name').text(data.package_products[3].name)
@@ -4033,7 +4046,7 @@
       }
     })
     $('#complete-btn-id').click(function() {
-      if (paypal_credit_card == '0') {
+      if (!paypal_credit_card || paypal_credit_card !== '1') {
         $('#loading').show()
         window.is_airwallex = true
         // if (countries1 == 'de') {
@@ -4752,7 +4765,7 @@
     }
   </script>
   <script>
-    if (paypal_credit_card == '0') {
+    <?php if (empty($paypal_credit_card) || $paypal_credit_card !== '1'): ?>
       Airwallex.init({
         env: '<?php echo $data['env']; ?>', // Setup which Airwallex env('staging' | 'demo' | 'prod') to integrate with
         origin: window.location.origin, // Setup your event target to receive the browser events message
@@ -4835,8 +4848,7 @@
           $("#cardCvc").removeClass("shipping-info-input-error");
         }
       });
-    }
-
+    <?php endif; ?>
     // paypal信用卡
     const createPaypalAirwallexInit = () => {
       const styleObject = {

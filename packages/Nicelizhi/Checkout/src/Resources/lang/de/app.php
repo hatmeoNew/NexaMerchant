@@ -79,7 +79,8 @@ return [
     'edit' => 'bearbeiten',
     'complete_secure_purchase' => 'Zahlen Sie jetzt',
     'Selected' => 'Ausgewählt',
-    'Most Recommended' => 'Am meisten empfohlen'
+    'Most Recommended' => 'Am meisten empfohlen',
+    'Return Insurance' => 'Rückversicherung',
   ],
   'v3' => [
     '30-Day Return' => '30 Tage Rückgaberecht',

@@ -60,7 +60,8 @@ return [
     'edit' => 'editar',
     'complete_secure_purchase' => 'Pagar ahora',
     'Selected' => 'Seleccionado',
-    'Most Recommended' => 'Más recomendado'
+    'Most Recommended' => 'Más recomendado',
+    'Return Insurance' => 'Seguro de devolución',
   ],
   'v3' => [
     '30-Day Return' => '30 días de devolución',

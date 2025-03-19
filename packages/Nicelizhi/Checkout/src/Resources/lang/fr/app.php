@@ -79,7 +79,8 @@ return [
     'edit' => 'modifier',
     'complete_secure_purchase' => 'Payez maintenant',
     'Selected' => 'Choisi',
-    'Most Recommended' => 'Le plus recommandé'
+    'Most Recommended' => 'Le plus recommandé',
+    'Return Insurance' => 'Assurance de retour',
   ],
   'v3' => [
     '30-Day Return' => '30 jours de retour',

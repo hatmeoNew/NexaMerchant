@@ -410,6 +410,9 @@ class ProductController extends Controller
                 ]);
             }
         }
+
+        $this->returnInsurance($input, $cart);
+
         // 添加地址内容
         $addressData = [];
 
@@ -726,6 +729,9 @@ class ProductController extends Controller
                 ]);
             }
         }
+
+        $this->returnInsurance($input, $cart);
+
         // 添加地址内容
         $addressData = [];
         $addressData['billing'] = [];
@@ -824,6 +830,22 @@ class ProductController extends Controller
         }
 
         // return response()->json($order);
+    }
+
+    private function returnInsurance($input, $cart)
+    {
+        // when return insurance eq 1 and auto add the insurance product into cart 
+        $input['return_insurance'] = isset($input['return_insurance']) ? $input['return_insurance'] : 0;
+        if ($input['return_insurance'] == 1) {
+
+            Cart::addProduct(config('onebuy.return_shipping_insurance.product_id'), [
+                'quantity' => 1,
+                'product_sku' => config('onebuy.return_shipping_insurance.product_sku'),
+                'selected_configurable_option' => '',
+                'product_id' => config('onebuy.return_shipping_insurance.product_id'),
+                'variant_id' => ''
+            ]);
+        }
     }
 
 

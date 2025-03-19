@@ -139,8 +139,7 @@ class CheckoutV2Controller extends Controller
         $data = $this->ProductDetail($slug);
 
         // enabled the  paypal credit card
-        // $paypal_credit_card = core()->getConfigData('sales.payment_methods.paypal_smart_button.credit_card');
-        $paypal_credit_card  = '0';
+        $paypal_credit_card = core()->getConfigData('sales.payment_methods.paypal_smart_button.credit_card');
         return view('checkout::product-detail-' . $this->view_prefix_key, compact('slug', 'comments', 'faqItems', 'product', 'default_country', "payments", "payments_default", "refer", "crm_channel", "data", "gtag", "paypal_credit_card"));
     }
 
