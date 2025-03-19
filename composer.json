@@ -82,6 +82,7 @@
         "nexa-merchant/odooapi": "dev-main",
         "nexa-merchant/shopify": "dev-main",
         "nexa-merchant/upselling": "1.0.3",
+        "obuchmann/odoo-jsonrpc": "^1.7",
         "paypal/paypal-checkout-sdk": "1.0.2",
         "predis/predis": "^2.2",
         "prettus/l5-repository": "^2.6",
@@ -157,6 +158,7 @@
             "NexaMerchant\\Feeds\\": "packages\/Apps\/Feeds\/src",
             "NexaMerchant\\GoogleAdsense\\": "packages\/Apps\/GoogleAdsense\/src",
             "NexaMerchant\\CheckoutCod\\": "packages\/Apps\/CheckoutCod\/src",
+            "Obuchmann\\OdooJsonRpc\\": "packages\/Apps\/odoo-jsonrpc\/src",
             "NexaMerchant\\Klaviyo\\": "packages\/Apps\/Klaviyo\/src"
         }
     },
