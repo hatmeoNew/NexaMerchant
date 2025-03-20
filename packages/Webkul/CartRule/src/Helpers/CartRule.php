@@ -131,14 +131,15 @@ class CartRule
             return $this->cartRules;
         }
 
+        $productIds = $this->cart->items->pluck('product_id')->toArray();
 
 
         // Use Laravel's cache to store cart rules
-        $cacheKey = 'cart_rules_' . ($this->cart->customer_group_id ?? 'guest');
-        $cacheTTL = config('cache.ttl.cart_rules', 60); // 60 minutes default
+        $cacheKey = 'cart_rules_' . ($this->cart->customer_group_id ?? 'guest') . '_' . core()->getCurrentChannel()->id;
+        $cacheTTL = config('cache.ttl.cart_rules', 60); // Cache for 60 minutes
         
-        $this->cartRules = cache()->remember($cacheKey, $cacheTTL, function () {
-            return $this->getCartRuleQuery()
+        $this->cartRules = cache()->remember($cacheKey, $cacheTTL, function ($productIds) {
+            return $this->getCartRuleQuery($productIds)
                 ->with([
                     'cart_rule_customer_groups',
                     'cart_rule_channels',
@@ -596,11 +597,11 @@ class CartRule
     /**
      * @return \Builder
      */
-    public function getCartRuleQuery()
+    public function getCartRuleQuery($productIds = [])
     {
         $customerGroup = $this->customerRepository->getCurrentGroup();
 
-        return $this->cartRuleRepository
+        $query = $this->cartRuleRepository
             ->leftJoin('cart_rule_customer_groups', 'cart_rules.id', '=',
                 'cart_rule_customer_groups.cart_rule_id')
             ->leftJoin('cart_rule_channels', 'cart_rules.id', '=', 'cart_rule_channels.cart_rule_id')
@@ -618,6 +619,13 @@ class CartRule
             })
             ->where('status', 1)
             ->orderBy('sort_order', 'asc');
+
+        if ($productIds) {
+            $query->leftJoin('cart_rule_products', 'cart_rules.id', '=', 'cart_rule_products.cart_rule_id')
+              ->whereIn('cart_rule_products.product_id', $productIds);
+        }
+
+        return $query;
     }
 
     /**
