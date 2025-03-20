@@ -794,6 +794,20 @@ class ApiController extends Controller
     public function OrderStatus(Request $request) {
         try {
             $order = $this->smartButton->getOrder(request()->input('orderData.orderID'));
+            $paypal_credit_card = $request->input('paypal_credit_card');
+
+            // when the order status eq completed and the paypal_credit_card eq 1 and need check the payments captures status eq COMPLETED
+            // if($order->result->status == "COMPLETED" && $order->result->payments[0]->status == "COMPLETED" && $paypal_credit_card == 1) {
+            //     $this->smartButton->captureOrder(request()->input('orderData.orderID'));
+                
+            // }
+            if($order->result->status != "COMPLETED" || $order->result->payments[0]->status != "COMPLETED") {
+                return new JsonResource([
+                    'redirect' => true,
+                    'message' => "Order status not eq completed",
+                    'data'     => route('shop.checkout.cart.index'),
+                ]); 
+            }
 
             $cartId = $request->input('orderData.cartId');
             if(empty($cartId)) {
