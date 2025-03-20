@@ -132,13 +132,11 @@ class CartRule
         }
 
         $productIds = $this->cart->items->pluck('product_id')->toArray();
-
-
         // Use Laravel's cache to store cart rules
-        $cacheKey = 'cart_rules_' . ($this->cart->customer_group_id ?? 'guest') . '_' . core()->getCurrentChannel()->id;
+        $cacheKey = 'cart_rules_' . ($this->cart->customer_group_id ?? 'guest') . '_' . core()->getCurrentChannel()->id. '_' . implode(',', $productIds);
         $cacheTTL = config('cache.ttl.cart_rules', 60); // Cache for 60 minutes
         
-        $this->cartRules = cache()->remember($cacheKey, $cacheTTL, function ($productIds) {
+        $this->cartRules = cache()->remember($cacheKey, $cacheTTL, function () use ($productIds) {
             return $this->getCartRuleQuery($productIds)
                 ->with([
                     'cart_rule_customer_groups',
@@ -519,6 +517,7 @@ class CartRule
      */
     public function calculateCartItemTotals()
     {
+
         foreach ($this->getCartRules() as $rule) {
             if ($rule->action_type != 'cart_fixed') {
                 continue;
@@ -635,6 +634,7 @@ class CartRule
      */
     public function haveCartRules(): bool
     {
-        return (boolean) $this->getCartRuleQuery()->count();
+        $productIds = $this->cart->items->pluck('product_id')->toArray();
+        return (boolean) $this->getCartRuleQuery($productIds)->count();
     }
 }
