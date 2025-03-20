@@ -4,8 +4,9 @@ namespace Webkul\CartRule\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Webkul\CartRule\Contracts\CartRuleProduct as CartRuleProductContract;
 
-class CartRuleProduct extends Model
+class CartRuleProduct extends Model implements CartRuleProductContract
 {
     protected $table = 'cart_rule_products';
 
