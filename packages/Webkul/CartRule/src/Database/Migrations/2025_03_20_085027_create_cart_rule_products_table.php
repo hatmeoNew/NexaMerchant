@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->timestamps();
 
-            $table->foreign('cart_rule_id')->references('id')->on('cart_rules')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            // $table->foreign('cart_rule_id')->references('id')->on('cart_rules')->onDelete('cascade');
+            // $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->unique(['cart_rule_id', 'product_id'], 'cart_rule_product_unique');
         });
     }
