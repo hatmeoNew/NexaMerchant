@@ -3,7 +3,7 @@
 
 <head>
   <title></title>
-  <link rel="icon prefetch" id="favicon-icon" href="/checkout/v2/images/favicon_de.webp" type="image/png" sizes="16x16" />
+  <link rel="icon prefetch" id="favicon-icon" href="/storage/favicon.ico" type="image/png" sizes="16x16" />
   <meta charset="utf-8" />
   <meta name="description" content="Fur Sweep Collar" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -1443,10 +1443,6 @@
   <!-- BEGIN MVMT EVERFLOW CHECKOUT PAGEVIEW PIXEL -->
   <script type="text/javascript" src="/checkout/v2/js/everflow.js"></script>
   <!-- END MVMT EVERFLOW CHECKOUT PAGEVIEW PIXEL -->
-  <div id="">
-    <img class="w-100 d-none d-md-block" id="pc-banner" style="display: none;" src="" />
-    <img class="w-100 d-block d-md-none" id="mobile-banner" style="display: none;" src="" />
-  </div>
   <div class="topStrip" style="text-align: center;">
     <div class="container-xxl">
       <p style="text-align: center;">
@@ -1459,8 +1455,18 @@
     <div class="container">
       <div class="dis-box-logo">
         <div class="logo_wrap_dist" style="display: flex;justify-content: center;align-items: center;">
-          <img src="" style=" max-height: 50px;" />
+          <img id="logo1" src="/storage/logo.webp" style=" max-height: 50px;" />
         </div>
+        <script>
+          // 获取当前时间戳
+          const timestamp1 = new Date().getTime();
+
+          // 获取 <img> 标签
+          const logo1 = document.getElementById('logo1');
+
+          // 给图片的 src 添加时间戳
+          logo1.src = `/storage/logo.webp?timestamp=${timestamp}`;
+        </script>
       </div>
     </div>
   </div>
@@ -2606,7 +2612,6 @@
       },
       reviewLang = "@lang('onebuy::app.product.order.Verified')",
       skuErr = false,
-      logoImg = "/checkout/v2/images/logo_" + countries1 + ".webp",
       schrittImg = "/checkout/v2/images/1701506369_" + countries1 + ".webp",
       googlerOrApple = '',
       googleShow = false,
@@ -2641,7 +2646,6 @@
       sku: phpsku,
     }
     $(function() {
-      $('.logo_wrap_dist img').attr('src', logoImg)
       if (countries1 == 'fr' || countries1 == 'es') {
         $('.Schritt-top-box').hide()
       } else {
@@ -2650,10 +2654,6 @@
       }
       if (countries1 == 'de' || countries1 == 'fr') {
         $('.terms-block-last').show()
-      }
-      if (countries1 == 'us' || countries1 == 'gb') {
-        var favicon = '/checkout/v2/images/favicon.webp'
-        $('#favicon-icon').attr('href', favicon)
       }
       // var dataUrl = '/api/onebuy/product/detail/' + getProductId + '?currency=' + currency
       // axios
@@ -2813,8 +2813,6 @@
           item.variant_id = ''
         })
       }
-      $('#pc-banner').attr('src', data.ads.pc.img);
-      $('#mobile-banner').attr('src', data.ads.mobile.img);
       $('.prod-name').text('<?php echo addslashes($data['product']['name']); ?>')
       $('title').html('<?php echo addslashes($data['product']['name']); ?>')
       $('#buy-select1, #buy-select3, #buy-select4').hide()
@@ -5016,7 +5014,7 @@
             })
             .catch((error) => {
               $('#loading').hide();
-              showFailToast(t('Payment failed, please pay again'))
+              alert('Payment failed, please pay again')
               console.error('There was a problem with the fetch operation:', error)
               // You might want to show a user-friendly message or perform a fallback action here
             });
