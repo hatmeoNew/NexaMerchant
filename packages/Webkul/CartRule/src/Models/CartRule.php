@@ -98,6 +98,16 @@ class CartRule extends Model implements CartRuleContract
      *
      * @deprecated laravel standard should be used
      */
+    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CartRuleProductProxy::modelClass());
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     *
+     * @deprecated laravel standard should be used
+     */
     public function coupons(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->cart_rule_coupon();
