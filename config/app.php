@@ -244,6 +244,8 @@ return [
         Nicelizhi\Checkout\Providers\CheckoutServiceProvider::class,
         Nicelizhi\Comments\Providers\CommentsServiceProvider::class,
 
+        Nicelizhi\Lp\Providers\LpServiceProvider::class,
+
 
 		
 		// NexaMerchant\Paypal\Providers\PaypalServiceProvider::class, 
