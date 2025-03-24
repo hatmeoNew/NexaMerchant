@@ -4692,8 +4692,8 @@
           var img = res.data.data.images
           var imgListLength = img.length
           var imglen = Math.floor(imgListLength / 3)
-          if (imglen > 3) {
-            imglen = 3;
+          if (imglen > 4) {
+            imglen = 4;
           }
           for (var i = 0; i < img.length; i++) {
             swiperList += `<div class="swiper-slide"><img src="${img[i].src}" ></div>`
