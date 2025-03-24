@@ -149,6 +149,11 @@ class CartRuleRepository extends Repository
             $cartRuleCoupon = $this->cartRuleCouponRepository->deleteWhere(['is_primary' => 1, 'cart_rule_id' => $cartRule->id]);
         }
 
+        // process cart rule conditions products
+
+
+        
+
         return $cartRule;
     }
 

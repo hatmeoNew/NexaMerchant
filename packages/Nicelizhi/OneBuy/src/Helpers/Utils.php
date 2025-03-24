@@ -196,7 +196,7 @@ final class Utils {
 
         if($price == 0) {
             // send msg to the feishu
-            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config('onebuy.brand').' price is eq 0  product_id:'.$product_id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
+            //\Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config('onebuy.brand').' price is eq 0  product_id:'.$product_id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
         }
 
         
