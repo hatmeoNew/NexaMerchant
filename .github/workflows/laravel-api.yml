@@ -32,6 +32,7 @@ jobs:
         port: ${{secrets.SSH_PORT_US }}
         script: |
           cd /www/wwwroot/shell
+          git pull
           ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
           echo "Script started in the background. Check output.log for details."
     - name: Sync to Server 2 and Do it
@@ -45,6 +46,7 @@ jobs:
         port: ${{secrets.SSH_PORT }}
         script: |
           cd /www/wwwroot/shell
+          git pull
           ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
           echo "Script started in the background. Check output.log for details."   
     - name: Sync to Server 3 and Do it
@@ -58,5 +60,6 @@ jobs:
         port: ${{secrets.SSH_PORT }}
         script: |
           cd /www/wwwroot/shell
+          git pull
           ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
           echo "Script started in the background. Check output.log for details."
