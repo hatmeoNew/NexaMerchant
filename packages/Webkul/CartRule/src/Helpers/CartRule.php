@@ -601,6 +601,7 @@ class CartRule
         $customerGroup = $this->customerRepository->getCurrentGroup();
 
         $query = $this->cartRuleRepository
+            ->select('cart_rules.*', 'cart_rule_customer_groups.customer_group_id', 'cart_rule_channels.channel_id')
             ->leftJoin('cart_rule_customer_groups', 'cart_rules.id', '=',
                 'cart_rule_customer_groups.cart_rule_id')
             ->leftJoin('cart_rule_channels', 'cart_rules.id', '=', 'cart_rule_channels.cart_rule_id')
