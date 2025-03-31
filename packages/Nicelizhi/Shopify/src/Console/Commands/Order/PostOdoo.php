@@ -45,13 +45,6 @@ class PostOdoo extends Command
      */
     public function __construct()
     {
-        $this->ShopifyOrder = new ShopifyOrder();
-        $this->ShopifyStore = new ShopifyStore();
-        $this->customerRepository = app(CustomerRepository::class);
-        $this->Order = new Order();
-        $this->product = new \Webkul\Product\Models\Product();
-        $this->product_image = new \Webkul\Product\Models\ProductImage();
-        $this->shopify_store_id = config('shopify.shopify_store_id');
         parent::__construct();
     }
 
@@ -62,6 +55,13 @@ class PostOdoo extends Command
      */
     public function handle()
     {
+        $this->ShopifyOrder = new ShopifyOrder();
+        $this->ShopifyStore = new ShopifyStore();
+        $this->customerRepository = app(CustomerRepository::class);
+        $this->Order = new Order();
+        $this->product = new \Webkul\Product\Models\Product();
+        $this->product_image = new \Webkul\Product\Models\ProductImage();
+        $this->shopify_store_id = config('shopify.shopify_store_id');
 
         $shopifyStore = Cache::get("shopify_store_" . $this->shopify_store_id);
 
