@@ -3949,7 +3949,7 @@
             })
             .catch((error) => {
               $('#loading').hide();
-              showFailToast(t('Payment failed, please pay again'))
+              alert('Payment failed, please pay again')
               console.error('There was a problem with the fetch operation:', error)
               // You might want to show a user-friendly message or perform a fallback action here
             });

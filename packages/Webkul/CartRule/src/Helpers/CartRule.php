@@ -135,7 +135,7 @@ class CartRule
         // Use Laravel's cache to store cart rules
         $cacheKey = 'cart_rules_' . ($this->cart->customer_group_id ?? 'guest') . '_' . core()->getCurrentChannel()->id. '_' . implode(',', $productIds);
         $cacheTTL = config('cache.ttl.cart_rules', 60); // Cache for 60 minutes
-        
+
         $this->cartRules = cache()->remember($cacheKey, $cacheTTL, function () use ($productIds) {
             return $this->getCartRuleQuery($productIds)
                 ->with([
@@ -241,7 +241,7 @@ class CartRule
             //Log::info('Processing rule id: ' . $rule->id . ' for item id: ' . $item->id. ' and rule condition_type: ' . $rule->condition_type);
             // when rule condition type is 1, and all the cart item conditions are met
             if ($rule->condition_type == '1') {
-                
+
                 // get the cart all items needed for the rule condition
                 $cartItems = $this->cart->items;
                 // check every cart item for the rule condition
@@ -258,7 +258,7 @@ class CartRule
                     //continue;
                 }
 
-            } 
+            }
             if (! $this->validator->validate($rule, $item)) {
                 //Log::info('Rule validation failed for rule id: ' . $rule->id . ' and item id: ' . $item->id);
                 continue;
@@ -601,6 +601,7 @@ class CartRule
         $customerGroup = $this->customerRepository->getCurrentGroup();
 
         $query = $this->cartRuleRepository
+            ->select('cart_rules.*', 'cart_rule_customer_groups.customer_group_id', 'cart_rule_channels.channel_id')
             ->leftJoin('cart_rule_customer_groups', 'cart_rules.id', '=',
                 'cart_rule_customer_groups.cart_rule_id')
             ->leftJoin('cart_rule_channels', 'cart_rules.id', '=', 'cart_rule_channels.cart_rule_id')
@@ -629,7 +630,7 @@ class CartRule
 
     /**
      * Check if cart rules are available or not for current customer group and channel
-     * 
+     *
      * @return boolean
      */
     public function haveCartRules(): bool
