@@ -55,35 +55,37 @@ class PostOdoo extends Command
      */
     public function handle()
     {
-        $this->ShopifyOrder = new ShopifyOrder();
-        $this->ShopifyStore = new ShopifyStore();
+        $this->ShopifyOrder       = new ShopifyOrder();
+        $this->ShopifyStore       = new ShopifyStore();
         $this->customerRepository = app(CustomerRepository::class);
-        $this->Order = new Order();
-        $this->product = new \Webkul\Product\Models\Product();
-        $this->product_image = new \Webkul\Product\Models\ProductImage();
-        $this->shopify_store_id = config('shopify.shopify_store_id');
+        $this->Order              = new Order();
+        $this->product            = new \Webkul\Product\Models\Product();
+        $this->product_image      = new \Webkul\Product\Models\ProductImage();
+        $this->shopify_store_id   = config('shopify.shopify_store_id');
 
         $shopifyStore = Cache::get("shopify_store_" . $this->shopify_store_id);
 
-        if (empty($shopifyStore)) {
-            $shopifyStore = $this->ShopifyStore->where('shopify_store_id', $this->shopify_store_id)->first();
-            Cache::put("shopify_store_" . $this->shopify_store_id, $shopifyStore, 3600);
-        }
+        // if (empty($shopifyStore)) {
+        //     $shopifyStore = $this->ShopifyStore->where('shopify_store_id', $this->shopify_store_id)->first();
+        //     Cache::put("shopify_store_" . $this->shopify_store_id, $shopifyStore, 3600);
+        // }
 
 
-        if (is_null($shopifyStore)) {
-            $this->error("no store");
-            return false;
-        }
+        // if (is_null($shopifyStore)) {
+        //     $this->error("no store");
+        //     return false;
+        // }
 
         $order_id = $this->option("order_id");
 
         if (!empty($order_id)) {
-            $lists = Order::where(['status' => 'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
+            // where(['status' => 'processing'])->
+            $lists = Order::where("id", $order_id)->select(['id'])->limit(1)->get();
         } else {
             $lists = [];
-            //$lists = Order::where(['status'=>'processing'])->orderBy("updated_at", "desc")->select(['id'])->limit(100)->get();
         }
+        // var_export($lists);
+        // exit();
 
         //$this->checkLog();
 
@@ -146,7 +148,7 @@ class PostOdoo extends Command
         // }
 
         $this->info("sync to order to shopify " . $id);
-        echo $id . " start post \r\n";
+        // echo $id . " start post \r\n";
 
         $client = new Client();
 
@@ -162,16 +164,21 @@ class PostOdoo extends Command
 
         $orderPayment = $order->payment;
 
-        //var_dump($order);exit;
+        // var_export($orderPayment);exit;
 
         $postOrder = [];
 
         $line_items = [];
 
         $products = $order->items;
+        // dd(count($products));
         $q_ty = 0;
-        foreach ($products as $product) {
+        foreach ($products as $k => $product) {
+            // if ($k == 1) continue
+            // dd($product->toArray());
             $sku = $product['additional'];
+            // dump($sku);
+            // continue;
 
             $attributes = "";
 
@@ -196,10 +203,10 @@ class PostOdoo extends Command
             }
 
             $line_item = [];
-            $line_item['variant_id'] = $variant_id;
-            $line_item['quantity'] = $product['qty_ordered'];
+            // $line_item['variant_id'] = $variant_id;
+            // $line_item['quantity'] = $product['qty_ordered'];
             $line_item['price'] = $product['price'];
-            $line_item['product_id'] = $variant_id;
+            // $line_item['product_id'] = $variant_id;
             $price_set = [];
             $price_set['shop_money'] = [
                 'amount' => $product['price'],
@@ -209,11 +216,20 @@ class PostOdoo extends Command
 
             $line_item['title'] = $product['name'] . $product['sku'] . $attributes;
             $line_item['name'] = $product['name'] . $product['sku'] . $attributes;
-            $variant_sku = $this->product->where('id', $variant_id)->value('sku');
-            $line_item['sku'] = $variant_sku;
-            if (empty($variant_sku)) {
-                $line_item['sku'] = $sku['product_sku'];
+            // $variant_sku = $this->product->where('id', $variant_id)->value('sku');
+            // $line_item['sku'] = $variant_sku;
+
+            // format sku attributes
+            if (!empty($sku['attributes'])) {
+                $sku['attributes'] = array_values($sku['attributes']);
+            } else {
+                $sku['attributes'] = [];
             }
+
+            $line_item['sku'] = $sku;
+            // if (empty($variant_sku)) {
+            //     $line_item['sku'] = $sku['product_sku'];
+            // }
 
             $product_image = $this->product_image->where('product_id', $variant_id)->value('path');
 
@@ -229,11 +245,13 @@ class PostOdoo extends Command
 
             $q_ty += $product['qty_ordered'];
             $line_item['requires_shipping'] = true;
+            $line_item['discount_amount'] = $product['discount_amount'];
+            $line_item['qty_ordered'] = $product['qty_ordered'];
 
             array_push($line_items, $line_item);
         }
-
-        //var_dump($line_items);exit;
+        // die();
+        // dd($line_items);
 
         $shipping_address = $order->shipping_address;
         $billing_address = $order->billing_address;
@@ -341,6 +359,10 @@ class PostOdoo extends Command
         $postOrder['financial_status'] = $financial_status;
         $postOrder['transactions'] = $transactions;
         $postOrder['current_subtotal_price'] = $order->sub_total;
+        $postOrder['created_at'] = $order->created_at;
+        $postOrder['grand_total'] = $order->grand_total;
+        $postOrder['tax_amount'] = $order->tax_amount;
+        $postOrder['discount_amount'] = $order->discount_amount;
 
         $current_subtotal_price_set = [
             'shop_money' => [
@@ -457,6 +479,7 @@ class PostOdoo extends Command
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
         $pOrder['order'] = $postOrder;
+        // dd($postOrder);
         // var_dump($pOrder);
 
         //exit;
@@ -613,20 +636,24 @@ class PostOdoo extends Command
         // }
 
         // post the order to odoo erp
-        if (1 || config('OdooApi.enable')) {
-            $odoo_url = config('OdooApi.host');
-            $odoo_url = $odoo_url . "/api/nexamerchant/order?api_key=" . config('OdooApi.api_key');
-
+        // dd($pOrder);
+        if (1 || config('odoo_api.enable')) {
+            $odoo_url = 'http://localhost:8069';//config('OdooApi.host');
+            $odoo_url = $odoo_url . "/api/nexamerchant/order?api_key=" . config('odoo_api.api_key');
+            // dd($odoo_url);
             try {
                 $response = $client->post($odoo_url, [
-                    'http_errors' => true,
+                    // 'http_errors' => true,
                     'headers' => [
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                     ],
                     'body' => json_encode($pOrder)
                 ]);
+                echo "Status Code: " . $response->getStatusCode() . PHP_EOL;
+                echo "Response Body: " . $response->getBody() . PHP_EOL;
                 dd($response);
+                dd();
             } catch (ClientException $e) {
                 //var_dump($e);
                 var_dump($e->getMessage());
