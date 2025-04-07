@@ -164,20 +164,21 @@ class PostOdoo extends Command
 
         $orderPayment = $order->payment;
 
-        // var_export($orderPayment);exit;
+        // dd($order);
 
         $postOrder = [];
 
         $line_items = [];
 
         $products = $order->items;
+        // dd($products);
         // dd(count($products));
         $q_ty = 0;
         foreach ($products as $k => $product) {
             // if ($k == 1) continue
             // dd($product->toArray());
             $sku = $product['additional'];
-            // dump($sku);
+            // dd($product);
             // continue;
 
             $attributes = "";
@@ -247,7 +248,8 @@ class PostOdoo extends Command
             $line_item['requires_shipping'] = true;
             $line_item['discount_amount'] = $product['discount_amount'];
             $line_item['qty_ordered'] = $product['qty_ordered'];
-
+            $line_item['default_code'] = $product['sku'];
+            dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
             array_push($line_items, $line_item);
         }
         // die();
@@ -281,6 +283,9 @@ class PostOdoo extends Command
             "zip" => $billing_address->postcode
         ];
         $postOrder['billing_address'] = $billing_address;
+        $postOrder['payment'] = $orderPayment->toArray();
+        echo $postOrder['payment']['method'], PHP_EOL;
+        // dd($postOrder['payment']);
 
         // create user
         $customer = $this->customerRepository->findOneByField('email', $shipping_address->email);
@@ -481,162 +486,8 @@ class PostOdoo extends Command
         $pOrder['order'] = $postOrder;
         // dd($postOrder);
         // var_dump($pOrder);
-
-        //exit;
-
-        // $crm_url = config('onebuy.crm_url');
-        // $app_env = config("app.env");
-        // if ($app_env == 'demo') {
-        //     $cnv_id = explode('-', $orderPayment['method_title']);
-        //     $crm_channel = config('onebuy.crm_channel');
-        //     $url = $crm_url . "/api/offers/callBack?refer=" . $cnv_id[1] . "&revenue=" . $order->grand_total . "&currency_code=" . $order->order_currency_code . "&channel_id=" . $crm_channel . "&q_ty=" . $q_ty . "&email=" . $shipping_address->email;
-        //     $res = $this->get_content($url);
-        //     Log::info("post to bm 2 url " . $url . " res " . json_encode($res));
-        //     return true;
-        // }
-
-        // try {
-        //     // create shopify orders
-        //     $response = $client->post($shopify['shopify_app_host_name'] . '/admin/api/2023-10/orders.json', [
-        //         'http_errors' => true,
-        //         'headers' => [
-        //             'Content-Type' => 'application/json',
-        //             'Accept' => 'application/json',
-        //             'X-Shopify-Access-Token' => $shopify['shopify_admin_access_token'],
-        //         ],
-        //         'body' => json_encode($pOrder)
-        //     ]);
-        // } catch (ClientException $e) {
-        //     //var_dump($e);
-        //     var_dump($e->getMessage());
-        //     Log::error(json_encode($e->getMessage()));
-        //     \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage() . '--' . $id . " fix check it ");
-        //     echo $e->getMessage() . " post failed";
-        //     //continue;
-        //     return false;
-        // }
-
-        // 创建完后将结果记录到本地
-        // $body = json_decode($response->getBody(), true);
-        // //Log::info("shopify post order body ". json_encode($pOrder));
-        // //Log::info("shopify post order".json_encode($body));
-        // if (isset($body['order']['id'])) {
-
-        //     $shopifyNewOrder = $this->ShopifyOrder->where([
-        //         'shopify_order_id' => $body['order']['id']
-        //     ])->first();
-        //     if (is_null($shopifyNewOrder)) $shopifyNewOrder = new ShopifyOrder();
-
-        //     $item = $body['order'];
-
-        //     $shopifyNewOrder->order_id = $id;
-        //     $shopifyNewOrder->shopify_order_id = $body['order']['id'];
-        //     $shopifyNewOrder->shopify_store_id = $this->shopify_store_id;
-        //     $shopifyNewOrder->admin_graphql_api_id = $item['admin_graphql_api_id'];
-        //     $shopifyNewOrder->app_id = $item['app_id'];
-        //     $shopifyNewOrder->browser_ip = $item['browser_ip'];
-        //     $shopifyNewOrder->buyer_accepts_marketing = $item['buyer_accepts_marketing'];
-        //     $shopifyNewOrder->cancel_reason = $item['cancel_reason'];
-        //     $shopifyNewOrder->cancelled_at = $item['cancelled_at'];
-        //     $shopifyNewOrder->cart_token = $item['cart_token'];
-        //     $shopifyNewOrder->checkout_id = $item['checkout_id'];
-        //     $shopifyNewOrder->checkout_token = $item['checkout_token'];
-        //     $shopifyNewOrder->client_details = $item['client_details'];
-        //     $shopifyNewOrder->closed_at = $item['closed_at'];
-        //     $shopifyNewOrder->company = @$item['company'];
-        //     $shopifyNewOrder->confirmation_number = $item['confirmation_number'];
-        //     $shopifyNewOrder->confirmed = $item['confirmed'];
-        //     $shopifyNewOrder->contact_email = $item['contact_email'];
-        //     $shopifyNewOrder->currency = $item['currency'];
-        //     $shopifyNewOrder->current_subtotal_price = $item['current_subtotal_price'];
-        //     $shopifyNewOrder->current_subtotal_price_set = $item['current_subtotal_price_set'];
-        //     $shopifyNewOrder->current_total_additional_fees_set = $item['current_total_additional_fees_set'];
-        //     $shopifyNewOrder->current_total_discounts = $item['current_total_discounts'];
-        //     $shopifyNewOrder->current_total_discounts_set = $item['current_total_discounts_set'];
-        //     $shopifyNewOrder->current_total_duties_set = $item['current_total_duties_set'];
-        //     $shopifyNewOrder->current_total_price = $item['current_total_price'];
-        //     $shopifyNewOrder->current_total_price_set = $item['current_total_price_set'];
-        //     $shopifyNewOrder->current_total_tax = $item['current_total_tax'];
-        //     $shopifyNewOrder->current_total_tax_set = $item['current_total_tax_set'];
-        //     $shopifyNewOrder->customer_locale = $item['customer_locale'];
-        //     $shopifyNewOrder->device_id = $item['device_id'];
-        //     $shopifyNewOrder->discount_codes = $item['discount_codes'];
-        //     $shopifyNewOrder->email = $item['email'];
-        //     $shopifyNewOrder->estimated_taxes = $item['estimated_taxes'];
-        //     $shopifyNewOrder->financial_status = $item['financial_status'];
-        //     $shopifyNewOrder->fulfillment_status = $item['fulfillment_status'];
-        //     $shopifyNewOrder->landing_site = $item['landing_site'];
-        //     $shopifyNewOrder->landing_site_ref = $item['landing_site_ref'];
-        //     $shopifyNewOrder->location_id = $item['location_id'];
-        //     $shopifyNewOrder->merchant_of_record_app_id = $item['merchant_of_record_app_id'];
-        //     $shopifyNewOrder->name = $item['name'];
-        //     $shopifyNewOrder->note = $item['note'];
-        //     $shopifyNewOrder->note_attributes = $item['note_attributes'];
-        //     $shopifyNewOrder->number = $item['number'];
-        //     $shopifyNewOrder->order_number = $item['order_number'];
-        //     $shopifyNewOrder->order_status_url = $item['order_status_url'];
-        //     $shopifyNewOrder->original_total_additional_fees_set = $item['original_total_additional_fees_set'];
-        //     $shopifyNewOrder->original_total_duties_set = $item['original_total_duties_set'];
-        //     $shopifyNewOrder->payment_gateway_names = $item['payment_gateway_names'];
-        //     $shopifyNewOrder->phone = $item['phone'];
-        //     $shopifyNewOrder->po_number = $item['po_number'];
-        //     $shopifyNewOrder->presentment_currency = $item['presentment_currency'];
-        //     $shopifyNewOrder->processed_at = $item['processed_at'];
-        //     $shopifyNewOrder->reference = $item['reference'];
-        //     $shopifyNewOrder->referring_site = $item['referring_site'];
-        //     $shopifyNewOrder->source_identifier = $item['source_identifier'];
-        //     $shopifyNewOrder->source_name = $item['source_name'];
-        //     $shopifyNewOrder->source_url = $item['source_url'];
-        //     $shopifyNewOrder->subtotal_price = $item['subtotal_price'];
-        //     $shopifyNewOrder->subtotal_price_set = $item['subtotal_price_set'];
-        //     $shopifyNewOrder->tags = $item['tags'];
-        //     $shopifyNewOrder->tax_exempt = $item['tax_exempt'];
-        //     $shopifyNewOrder->tax_lines = $item['tax_lines'];
-        //     $shopifyNewOrder->taxes_included = $item['taxes_included'];
-        //     $shopifyNewOrder->test = $item['test'];
-        //     $shopifyNewOrder->token = $item['token'];
-        //     $shopifyNewOrder->total_discounts = $item['total_discounts'];
-        //     $shopifyNewOrder->total_discounts_set = $item['total_discounts_set'];
-        //     $shopifyNewOrder->total_line_items_price = $item['total_line_items_price'];
-        //     $shopifyNewOrder->total_line_items_price_set = $item['total_line_items_price_set'];
-        //     $shopifyNewOrder->total_outstanding = $item['total_outstanding'];
-        //     $shopifyNewOrder->total_price = $item['total_price'];
-        //     $shopifyNewOrder->total_price_set = $item['total_price_set'];
-        //     $shopifyNewOrder->total_shipping_price_set = $item['total_shipping_price_set'];
-        //     $shopifyNewOrder->total_tax = $item['total_tax'];
-        //     $shopifyNewOrder->total_tax_set = $item['total_tax_set'];
-        //     $shopifyNewOrder->total_tip_received = $item['total_tip_received'];
-        //     $shopifyNewOrder->total_weight = $item['total_weight'];
-        //     $shopifyNewOrder->user_id = $item['user_id'];
-        //     $shopifyNewOrder->billing_address = $item['billing_address'];
-        //     $shopifyNewOrder->customer = $item['customer'];
-        //     $shopifyNewOrder->discount_applications = $item['discount_applications'];
-        //     $shopifyNewOrder->fulfillments = $item['fulfillments'];
-        //     $shopifyNewOrder->line_items = $item['line_items'];
-        //     $shopifyNewOrder->payment_terms = $item['payment_terms'];
-        //     $shopifyNewOrder->refunds = $item['refunds'];
-        //     $shopifyNewOrder->shipping_address = $item['shipping_address'];
-        //     $shopifyNewOrder->shipping_lines = $item['shipping_lines'];
-
-        //     $shopifyNewOrder->save();
-
-        //     // order sync to other job
-
-        //     $cnv_id = explode('-', $orderPayment['method_title']);
-        //     $crm_channel = config('onebuy.crm_channel');
-        //     $url = $crm_url . "/api/offers/callBack?refer=" . $cnv_id[1] . "&revenue=" . $order->grand_total . "&currency_code=" . $order->order_currency_code . "&channel_id=" . $crm_channel . "&q_ty=" . $q_ty . "&email=" . $item['email'] . "&order_id=" . $id;
-        //     $res = $this->get_content($url);
-        //     Log::info("post to bm 2 url " . $url . " res " . json_encode($res));
-
-        //     // order check
-        //     // for cod order need check the order
-        //     if ($orderPayment['method'] == 'codpayment') {
-        //         Artisan::queue("GooglePlaces:check-order", ['--order_id' => $id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
-        //     }
-        // }
-
         // post the order to odoo erp
-        // dd($pOrder);
+        // dump($pOrder);
         if (1 || config('odoo_api.enable')) {
             $odoo_url = 'http://localhost:8069';//config('OdooApi.host');
             $odoo_url = $odoo_url . "/api/nexamerchant/order?api_key=" . config('odoo_api.api_key');
@@ -652,7 +503,7 @@ class PostOdoo extends Command
                 ]);
                 echo "Status Code: " . $response->getStatusCode() . PHP_EOL;
                 echo "Response Body: " . $response->getBody() . PHP_EOL;
-                dd($response);
+                // dd($response);
                 dd();
             } catch (ClientException $e) {
                 //var_dump($e);
