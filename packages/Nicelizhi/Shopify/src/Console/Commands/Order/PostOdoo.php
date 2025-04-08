@@ -52,6 +52,8 @@ class PostOdoo extends Command
      */
     public function handle()
     {
+        $this->info("start post order");
+
         $this->customerRepository = app(CustomerRepository::class);
         $this->Order              = new Order();
         $this->product            = new \Webkul\Product\Models\Product();
@@ -64,7 +66,8 @@ class PostOdoo extends Command
             $lists = Order::where("id", $order_id)->select(['id'])->limit(1)->get();
         } else {
             $lists = [];
-            $this->error("no Order");
+            // $this->error("no Order");
+            $this->info("no order");
         }
 
         foreach ($lists as $list) {
