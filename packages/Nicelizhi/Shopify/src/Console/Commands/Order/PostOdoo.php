@@ -11,6 +11,7 @@ use GuzzleHttp\Exception\ClientException;
 use Nicelizhi\Shopify\Models\OdooOrder;
 use Nicelizhi\Shopify\Models\OdooCustomer;
 use Nicelizhi\Shopify\Models\OdooProducts;
+use PHPUnit\Event\Runtime\PHP;
 use Webkul\Customer\Repositories\CustomerRepository;
 
 class PostOdoo extends Command
@@ -390,6 +391,7 @@ class PostOdoo extends Command
             $odoo_url = 'http://172.236.143.182:8070';//config('OdooApi.host');
             $odoo_url = $odoo_url . "/api/nexamerchant/order?api_key=" . config('odoo_api.api_key');
             // dd($odoo_url);
+            echo $odoo_url, PHP_EOL;
             try {
                 $response = $client->post($odoo_url, [
                     // 'http_errors' => true,
