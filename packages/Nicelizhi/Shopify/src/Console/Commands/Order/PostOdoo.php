@@ -64,6 +64,7 @@ class PostOdoo extends Command
             $lists = Order::where("id", $order_id)->select(['id'])->limit(1)->get();
         } else {
             $lists = [];
+            $this->error("no Order");
         }
 
         foreach ($lists as $list) {
