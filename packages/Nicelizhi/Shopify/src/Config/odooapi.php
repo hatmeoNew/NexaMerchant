@@ -1,5 +1,6 @@
 <?php
 return [
+    'host' => env('ODOO_HOST', 'http://172.236.143.182:8070/'),
     'odoo_app_host_name' => env('SHOPIFY_APP_HOST_NAME', "https://wmshoe.myshopify.com"),
     'shopify_admin_access_token'  => env('SHOPIFY_ADMIN_ACCESS_TOKEN'),
     'shopify_client_id'  => env('SHOPIFY_CLIENT_ID'),

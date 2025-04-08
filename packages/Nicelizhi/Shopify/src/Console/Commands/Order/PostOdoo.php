@@ -2,17 +2,16 @@
 
 namespace Nicelizhi\Shopify\Console\Commands\Order;
 
-use Illuminate\Console\Command;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
-use Nicelizhi\Shopify\Models\ShopifyOrder;
-use Nicelizhi\Shopify\Models\ShopifyStore;
 use Webkul\Sales\Models\Order;
-use GuzzleHttp\Exception\ClientException;
-use Webkul\Customer\Repositories\CustomerRepository;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Artisan;
+use GuzzleHttp\Exception\ClientException;
+use Nicelizhi\Shopify\Models\OdooOrder;
+use Nicelizhi\Shopify\Models\OdooCustomer;
+use Nicelizhi\Shopify\Models\OdooProducts;
+use Webkul\Customer\Repositories\CustomerRepository;
 
 class PostOdoo extends Command
 {
@@ -30,9 +29,7 @@ class PostOdoo extends Command
      */
     protected $description = 'create Order odoo:order:post';
 
-    private $shopify_store_id = null;
     private $customerRepository = null;
-    private $product = null;
     private $product_image = null;
 
     //protected ShopifyOrder $ShopifyOrder,
@@ -55,68 +52,25 @@ class PostOdoo extends Command
      */
     public function handle()
     {
-        $this->ShopifyOrder       = new ShopifyOrder();
-        $this->ShopifyStore       = new ShopifyStore();
         $this->customerRepository = app(CustomerRepository::class);
         $this->Order              = new Order();
         $this->product            = new \Webkul\Product\Models\Product();
         $this->product_image      = new \Webkul\Product\Models\ProductImage();
         $this->shopify_store_id   = config('shopify.shopify_store_id');
 
-        $shopifyStore = Cache::get("shopify_store_" . $this->shopify_store_id);
-
-        // if (empty($shopifyStore)) {
-        //     $shopifyStore = $this->ShopifyStore->where('shopify_store_id', $this->shopify_store_id)->first();
-        //     Cache::put("shopify_store_" . $this->shopify_store_id, $shopifyStore, 3600);
-        // }
-
-
-        // if (is_null($shopifyStore)) {
-        //     $this->error("no store");
-        //     return false;
-        // }
-
         $order_id = $this->option("order_id");
 
         if (!empty($order_id)) {
-            // where(['status' => 'processing'])->
             $lists = Order::where("id", $order_id)->select(['id'])->limit(1)->get();
         } else {
             $lists = [];
         }
-        // var_export($lists);
-        // exit();
 
-        //$this->checkLog();
-
-        foreach ($lists as $key => $list) {
+        foreach ($lists as $list) {
             $this->info("start post order " . $list->id);
-            $this->postOrder($list->id, $shopifyStore);
-            // $this->syncOrderPrice($list); // sync price to system
-            //exit;
+            $this->postOrder($list->id);
+            $this->syncOrderPrice($list); // sync price to system
         }
-    }
-
-    /**
-     *
-     * check the today log file
-     *
-     */
-
-    public function checkLog()
-    {
-
-        //return false;
-        // use grep command to gerneter new log file
-
-        $yesterday = date("Y-m-d", strtotime('-1 days'));
-
-        $big_log_file = storage_path('logs/laravel-' . $yesterday . '.log');
-        $error_log_file = storage_path('logs/error-' . $yesterday . '.log');
-        echo $big_log_file . "\r\n";
-        echo $error_log_file . "\r\n";
-
-        if (!file_exists($error_log_file)) exec("cat " . $big_log_file . " | grep SQLSTATE >" . $error_log_file);
     }
 
     /**
@@ -128,53 +82,31 @@ class PostOdoo extends Command
     public function syncOrderPrice($orderItem)
     {
         if ($orderItem->grand_total_invoiced == '0.0000') {
-
             $base_grand_total_invoiced = $orderItem->base_grand_total;
             $grand_total_invoiced = $orderItem->grand_total;
             Order::where(['id' => $orderItem->id])->update(['grand_total_invoiced' => $grand_total_invoiced, 'base_grand_total_invoiced' => $base_grand_total_invoiced]);
         }
     }
 
-    public function postOrder($id, $shopifyStore)
+    public function postOrder($id)
     {
-        //return false;
-        // check the shopify have sync
-
-        // $shopifyOrder = $this->ShopifyOrder->where([
-        //     'order_id' => $id
-        // ])->first();
-        // if (!is_null($shopifyOrder)) {
-        //     return false;
-        // }
-
         $this->info("sync to order to shopify " . $id);
-        // echo $id . " start post \r\n";
 
         $client = new Client();
 
-        // $shopify = $shopifyStore->toArray();
-
-        /**
-         *
-         * @link https://shopify.dev/docs/api/admin-rest/2023-10/resources/order#post-orders
-         *
-         */
-        // $id = 147;
         $order = $this->Order->findOrFail($id);
+        // dd($order->toArray());
 
         $orderPayment = $order->payment;
-
-        // dd($order);
 
         $postOrder = [];
 
         $line_items = [];
 
         $products = $order->items;
-        // dd($products);
-        // dd(count($products));
+
         $q_ty = 0;
-        foreach ($products as $k => $product) {
+        foreach ($products as $product) {
             // if ($k == 1) continue
             // dd($product->toArray());
             $sku = $product['additional'];
@@ -252,13 +184,11 @@ class PostOdoo extends Command
             dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
             array_push($line_items, $line_item);
         }
-        // die();
         // dd($line_items);
 
         $shipping_address = $order->shipping_address;
         $billing_address = $order->billing_address;
         $postOrder['line_items'] = $line_items;
-
 
         $customer = [];
         $customer = [
@@ -330,11 +260,6 @@ class PostOdoo extends Command
             ]
         ];
 
-        // if($shipping_address->email=='test@example.com') {
-        //     $postOrder['test'] = true;
-        //     return false;
-        // }
-
         $financial_status = "paid";
 
         if ($orderPayment['method'] == 'codpayment') {
@@ -381,22 +306,6 @@ class PostOdoo extends Command
         ];
         $postOrder['current_subtotal_price_set'] = $current_subtotal_price_set;
 
-        // $total_shipping_price_set = [];
-        // $shop_money = [];
-        // $shop_money['amount'] = $order->shipping_amount;
-        // $shop_money['currency_code'] = $order->order_currency_code;
-        // $total_shipping_price_set['shop_money'] = $shop_money;
-        // $total_shipping_price_set['presentment_money'] = $shop_money;
-
-        if ($order->shipping_amount == '14.9850') {
-            $str = "aud order";
-            //\Nicelizhi\Shopify\Helpers\Utils::send($str.'--' .$id. " 需要留意查看 ");
-            //continue;
-            //return false;
-            $postOrder['send_receipt'] = true;
-        } else {
-            $postOrder['send_receipt'] = true;
-        }
 
         $total_shipping_price_set = [
             "shop_money" => [
@@ -410,24 +319,7 @@ class PostOdoo extends Command
         ];
 
         $postOrder['total_shipping_price_set'] = $total_shipping_price_set;
-
-        // $discount_codes = [];
-        // $discount_codes = [
-        //     'code' => 'COUPON_CODE',
-        //     'amount' => $order->discount_amount,
-        //     'type' => 'percentage'
-        // ];
-
-        /**
-         *
-         * If you're working on a private app and order confirmations are still being sent to the customer when send_receipt is set to false, then you need to disable the Storefront API from the private app's page in the Shopify admin.
-         *
-         */
-
         $postOrder['send_receipt'] = false;
-        //$postOrder['send_receipt'] = true;
-        // $postOrder['discount_codes'] = $discount_codes;
-
         $postOrder['current_total_discounts'] = $order->discount_amount;
         $current_total_discounts_set = [
             'shop_money' => [
@@ -484,12 +376,9 @@ class PostOdoo extends Command
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
         $pOrder['order'] = $postOrder;
-        // dd($postOrder);
-        // var_dump($pOrder);
-        // post the order to odoo erp
-        // dump($pOrder);
+
         if (1 || config('odoo_api.enable')) {
-            $odoo_url = 'http://localhost:8069';//config('OdooApi.host');
+            $odoo_url = 'http://172.236.143.182:8070';//config('OdooApi.host');
             $odoo_url = $odoo_url . "/api/nexamerchant/order?api_key=" . config('odoo_api.api_key');
             // dd($odoo_url);
             try {
@@ -501,10 +390,27 @@ class PostOdoo extends Command
                     ],
                     'body' => json_encode($pOrder)
                 ]);
+                if ($response->getStatusCode() == 200) {
+                    $response_body = json_decode($response->getBody(), true);
+                    $response_data = $response_body['result'];
+                    if ($response_data['success'] == true) {
+                        // dd($response_data['data']);
+                        try {
+                            $this->syncOdooLog($response_data['data']);
+                        } catch (\Throwable $th) {
+                            echo $th->getMessage(), PHP_EOL;
+                        }
+                        echo $id . " post success \r\n";
+                        return true;
+                    } else {
+                        echo $id . " post failed \r\n";
+                        return false;
+                    }
+                }
                 echo "Status Code: " . $response->getStatusCode() . PHP_EOL;
                 echo "Response Body: " . $response->getBody() . PHP_EOL;
                 // dd($response);
-                dd();
+                // dd();
             } catch (ClientException $e) {
                 //var_dump($e);
                 var_dump($e->getMessage());
@@ -519,14 +425,85 @@ class PostOdoo extends Command
         echo $id . " end post \r\n";
     }
 
-    private function get_content($URL)
+    public function syncOdooLog($data)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_URL, $URL);
-        $data = curl_exec($ch);
-        curl_close($ch);
-        return $data;
+        $orderData = $data['order_data'];
+        $customerData = $data['customer_data'];
+        $productsData = $data['product_data'];
+
+        OdooOrder::create([
+            'name'                => $orderData['name'],
+            'partner_id'          => $orderData['partner_id'],
+            'partner_invoice_id'  => $orderData['partner_invoice_id'],
+            'partner_shipping_id' => $orderData['partner_shipping_id'],
+            'pricelist_id'        => $orderData['pricelist_id'],
+            'currency_id'         => $orderData['currency_id'],
+            'payment_term_id'     => $orderData['payment_term_id'],
+            'team_id'             => $orderData['team_id'],
+            'user_id'             => $orderData['user_id'],
+            'company_id'          => $orderData['company_id'],
+            'warehouse_id'        => $orderData['warehouse_id'],
+            'client_order_ref'    => $orderData['client_order_ref'],
+            'date_order'          => $orderData['date_order'],
+            'state'               => $orderData['state'],
+            'invoice_status'      => $orderData['invoice_status'],
+            'picking_policy'      => $orderData['picking_policy'],
+            'amount_tax'          => $orderData['amount_tax'],
+            'amount_total'        => $orderData['amount_total'],
+            'created_at'          => date('Y-m-d H:i:s'),
+            'updated_at'          => date('Y-m-d H:i:s'),
+        ]);
+
+        OdooCustomer::create([
+            'name'                  => $customerData['name'],
+            'email'                 => $customerData['email'],
+            'phone'                 => $customerData['phone'],
+            'mobile'                => $customerData['mobile'],
+            'street'                => $customerData['street'],
+            'street2'               => $customerData['street2'],
+            'zip'                   => $customerData['zip'],
+            'city'                  => $customerData['city'],
+            'state_id'              => $customerData['state_id'],
+            'country_id'            => $customerData['country_id'],
+            'vat'                   => $customerData['vat'],
+            'function'              => $customerData['function'],
+            'title'                 => $customerData['title'],
+            'company_id'            => $customerData['company_id'],
+            'category_id'           => $customerData['category_id'],
+            'user_id'               => $customerData['user_id'],
+            'team_id'               => $customerData['team_id'],
+            'lang'                  => $customerData['lang'],
+            'tz'                    => $customerData['tz'],
+            'active'                => $customerData['active'],
+            'company_type'          => $customerData['company_type'],
+            'is_company'            => $customerData['is_company'],
+            'color'                 => $customerData['color'],
+            'partner_share'         => $customerData['partner_share'],
+            'commercial_partner_id' => $customerData['commercial_partner_id'],
+            'type'                  => $customerData['type'],
+            'signup_token'          => $customerData['signup_token'],
+            'signup_type'           => $customerData['signup_type'],
+            'signup_expiration'     => $customerData['signup_expiration'],
+            'signup_url'            => $customerData['signup_url'],
+            'partner_gid'           => $customerData['partner_gid'],
+            'created_at'            => date('Y-m-d H:i:s'),
+            'updated_at'            => date('Y-m-d H:i:s'),
+        ]);
+
+        foreach ($productsData as $productData) {
+            OdooProducts::create([
+                'name'         => $productData['name'],
+                'product_id'   => $productData['product_id'],
+                'default_code' => $productData['default_code'],
+                'type'         => $productData['type'],
+                'list_price'   => $productData['list_price'],
+                'currency_id'  => $productData['currency_id'],
+                'uom_id'       => $productData['uom_id'],
+                'categ_id'     => $productData['categ_id'],
+                'created_at'   => date('Y-m-d H:i:s'),
+                'updated_at'   => date('Y-m-d H:i:s'),
+            ]);
+        }
     }
 
     public function createCuster($data)
