@@ -390,10 +390,11 @@ class PostOdoo extends Command
                     ],
                     'body' => json_encode($pOrder)
                 ]);
+                echo "Response Body: " . $response->getBody() . PHP_EOL;
                 if ($response->getStatusCode() == 200) {
                     $response_body = json_decode($response->getBody(), true);
                     $response_data = $response_body['result'];
-                    if ($response_data['success'] == true) {
+                    if (!empty($response_data['success']) && $response_data['success'] == true) {
                         // dd($response_data['data']);
                         try {
                             $this->syncOdooLog($response_data['data']);
@@ -407,8 +408,6 @@ class PostOdoo extends Command
                         return false;
                     }
                 }
-                echo "Status Code: " . $response->getStatusCode() . PHP_EOL;
-                echo "Response Body: " . $response->getBody() . PHP_EOL;
                 // dd($response);
                 // dd();
             } catch (ClientException $e) {
