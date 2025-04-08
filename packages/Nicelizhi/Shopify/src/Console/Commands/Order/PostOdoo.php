@@ -54,27 +54,32 @@ class PostOdoo extends Command
     {
         $this->info("start post order");
 
-        $this->customerRepository = app(CustomerRepository::class);
-        $this->Order              = new Order();
-        $this->product            = new \Webkul\Product\Models\Product();
-        $this->product_image      = new \Webkul\Product\Models\ProductImage();
-        $this->shopify_store_id   = config('shopify.shopify_store_id');
+        try {
+            $this->customerRepository = app(CustomerRepository::class);
+            $this->Order              = new Order();
+            $this->product            = new \Webkul\Product\Models\Product();
+            $this->product_image      = new \Webkul\Product\Models\ProductImage();
+            $this->shopify_store_id   = config('shopify.shopify_store_id');
 
-        $order_id = $this->option("order_id");
+            $order_id = $this->option("order_id");
 
-        if (!empty($order_id)) {
-            $lists = Order::where("id", $order_id)->select(['id'])->limit(1)->get();
-        } else {
-            $lists = [];
-            // $this->error("no Order");
-            $this->info("no order");
+            if (!empty($order_id)) {
+                $lists = Order::where("id", $order_id)->select(['id'])->limit(1)->get();
+            } else {
+                $lists = [];
+                // $this->error("no Order");
+                $this->info("no order");
+            }
+
+            foreach ($lists as $list) {
+                $this->info("start post order " . $list->id);
+                $this->postOrder($list->id);
+                $this->syncOrderPrice($list); // sync price to system
+            }
+        } catch (\Throwable $th) {
+            $this->info($th->getMessage() . ' | ' . $th->getLine());
         }
 
-        foreach ($lists as $list) {
-            $this->info("start post order " . $list->id);
-            $this->postOrder($list->id);
-            $this->syncOrderPrice($list); // sync price to system
-        }
     }
 
     /**
