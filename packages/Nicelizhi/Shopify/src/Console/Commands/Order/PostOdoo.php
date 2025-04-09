@@ -416,7 +416,7 @@ class PostOdoo extends Command
                         return true;
                     } else {
                         echo $id . " post failed \r\n";
-                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message']);
+                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id);
                         return false;
                     }
                 }
