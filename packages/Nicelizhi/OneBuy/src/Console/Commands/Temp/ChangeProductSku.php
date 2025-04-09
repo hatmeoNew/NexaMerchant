@@ -13,8 +13,8 @@ class ChangeProductSku extends Command
         $this->info('Change product sku id');
         
         
-        $products = \Webkul\Product\Models\Product::where('type', 'configurable')->get(); // for product
-        //$products = \Webkul\Product\Models\Product::where('id', '1671')->get(); // for test
+        //$products = \Webkul\Product\Models\Product::where('type', 'configurable')->get(); // for product
+        $products = \Webkul\Product\Models\Product::where('id', '1878')->get(); // for test
 
         // product variant
         foreach ($products as $product) {
@@ -72,6 +72,7 @@ class ChangeProductSku extends Command
                             $this->warn('super_attribute_id : '.$super_attribute_id);
                             $attribute_options = \Webkul\Attribute\Models\AttributeOption::where('attribute_id', $super_attribute_id)->where('admin_name', $label)->first();
                             if(is_null($attribute_options)) {
+                                $this->error('attribute_options is label '. $label);
                                 $this->error('attribute_options is null '. $product_attribute_values->integer_value);
                                 continue;
                                 //exit;
@@ -83,9 +84,17 @@ class ChangeProductSku extends Command
                             if($product_attribute_values->integer_value != $attribute_options->id) {
                                 $this->error('attribute_options is not equal '. $product_attribute_values->integer_value. ' - '.$attribute_options->id);
                                 // update the integer_value to attribute_options
-                                $attribute_options->id = $product_attribute_values->integer_value;
-                                $attribute_options->save();
-                                var_dump($attribute_options->toArray());
+                                if($attribute_options->id != 0) {
+                                    $product_attribute_values->integer_value = $attribute_options->id;
+                                    $product_attribute_values->save();
+                                }else{
+                                    var_dump($attribute_options->toArray());
+                                    var_dump($product_attribute_values->toArray());
+                                    $this->error('product_attribute_values is null '. $product_attribute_values->integer_value);
+                                    exit;
+                                }
+
+ 
                                 //exit;
                             }
 
