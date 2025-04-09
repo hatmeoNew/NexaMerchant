@@ -11,7 +11,6 @@ use GuzzleHttp\Exception\ClientException;
 use Nicelizhi\Shopify\Models\OdooOrder;
 use Nicelizhi\Shopify\Models\OdooCustomer;
 use Nicelizhi\Shopify\Models\OdooProducts;
-use PHPUnit\Event\Runtime\PHP;
 use Webkul\Customer\Repositories\CustomerRepository;
 
 class PostOdoo extends Command
@@ -66,6 +65,7 @@ class PostOdoo extends Command
 
             if (!empty($order_id)) {
                 $lists = Order::where("id", $order_id)->select(['id'])->limit(1)->get();
+                // $lists = Order::where("id", ">=", $order_id)->select(['id'])->limit(50)->get();
             } else {
                 $lists = [];
                 // $this->error("no Order");
@@ -114,16 +114,17 @@ class PostOdoo extends Command
         $line_items = [];
 
         $products = $order->items;
+        // dd($products);
 
         $q_ty = 0;
-        foreach ($products as $product) {
-            // if ($k == 1) continue
+        foreach ($products as $k => $product) {
+            // if ($k == 0) continue;
             // dd($product->toArray());
             $sku = $product['additional'];
-            // dd($product);
-            // continue;
 
             $attributes = "";
+
+            // dump($product['price'] . ' ~~~~~' . $product['discount_amount']);
 
             if (isset($sku['attributes'])) {
                 foreach ($sku['attributes'] as $sku_attribute) {
@@ -146,10 +147,7 @@ class PostOdoo extends Command
             }
 
             $line_item = [];
-            // $line_item['variant_id'] = $variant_id;
-            // $line_item['quantity'] = $product['qty_ordered'];
             $line_item['price'] = $product['price'];
-            // $line_item['product_id'] = $variant_id;
             $price_set = [];
             $price_set['shop_money'] = [
                 'amount' => $product['price'],
@@ -159,10 +157,7 @@ class PostOdoo extends Command
 
             $line_item['title'] = $product['name'] . $product['sku'] . $attributes;
             $line_item['name'] = $product['name'] . $product['sku'] . $attributes;
-            // $variant_sku = $this->product->where('id', $variant_id)->value('sku');
-            // $line_item['sku'] = $variant_sku;
 
-            // format sku attributes
             if (!empty($sku['attributes'])) {
                 $sku['attributes'] = array_values($sku['attributes']);
             } else {
@@ -170,13 +165,9 @@ class PostOdoo extends Command
             }
 
             $line_item['sku'] = $sku;
-            // if (empty($variant_sku)) {
-            //     $line_item['sku'] = $sku['product_sku'];
-            // }
 
             $product_image = $this->product_image->where('product_id', $variant_id)->value('path');
 
-            // add image to line item
             if (!empty($product_image)) {
                 $line_item['properties'] = [
                     [
@@ -191,10 +182,11 @@ class PostOdoo extends Command
             $line_item['discount_amount'] = $product['discount_amount'];
             $line_item['qty_ordered'] = $product['qty_ordered'];
             $line_item['default_code'] = $product['sku'];
-            dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
+            // dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
             array_push($line_items, $line_item);
         }
-        // dd($line_items);
+
+        // dd();
 
         $shipping_address = $order->shipping_address;
         $billing_address = $order->billing_address;
@@ -225,7 +217,6 @@ class PostOdoo extends Command
         $postOrder['billing_address'] = $billing_address;
         $postOrder['payment'] = $orderPayment->toArray();
         echo $postOrder['payment']['method'], PHP_EOL;
-        // dd($postOrder['payment']);
 
         // create user
         $customer = $this->customerRepository->findOneByField('email', $shipping_address->email);
@@ -240,7 +231,6 @@ class PostOdoo extends Command
                 $data['gender'] = $shipping_address->gender;
                 $data['phone'] = $shipping_address->phone;
 
-                //var_dump($data);
                 $this->createCuster($data);
             }
         }
@@ -257,10 +247,6 @@ class PostOdoo extends Command
         ];
 
         $postOrder['shipping_address'] = $shipping_address;
-
-        //$postOrder['email'] = "";
-
-        $transactions = [];
 
         $transactions = [
             [
@@ -379,32 +365,35 @@ class PostOdoo extends Command
         ];
 
         $postOrder['shipping_lines'][] = $shipping_lines;
-
-        $postOrder['buyer_accepts_marketing'] = true; //
-        $postOrder['name'] = config('shopify.order_pre') . '#' . $id;
+        $postOrder['buyer_accepts_marketing'] = true;
         $postOrder['order_number'] = $id;
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
+        // dd();
         $pOrder['order'] = $postOrder;
-
+        // dd($postOrder);
         if (1 || config('odoo_api.enable')) {
-            $odoo_url = 'http://172.236.143.182:8070';//config('OdooApi.host');
-            $odoo_url = $odoo_url . "/api/nexamerchant/order?api_key=" . config('odoo_api.api_key');
+            // $odoo_url = 'http://172.236.143.182:8070';
+            // $odoo_url = 'http://127.0.0.1:8069';
+            $odoo_url = config('odoo_api.host');
+            $odoo_url = $odoo_url . "/api/nexamerchant/order";
             // dd($odoo_url);
-            echo $odoo_url, PHP_EOL;
+            // dd $odoo_url, PHP_EOL;
             try {
                 $response = $client->post($odoo_url, [
-                    // 'http_errors' => true,
                     'headers' => [
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . config('odoo_api.api_token'),
                     ],
                     'body' => json_encode($pOrder)
                 ]);
-                echo "Response Body: " . $response->getBody() . PHP_EOL;
+                // echo "Response Body: " . $response->getBody() . PHP_EOL;
+                // dd();
                 if ($response->getStatusCode() == 200) {
                     $response_body = json_decode($response->getBody(), true);
                     $response_data = $response_body['result'];
+                    // dd($response_data);
                     if (!empty($response_data['success']) && $response_data['success'] == true) {
                         // dd($response_data['data']);
                         try {
@@ -455,6 +444,7 @@ class PostOdoo extends Command
             'company_id'          => $orderData['company_id'],
             'warehouse_id'        => $orderData['warehouse_id'],
             'client_order_ref'    => $orderData['client_order_ref'],
+            'origin'              => $orderData['origin'],
             'date_order'          => $orderData['date_order'],
             'state'               => $orderData['state'],
             'invoice_status'      => $orderData['invoice_status'],
