@@ -73,8 +73,8 @@ class AirwallexController extends Controller
         $input = $request->all();
 
         // check the webhook version
-        if($input['version'] !== '2023-10-01') {
-            
+        $supportedVersions = ['2023-10-01','2022-11-11'];
+        if (!isset($input['version']) || !in_array($input['version'], $supportedVersions)) {
             // send message to feish
             \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config("app.name").' airwallex webhook version is not match, please check it ');
             Log::info("airwallex notification received for object ".$input['name']." webhook version is not match");
@@ -190,6 +190,9 @@ class AirwallexController extends Controller
 
             return response('OK', 200);
         }else {
+
+            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config("app.name").' airwallex webhook is not support, please check it ');
+
             return response('Invalid notification', 400);
         }
     }
@@ -227,7 +230,7 @@ class AirwallexController extends Controller
     }
 
 
-    protected function webhookProcess($name, $data)
+    protected function webhookProcess($name, $data, $version="2023-10-01")
     {
         //$webhookhelp = new \Webkul\Airwallex\Helpers\Webhook($name, $data);
         $webhookhelp = $this->webhookhelp->init($name, $data);

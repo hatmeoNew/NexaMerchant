@@ -14,6 +14,7 @@ class WebHook {
 
     private $name = null;
     private $data = null;
+    private $version = null;
 
     public function __construct(
     ) {
@@ -22,6 +23,7 @@ class WebHook {
     public function init($name, $data){
         $this->name = $name;
         $this->data = $data;
+        $this->version = $data['version'];
         return $this;
     }
 
