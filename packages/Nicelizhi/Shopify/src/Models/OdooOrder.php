@@ -22,6 +22,7 @@ class OdooOrder extends Model
         'company_id',
         'warehouse_id',
         'client_order_ref',
+        'origin',
         'date_order',
         'state',
         'invoice_status',
