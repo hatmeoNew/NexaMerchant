@@ -49,7 +49,7 @@ class Post extends Command
      * @return void
      */
     public function __construct(
-        
+
     )
     {
         $this->ShopifyOrder = new ShopifyOrder();
@@ -88,13 +88,20 @@ class Post extends Command
 
         $order_id = $this->option("order_id");
 
+        try {
+            Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order_id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
+            $this->info('push odoo success. id=' . $order_id);
+        } catch (\Throwable $th) {
+            $this->info('push odoo fail. id=' . $order_id);
+            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($th->getMessage() . ' --order_id=' . $order_id);
+        }
+
         if(!empty($order_id)) {
             $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
         }else{
             $lists = [];
             //$lists = Order::where(['status'=>'processing'])->orderBy("updated_at", "desc")->select(['id'])->limit(100)->get();
         }
-        
 
         //$this->checkLog();
 
@@ -106,13 +113,13 @@ class Post extends Command
         }
 
 
-        
+
     }
 
     /**
-     * 
+     *
      * check the today log file
-     * 
+     *
      */
 
      public function checkLog() {
@@ -128,25 +135,25 @@ class Post extends Command
        echo $error_log_file."\r\n";
 
        if(!file_exists($error_log_file)) exec("cat ".$big_log_file." | grep SQLSTATE >".$error_log_file);
-       
+
 
      }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param object orderitem
-     * 
+     *
      */
     public function syncOrderPrice($orderItem) {
         if($orderItem->grand_total_invoiced=='0.0000') {
-            
+
             $base_grand_total_invoiced = $orderItem->base_grand_total;
             $grand_total_invoiced = $orderItem->grand_total;
             Order::where(['id'=>$orderItem->id])->update(['grand_total_invoiced'=>$grand_total_invoiced, 'base_grand_total_invoiced'=>$base_grand_total_invoiced]);
 
         }
-        
+
     }
 
     public function postOrder($id, $shopifyStore) {
@@ -168,18 +175,18 @@ class Post extends Command
         $shopify = $shopifyStore->toArray();
 
         /**
-         * 
+         *
          * @link https://shopify.dev/docs/api/admin-rest/2023-10/resources/order#post-orders
-         * 
+         *
          */
         // $id = 147;
         $order = $this->Order->findOrFail($id);
 
-        $orderPayment = $order->payment;  
+        $orderPayment = $order->payment;
 
-        
 
-        
+
+
 
         //var_dump($order);exit;
 
@@ -193,7 +200,7 @@ class Post extends Command
             $sku = $product['additional'];
 
             var_dump($sku);
-            
+
             $attributes = "";
 
             if(isset($sku['attributes'])) {
@@ -201,7 +208,7 @@ class Post extends Command
                     $attributes .= $sku_attribute['attribute_name'].":".$sku_attribute['option_label'].";";
                 }
             }
-            
+
             $variant_id = $sku['selected_configurable_option'];
             //var_dump($variant_id);
             // check the product_sku have "-"
@@ -217,7 +224,7 @@ class Post extends Command
             if(!is_numeric($variant_id)) {
                 $variant_id = $sku['selected_configurable_option'];
             }
-            
+
 
             $line_item = [];
             $line_item['variant_id'] = $variant_id;
@@ -282,7 +289,7 @@ class Post extends Command
             "last_name" => $billing_address->last_name,
             "address1" => $billing_address->address1,
             //$input['phone_full'] = str_replace('undefined+','', $input['phone_full']);
-            
+
             "phone" => $shipping_address->phone,
             "city" => $billing_address->city,
             "province" => $billing_address->state,
@@ -306,11 +313,11 @@ class Post extends Command
                 $data['phone'] = $shipping_address->phone;
 
                 //var_dump($data);
-    
+
                 $this->createCuster($data);
             }
         }
-        
+
 
         $shipping_address = [
             "first_name" => $shipping_address->first_name,
@@ -326,7 +333,7 @@ class Post extends Command
         $postOrder['shipping_address'] = $shipping_address;
 
         //$postOrder['email'] = "";
-        
+
         $transactions = [];
 
         $transactions = [
@@ -341,9 +348,9 @@ class Post extends Command
         //     $postOrder['test'] = true;
         //     return false;
         // }
-        
 
-        
+
+
         $financial_status = "paid";
 
         if($orderPayment['method']=='codpayment') {
@@ -368,7 +375,7 @@ class Post extends Command
                 ]
             ];
 
-            
+
 
         }
 
@@ -404,9 +411,9 @@ class Post extends Command
             //\Nicelizhi\Shopify\Helpers\Utils::send($str.'--' .$id. " 需要留意查看 ");
             //continue;
             //return false;
-            $postOrder['send_receipt'] = true; 
+            $postOrder['send_receipt'] = true;
         }else{
-            $postOrder['send_receipt'] = true; 
+            $postOrder['send_receipt'] = true;
         }
 
         $total_shipping_price_set = [
@@ -430,13 +437,13 @@ class Post extends Command
         // ];
 
         /**
-         * 
+         *
          * If you're working on a private app and order confirmations are still being sent to the customer when send_receipt is set to false, then you need to disable the Storefront API from the private app's page in the Shopify admin.
-         * 
+         *
          */
 
-        $postOrder['send_receipt'] = false; 
-        //$postOrder['send_receipt'] = true; 
+        $postOrder['send_receipt'] = false;
+        //$postOrder['send_receipt'] = true;
 
         // $postOrder['discount_codes'] = $discount_codes;
 
@@ -491,7 +498,7 @@ class Post extends Command
 
         $postOrder['shipping_lines'][] = $shipping_lines;
 
-        $postOrder['buyer_accepts_marketing'] = true; // 
+        $postOrder['buyer_accepts_marketing'] = true; //
 
         $postOrder['name'] = config('shopify.order_pre').'#'.$id;
         $postOrder['order_number'] = $id;
@@ -508,7 +515,7 @@ class Post extends Command
         if($app_env=='demo') {
 
             $cnv_id = explode('-',$orderPayment['method_title']);
-            
+
 
             $crm_channel = config('onebuy.crm_channel');
 
@@ -539,7 +546,7 @@ class Post extends Command
             return false;
         }
 
-        
+
 
         $body = json_decode($response->getBody(), true);
         //Log::info("shopify post order body ". json_encode($pOrder));
@@ -626,7 +633,7 @@ class Post extends Command
             $shopifyNewOrder->total_outstanding = $item['total_outstanding'];
             $shopifyNewOrder->total_price = $item['total_price'];
             $shopifyNewOrder->total_price_set = $item['total_price_set'];
-            
+
             $shopifyNewOrder->total_shipping_price_set = $item['total_shipping_price_set'];
             $shopifyNewOrder->total_tax = $item['total_tax'];
             $shopifyNewOrder->total_tax_set = $item['total_tax_set'];
@@ -652,7 +659,7 @@ class Post extends Command
 
             $crm_channel = config('onebuy.crm_channel');
 
-            
+
             $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$item['email']."&order_id=".$id;
             $res = $this->get_content($url);
             Log::info("post to bm 2 url ".$url." res ".json_encode($res));
@@ -662,7 +669,7 @@ class Post extends Command
             if($orderPayment['method']=='codpayment'){
                 Artisan::queue("GooglePlaces:check-order",['--order_id'=>$id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
             }
-           
+
         }
 
         // post the order to odoo erp
@@ -690,7 +697,7 @@ class Post extends Command
                 return false;
             }
         }
-        
+
 
         echo $id." end post \r\n";
     }
@@ -716,5 +723,5 @@ class Post extends Command
 
         $this->customerRepository->create($data);
     }
-    
+
 }
