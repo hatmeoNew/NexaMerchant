@@ -59,7 +59,6 @@ class PostOdoo extends Command
             $this->Order              = new Order();
             $this->product            = new \Webkul\Product\Models\Product();
             $this->product_image      = new \Webkul\Product\Models\ProductImage();
-            $this->shopify_store_id   = config('shopify.shopify_store_id');
 
             $order_id = $this->option("order_id");
 
@@ -68,7 +67,6 @@ class PostOdoo extends Command
                 // $lists = Order::where("id", ">=", $order_id)->select(['id'])->limit(50)->get();
             } else {
                 $lists = [];
-                // $this->error("no Order");
                 $this->info("no order");
             }
 
@@ -100,7 +98,7 @@ class PostOdoo extends Command
 
     public function postOrder($id)
     {
-        $this->info("sync to order to shopify " . $id);
+        $this->info("sync to order to odoo " . $id);
 
         $client = new Client();
 
@@ -108,23 +106,22 @@ class PostOdoo extends Command
         // dd($order->toArray());
 
         $orderPayment = $order->payment;
+        // dd($orderPayment->toArray());
 
         $postOrder = [];
 
         $line_items = [];
 
         $products = $order->items;
-        // dd($products);
+        // dd(count($products));
 
         $q_ty = 0;
         foreach ($products as $k => $product) {
             // if ($k == 0) continue;
-            // dd($product->toArray());
+            // dump($product->toArray());
             $sku = $product['additional'];
 
             $attributes = "";
-
-            // dump($product['price'] . ' ~~~~~' . $product['discount_amount']);
 
             if (isset($sku['attributes'])) {
                 foreach ($sku['attributes'] as $sku_attribute) {
@@ -182,6 +179,9 @@ class PostOdoo extends Command
             $line_item['discount_amount'] = $product['discount_amount'];
             $line_item['qty_ordered'] = $product['qty_ordered'];
             $line_item['default_code'] = $product['sku'];
+
+            dump($product['qty_ordered'] . ' ~~~~~'  . $product['price'] . ' ~~~~~' . $product['discount_amount']);
+
             // dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
             array_push($line_items, $line_item);
         }
@@ -373,8 +373,6 @@ class PostOdoo extends Command
         $pOrder['order'] = $postOrder;
         // dd($postOrder);
         if (1 || config('odoo_api.enable')) {
-            // $odoo_url = 'http://172.236.143.182:8070';
-            // $odoo_url = 'http://127.0.0.1:8069';
             $odoo_url = config('odoo_api.host');
             $odoo_url = $odoo_url . "/api/nexamerchant/order";
             // dd($odoo_url);
