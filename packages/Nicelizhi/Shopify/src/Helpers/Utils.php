@@ -77,6 +77,13 @@ final class Utils {
         // text msg add client referer
         $text = $text."--".request()->header('referer');
 
+        // if have login user
+        if(auth()->check()) {
+            $user = auth()->user();
+            $text = $text."--". $user->email;
+            $text = $text."--". $user->name;
+        }
+
         $argc = [];
         $argc['msg_type'] = "text";
         $argc['content'] = [

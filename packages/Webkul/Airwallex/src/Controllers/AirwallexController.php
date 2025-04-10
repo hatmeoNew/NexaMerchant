@@ -71,6 +71,17 @@ class AirwallexController extends Controller
     {
         Log::info(json_encode($request->all())); // log body
         $input = $request->all();
+
+        // check the webhook version
+        if($input['version'] !== '2023-10-01') {
+            
+            // send message to feish
+            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config("app.name").' airwallex webhook version is not match, please check it ');
+            Log::info("airwallex notification received for object ".$input['name']." webhook version is not match");
+
+            return response('Invalid version', 400);
+        }
+
         // order webhook
         if (isset($input['data']['object']['merchant_order_id'])) {
 
@@ -92,7 +103,7 @@ class AirwallexController extends Controller
 
             if ($order) {
                 Log::info("airwallex notification received for order id:" . $transactionId);    
-                $status = $input['data']['object']['status'];
+                $status = isset($input['data']['object']['status']) ? $input['data']['object']['status'] : null;
                 if ($status === 'SUCCEEDED' && $input['name']==='payment_intent.succeeded') {
 
                     if($order->status!=='pending') {
