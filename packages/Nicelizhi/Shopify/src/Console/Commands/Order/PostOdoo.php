@@ -180,7 +180,7 @@ class PostOdoo extends Command
             $line_item['qty_ordered'] = $product['qty_ordered'];
             $line_item['default_code'] = $product['sku'];
 
-            dump($product['qty_ordered'] . ' ~~~~~'  . $product['price'] . ' ~~~~~' . $product['discount_amount']);
+            dump($product['sku'] . '~~~' . $product['qty_ordered'] . ' ~~~~~'  . $product['price'] . ' ~~~~~' . $product['discount_amount']);
 
             // dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
             array_push($line_items, $line_item);
@@ -370,6 +370,7 @@ class PostOdoo extends Command
         $postOrder['name'] = config('odoo_api.order_prefix') . $id;
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
+        $postOrder['website_name'] = config('odoo_api.website_name');
         // dd();
         $pOrder['order'] = $postOrder;
         // dd($postOrder);
