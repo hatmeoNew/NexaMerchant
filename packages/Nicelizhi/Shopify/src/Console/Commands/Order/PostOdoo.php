@@ -370,8 +370,7 @@ class PostOdoo extends Command
         $postOrder['name'] = config('odoo_api.order_prefix') . $id;
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
-        $postOrder['website_name'] = config('odoo_api.website_name');
-        // dd();
+        $postOrder['website_name'] = self::getRootDomain(config('odoo_api.website_url'));
         $pOrder['order'] = $postOrder;
         // dd($postOrder);
         if (1 || config('odoo_api.enable')) {
@@ -525,5 +524,50 @@ class PostOdoo extends Command
         ]);
 
         $this->customerRepository->create($data);
+    }
+
+    function getRootDomain($url)
+    {
+        // 解析主机名
+        $host = parse_url($url, PHP_URL_HOST);
+
+        // 如果没有 host，尝试从路径中取
+        if (!$host) {
+            $host = $url;
+        }
+
+        // 转换为小写
+        $host = strtolower($host);
+
+        // 去掉前缀的 www.
+        $host = preg_replace('/^www\./', '', $host);
+
+        // 用点号分隔
+        $parts = explode('.', $host);
+
+        // 如果是IP或localhost直接返回
+        if (filter_var($host, FILTER_VALIDATE_IP) || $host === 'localhost') {
+            return $host;
+        }
+
+        $count = count($parts);
+
+        // 多级域名判断，默认返回最后两个
+        if ($count >= 2) {
+            // 判断特殊的二级后缀情况，比如 .com.cn, .co.uk 等
+            $commonTlds = [
+                'com.cn', 'net.cn', 'org.cn', 'gov.cn',
+                'com.hk', 'co.uk', 'org.uk', 'gov.uk',
+            ];
+            $lastTwo = $parts[$count - 2] . '.' . $parts[$count - 1];
+
+            if (in_array($lastTwo, $commonTlds) && $count >= 3) {
+                return $parts[$count - 3] . '.' . $lastTwo;
+            }
+
+            return $lastTwo;
+        }
+
+        return $host;
     }
 }
