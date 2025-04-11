@@ -367,6 +367,7 @@ class PostOdoo extends Command
         $postOrder['shipping_lines'][] = $shipping_lines;
         $postOrder['buyer_accepts_marketing'] = true;
         $postOrder['order_number'] = $id;
+        $postOrder['name'] = config('odoo_api.order_prefix') . $id;
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
         // dd();
