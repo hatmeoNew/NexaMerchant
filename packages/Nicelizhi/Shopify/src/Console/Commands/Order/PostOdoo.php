@@ -391,20 +391,26 @@ class PostOdoo extends Command
                 // dd();
                 if ($response->getStatusCode() == 200) {
                     $response_body = json_decode($response->getBody(), true);
-                    $response_data = $response_body['result'];
-                    // dd($response_data);
-                    if (!empty($response_data['success']) && $response_data['success'] == true) {
-                        // dd($response_data['data']);
-                        try {
-                            $this->syncOdooLog($response_data['data']);
-                        } catch (\Throwable $th) {
-                            echo $th->getMessage(), PHP_EOL;
+                    try {
+                        $response_data = $response_body['result'];
+                        // dd($response_data);
+                        if (!empty($response_data['success']) && $response_data['success'] == true) {
+                            // dd($response_data['data']);
+                            try {
+                                $this->syncOdooLog($response_data['data']);
+                            } catch (\Throwable $th) {
+                                echo $th->getMessage(), PHP_EOL;
+                            }
+                            echo $id . " post success \r\n";
+                            return true;
+                        } else {
+                            echo $id . " post failed \r\n";
+                            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id);
+                            return false;
                         }
-                        echo $id . " post success \r\n";
-                        return true;
-                    } else {
-                        echo $id . " post failed \r\n";
-                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id);
+                    } catch (\Throwable $th) {
+                        echo $th->getMessage(), PHP_EOL;
+                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response->getBody() . ' --order_id=' . $id);
                         return false;
                     }
                 }
