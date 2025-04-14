@@ -2,7 +2,6 @@
 return [
     'host' => env('ODOO_HOST'),
     'api_token' => env('ODOO_API_TOKEN'),
-    'order_prefix' => env('ODOO_ORDER_PRE'),
     'website_url' => env('SHOP_URL'),
     'odoo_app_host_name' => env('SHOPIFY_APP_HOST_NAME'),
     'wcom_noticle_url' => env('WCOME_NOTICLE_URL'),
