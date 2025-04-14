@@ -63,7 +63,7 @@ class PostOdoo extends Command
             $order_id = $this->option("order_id");
 
             if (!empty($order_id)) {
-                $lists = Order::where("id", $order_id)->select(['id'])->limit(1)->get();
+                $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
                 // $lists = Order::where("id", ">=", $order_id)->select(['id'])->limit(50)->get();
             } else {
                 $lists = [];
