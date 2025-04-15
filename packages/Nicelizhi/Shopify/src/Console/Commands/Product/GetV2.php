@@ -497,7 +497,7 @@ class GetV2 extends Command
 
                 $this->info($info['filename']);
 
-                $image_path = "product/".$id."/".$info['filename'].".webp";
+                $image_path = "product/".$id."/".md5($info['filename']).".webp";
                 $local_image_path = "storage/".$image_path;
                 $this->info(public_path($local_image_path));
                 if(!file_exists(public_path($local_image_path))) {
@@ -570,7 +570,7 @@ class GetV2 extends Command
     
                     $this->info($info['filename']);
     
-                    $image_path = "product/".$sku->id."/".$info['filename'].".webp";
+                    $image_path = "product/".$sku->id."/".md5($info['filename']).".webp";
                     $local_image_path = "storage/".$image_path;
                     $this->info(public_path($local_image_path));
                     if(!file_exists(public_path($local_image_path))) {
