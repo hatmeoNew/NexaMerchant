@@ -157,6 +157,7 @@
             "NexaMerchant\\OdooApi\\": "packages\/Apps\/OdooApi\/src",
             "NexaMerchant\\Shopify\\": "packages\/Apps\/Shopify\/src",
             "NexaMerchant\\Feeds\\": "packages\/Apps\/Feeds\/src",
+            "NexaMerchant\\Blog\\": "packages\/Apps\/Blog\/src",
             "NexaMerchant\\GoogleAdsense\\": "packages\/Apps\/GoogleAdsense\/src",
             "NexaMerchant\\CheckoutCod\\": "packages\/Apps\/CheckoutCod\/src",
             "Obuchmann\\OdooJsonRpc\\": "packages\/Apps\/odoo-jsonrpc\/src",
