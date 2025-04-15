@@ -30,7 +30,7 @@ class Post extends Command
      *
      * @var string
      */
-    protected $description = 'create Order shopify:order:post';
+    protected $description = 'create Order shopify:order:post {--order_id=}';
 
     private $shopify_store_id = null;
     private $lang = null;
@@ -284,6 +284,14 @@ class Post extends Command
         $shipping_address->phone = str_replace('undefined', '', $shipping_address->phone);
         $shipping_address->city = empty($shipping_address->city) ? $shipping_address->state : $shipping_address->city;
 
+        // if the country is JP and the province need select the country_state table and get the name
+        if($billing_address->country=='JP') {
+            $country_state = \Webkul\Core\Models\CountryState::where('code', $billing_address->state)->where("country_code",$billing_address->country)->first();
+            if(!is_null($country_state)) {
+                $billing_address->state = $country_state->default_name;
+            }
+        }
+
         $billing_address = [
             "first_name" => $billing_address->first_name,
             "last_name" => $billing_address->last_name,
@@ -315,6 +323,14 @@ class Post extends Command
                 //var_dump($data);
 
                 $this->createCuster($data);
+            }
+        }
+
+        // if the country is JP and the province need select the country_state table and get the name
+        if($shipping_address->country=='JP') {
+            $country_state = \Webkul\Core\Models\CountryState::where('code', $shipping_address->state)->where("country_code",$shipping_address->country)->first();
+            if(!is_null($country_state)) {
+                $shipping_address->state = $country_state->default_name;
             }
         }
 
