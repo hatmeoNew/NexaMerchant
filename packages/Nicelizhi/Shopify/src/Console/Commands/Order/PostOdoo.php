@@ -11,6 +11,7 @@ use GuzzleHttp\Exception\ClientException;
 use Nicelizhi\Shopify\Models\OdooOrder;
 use Nicelizhi\Shopify\Models\OdooCustomer;
 use Nicelizhi\Shopify\Models\OdooProducts;
+use Webkul\Core\Models\CountryState;
 use Webkul\Customer\Repositories\CustomerRepository;
 
 class PostOdoo extends Command
@@ -246,6 +247,7 @@ class PostOdoo extends Command
             "phone" => $shipping_address->phone,
             "city" => $shipping_address->city,
             "province" => $shipping_address->state,
+            'state_name' => CountryState::where('code', $shipping_address->state)->where('country_code', $shipping_address->country)->value('default_name'),
             "country" => $shipping_address->country,
             "zip" => $shipping_address->postcode
         ];
