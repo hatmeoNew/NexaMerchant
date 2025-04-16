@@ -391,7 +391,7 @@ class PostOdoo extends Command
                     ],
                     'body' => json_encode($pOrder)
                 ]);
-                // echo "Response Body: " . $response->getBody() . PHP_EOL;
+                echo "Response Body: " . $response->getBody() . PHP_EOL;
                 // dd();
                 if ($response->getStatusCode() == 200) {
                     $response_body = json_decode($response->getBody(), true);
