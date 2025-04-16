@@ -409,12 +409,12 @@ class PostOdoo extends Command
                             return true;
                         } else {
                             echo $id . " post failed \r\n";
-                            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id);
+                            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
                             return false;
                         }
                     } catch (\Throwable $th) {
                         echo $th->getMessage(), PHP_EOL;
-                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response->getBody() . ' --order_id=' . $id);
+                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response->getBody() . ' --order_id=' . $id) . ' website:' . $postOrder['website_name'];
                         return false;
                     }
                 }
