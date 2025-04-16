@@ -67,6 +67,7 @@ class PostOdoo extends Command
                 // $lists = Order::where("id", ">=", $order_id)->select(['id'])->limit(50)->get();
             } else {
                 $lists = [];
+                echo "no order", PHP_EOL;
                 $this->info("no order");
             }
 
