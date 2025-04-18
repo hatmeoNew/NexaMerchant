@@ -117,75 +117,37 @@ class PostOdoo extends Command
 
         $line_items = [];
 
-        $products = $order->items;
-        // dd(count($products));
+        $orderItems = $order->items;
 
-        $q_ty = 0;
-        foreach ($products as $k => $product) {
-            // if ($k == 0) continue;
-            // dump($product->toArray());
-            $sku = $product['additional'];
-
-            $attributes = "";
-
-            if (isset($sku['attributes'])) {
-                foreach ($sku['attributes'] as $sku_attribute) {
-                    $attributes .= $sku_attribute['attribute_name'] . ":" . $sku_attribute['option_label'] . ";";
-                }
-            }
-
-            $variant_id = $sku['selected_configurable_option'];
-            if (isset($sku['product_sku']) && strpos($sku['product_sku'], '-') !== false) {
-                $skuInfo = explode('-', $sku['product_sku']);
-                if (!isset($skuInfo[1])) {
-                    $this->error("have error" . $id);
-                    return false;
-                }
-                $variant_id = $skuInfo[1];
-            }
-
-            if (!is_numeric($variant_id)) {
-                $variant_id = $sku['selected_configurable_option'];
-            }
+        foreach ($orderItems as $orderItem) {
 
             $line_item = [];
-            $line_item['price'] = $product['price'];
-            $price_set = [];
-            $price_set['shop_money'] = [
-                'amount' => $product['price'],
-                'currency_code' => $order->order_currency_code
-            ];
-            $line_item['price_set'] = $price_set;
 
-            $line_item['title'] = $product['name'] . $product['sku'] . $attributes;
-            $line_item['name'] = $product['name'] . $product['sku'] . $attributes;
-
-            if (!empty($sku['attributes'])) {
-                $sku['attributes'] = array_values($sku['attributes']);
-            } else {
-                $sku['attributes'] = [];
-            }
-
-            $line_item['sku'] = $sku;
-
-            $product_image = $this->product_image->where('product_id', $variant_id)->value('path');
-
-            if (!empty($product_image)) {
-                $line_item['properties'] = [
-                    [
-                        'name' => 'image',
-                        'value' => $product_image
-                    ]
-                ];
-            }
-
-            $q_ty += $product['qty_ordered'];
+            $line_item['name'] = $orderItem['name'];
+            $line_item['price'] = $orderItem['price'];
             $line_item['requires_shipping'] = true;
-            $line_item['discount_amount'] = $product['discount_amount'];
-            $line_item['qty_ordered'] = $product['qty_ordered'];
-            $line_item['default_code'] = $product['sku'];
+            $line_item['discount_amount'] = $orderItem['discount_amount'];
+            $line_item['qty_ordered'] = $orderItem['qty_ordered'];
+            $line_item['default_code'] = $orderItem['sku'];
 
-            dump($product['sku'] . '~~~' . $product['qty_ordered'] . ' ~~~~~'  . $product['price'] . ' ~~~~~' . $product['discount_amount']);
+            $additional = $orderItem['additional'];
+            // dd($additional);
+
+            if (empty($additional['product_sku'])) {
+                $variant_id = $additional['selected_configurable_option'];
+                $additional['product_sku'] = $this->product->where('id', $variant_id)->value('sku');
+                $additional['img'] = $this->product_image->where('product_id', $variant_id)->value('path');
+            }
+
+            if (!empty($additional['attributes'])) {
+                $additional['attributes'] = array_values($additional['attributes']);
+            } else {
+                $additional['attributes'] = [];
+            }
+
+            $line_item['sku'] = $additional;
+
+            dump($orderItem['sku'] . '~~~' . $orderItem['qty_ordered'] . ' ~~~~~'  . $orderItem['price'] . ' ~~~~~' . $orderItem['discount_amount']);
 
             // dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
             array_push($line_items, $line_item);
@@ -194,7 +156,6 @@ class PostOdoo extends Command
         // dd();
 
         $shipping_address = $order->shipping_address;
-        $billing_address = $order->billing_address;
         $postOrder['line_items'] = $line_items;
 
         $customer = [];
@@ -207,21 +168,6 @@ class PostOdoo extends Command
 
         $shipping_address->phone = str_replace('undefined', '', $shipping_address->phone);
         $shipping_address->city = empty($shipping_address->city) ? $shipping_address->state : $shipping_address->city;
-
-        $billing_address = [
-            "first_name" => $billing_address->first_name,
-            "last_name" => $billing_address->last_name,
-            "address1" => $billing_address->address1,
-            //$input['phone_full'] = str_replace('undefined+','', $input['phone_full']);
-            "phone" => $shipping_address->phone,
-            "city" => $billing_address->city,
-            "province" => $billing_address->state,
-            "country" => $billing_address->country,
-            "zip" => $billing_address->postcode
-        ];
-        $postOrder['billing_address'] = $billing_address;
-        $postOrder['payment'] = $orderPayment->toArray();
-        echo $postOrder['payment']['method'], PHP_EOL;
 
         // create user
         $customer = $this->customerRepository->findOneByField('email', $shipping_address->email);
@@ -254,136 +200,36 @@ class PostOdoo extends Command
 
         $postOrder['shipping_address'] = $shipping_address;
 
-        $transactions = [
-            [
-                "kind" => "sales",
-                "status" => "success",
-                "amount" => $order->grand_total,
-            ]
-        ];
-
-        $financial_status = "paid";
-
         if ($orderPayment['method'] == 'codpayment') {
-            $financial_status = "pending";
             $postOrder['payment_gateway_names'] = [
                 "codPay",
                 "cash_on_delivery"
             ];
-
-            // when cod payment need format the price to Round integer
             $order->grand_total = round($order->grand_total);
             $order->sub_total = round($order->sub_total);
             $order->discount_amount = round($order->discount_amount);
             $order->shipping_amount = round($order->shipping_amount);
-
-            $transactions = [
-                [
-                    "kind" => "sale",
-                    "status" => "pending",
-                    "amount" => $order->grand_total,
-                    "gateway" => "Cash on Delivery (COD)"
-                ]
-            ];
         }
 
-        //$postOrder['financial_status'] = "paid";
-        $postOrder['financial_status'] = $financial_status;
-        $postOrder['transactions'] = $transactions;
-        $postOrder['current_subtotal_price'] = $order->sub_total;
+        $postOrder['payment'] = $orderPayment->toArray();
         $postOrder['created_at'] = $order->created_at;
         $postOrder['grand_total'] = $order->grand_total;
         $postOrder['tax_amount'] = $order->tax_amount;
         $postOrder['discount_amount'] = $order->discount_amount;
-
-        $current_subtotal_price_set = [
-            'shop_money' => [
-                "amount" => $order->sub_total,
-                "currency_code" => $order->order_currency_code,
-            ],
-            'presentment_money' => [
-                "amount" => $order->sub_total,
-                "currency_code" => $order->order_currency_code,
-            ]
-        ];
-        $postOrder['current_subtotal_price_set'] = $current_subtotal_price_set;
-
-
-        $total_shipping_price_set = [
-            "shop_money" => [
-                "amount" => $order->shipping_amount,
-                "currency_code" => $order->order_currency_code,
-            ],
-            "presentment_money" => [
-                "amount" => $order->shipping_amount,
-                "currency_code" => $order->order_currency_code,
-            ]
-        ];
-
-        $postOrder['total_shipping_price_set'] = $total_shipping_price_set;
         $postOrder['send_receipt'] = false;
         $postOrder['current_total_discounts'] = $order->discount_amount;
-        $current_total_discounts_set = [
-            'shop_money' => [
-                'amount' => $order->discount_amount,
-                'currency_code' => $order->order_currency_code
-            ],
-            'presentment_money' => [
-                'amount' => $order->discount_amount,
-                'currency_code' => $order->order_currency_code
-            ]
-        ];
-        $postOrder['current_total_discounts_set'] = $current_total_discounts_set;
         $postOrder['total_discount'] = $order->discount_amount;
-        $total_discount_set = [];
-        $total_discount_set = [
-            'shop_money' => [
-                'amount' => $order->discount_amount,
-                'currency_code' => $order->order_currency_code
-            ],
-            'presentment_money' => [
-                'amount' => $order->discount_amount,
-                'currency_code' => $order->order_currency_code
-            ]
-        ];
-        $postOrder['total_discount_set'] = $total_discount_set;
         $postOrder['total_discounts'] = $order->discount_amount;
-
-        $shipping_lines = [];
-        $shipping_lines = [
-            'price' => $order->shipping_amount,
-            'code' => 'Standard',
-            "title" => "Standard Shipping",
-            "source" => "us_post",
-            "tax_lines" => [],
-            "carrier_identifier" => "third_party_carrier_identifier",
-            "requested_fulfillment_service_id" => "third_party_fulfillment_service_id",
-            "price_set" => [
-                'shop_money' => [
-                    'amount' => $order->shipping_amount,
-                    'currency_code' => $order->order_currency_code
-                ],
-                'presentment_money' => [
-                    'amount' => $order->shipping_amount,
-                    'currency_code' => $order->order_currency_code
-                ]
-            ]
-        ];
-
-        $postOrder['shipping_lines'][] = $shipping_lines;
-        $postOrder['buyer_accepts_marketing'] = true;
         $postOrder['order_number'] = $id;
         $postOrder['name'] = config('odoo_api.order_pre') . '#' . $id;
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
         $postOrder['website_name'] = self::getRootDomain(config('odoo_api.website_url'));
+
         $pOrder['order'] = $postOrder;
-        // dd($postOrder);
+
         if (1 || config('odoo_api.enable')) {
-            $odoo_url = config('odoo_api.host');
-            $odoo_url = $odoo_url . "/api/nexamerchant/order";
-            // dd($odoo_url);
-            // dd $odoo_url, PHP_EOL;
+            $odoo_url = config('odoo_api.host') . "/api/nexamerchant/order";
             try {
                 $response = $client->post($odoo_url, [
                     'headers' => [
