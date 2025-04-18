@@ -75,6 +75,10 @@ class ShopifyServiceProvider extends ServiceProvider
             dirname(__DIR__) . '/Config/shopify.php', 'shopify'
         );
 
+        $this->mergeConfigFrom(
+            dirname(__DIR__) . '/Config/odoo_api.php', 'odoo_api'
+        );
+
     }
 
     /**
