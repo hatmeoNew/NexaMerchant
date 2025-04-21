@@ -30,7 +30,7 @@ class Post extends Command
      *
      * @var string
      */
-    protected $description = 'create Order shopify:order:post {--order_id=}';
+    protected $description = 'create Order shopify:order:post {--order_id=} ';
 
     private $shopify_store_id = null;
     private $lang = null;
