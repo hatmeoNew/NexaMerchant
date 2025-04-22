@@ -146,6 +146,10 @@ class PostOdoo extends Command
                             break;
                         }
                     }
+                    // 如果没有图片，则取第一个图片
+                    if (empty($additional['img'])) {
+                        $additional['img'] = $shopifyProduct['images'][0]['src'];
+                    }
                     break;
                 }
             }
