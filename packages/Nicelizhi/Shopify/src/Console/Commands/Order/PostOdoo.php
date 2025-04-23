@@ -137,7 +137,7 @@ class PostOdoo extends Command
             // dd($shopifyProduct);
             if (empty($shopifyProduct)) {
                 dump('shopifyProduct is empty');
-                Utils::sendFeishu('shopifyProduct is empty --order_id=' . $id) . ' website:' . $postOrder['website_name'];
+                Utils::sendFeishu('shopifyProduct is empty --order_id=' . $id . ' website:' . $postOrder['website_name']);
                 continue;
             }
 
@@ -315,7 +315,7 @@ class PostOdoo extends Command
                         }
                     } catch (\Throwable $th) {
                         echo $th->getMessage(), PHP_EOL;
-                        Utils::sendFeishu($response->getBody() . ' --order_id=' . $id) . ' website:' . $postOrder['website_name'];
+                        Utils::sendFeishu($response->getBody() . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
                         return false;
                     }
                 }
