@@ -170,29 +170,33 @@ class PostOdoo extends Command
                 $additional['attributes'] = array_values($additional['attributes']);
             } else {
 
-                if (empty($options)) {
-                    dump('options is empty');
-                    Utils::sendFeishu('attributes & options is empty --order_id=' . $id) . ' website:' . $postOrder['website_name'];
-                    continue;
-                }
+                // 非运费险订单才需要属性
+                if ($variant_id != env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID')) {
 
-                $i = 0;
-                foreach ($options as $option) {
-                    if (empty($shopifyProduct['options'][$i])) {
-                        $i++;
+                    if (empty($options)) {
+                        dump('options is empty');
+                        Utils::sendFeishu('attributes & options is empty --order_id=' . $id) . ' website:' . $postOrder['website_name'];
                         continue;
                     }
-                    $attrName = $shopifyProduct['options'][$i];
-                    $attrValue = $option;
-                    $additional['attributes']['attribute_name'] = $attrName;
-                    $additional['attributes']['option_label'] = $attrValue;
 
-                    $additional['attributes'][] = [
-                        'attribute_name' => $attrName,
-                        'option_label' => $attrValue,
-                    ];
+                    $i = 0;
+                    foreach ($options as $option) {
+                        if (empty($shopifyProduct['options'][$i])) {
+                            $i++;
+                            continue;
+                        }
+                        $attrName = $shopifyProduct['options'][$i];
+                        $attrValue = $option;
+                        $additional['attributes']['attribute_name'] = $attrName;
+                        $additional['attributes']['option_label'] = $attrValue;
 
-                    $i++;
+                        $additional['attributes'][] = [
+                            'attribute_name' => $attrName,
+                            'option_label' => $attrValue,
+                        ];
+
+                        $i++;
+                    }
                 }
             }
 
