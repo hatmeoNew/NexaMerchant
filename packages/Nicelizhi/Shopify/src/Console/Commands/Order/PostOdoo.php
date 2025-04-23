@@ -132,7 +132,7 @@ class PostOdoo extends Command
             }
             $shopifyInfo = Product::query()->where('id', $variant_id)->value('sku');
             list($shopify_product_id, $shopify_variant_id) = explode('-', $shopifyInfo);
-            // dump($shopify_product_id . ' ~~~');
+            // dump($shopifyInfo);
             $shopifyProduct = ShopifyProduct::query()->where('product_id', $shopify_product_id)->select('variants', 'images', 'options')->first();
             // dd($shopifyProduct);
             if (empty($shopifyProduct)) {
@@ -145,12 +145,15 @@ class PostOdoo extends Command
             foreach ($shopifyProduct['variants'] as $variants) {
                 if ($variants['id'] == $shopify_variant_id) {
                     $additional['product_sku'] = $variants['sku'];
-                    $options = [
-                        'option1' => $variants['option1'],
-                        'option2' => $variants['option2'],
-                    ];
+
+                    if (!empty($variants['option1'])) {
+                        $options['option1'] = $variants['option1'];
+                    }
+                    if (!empty($variants['option2'])) {
+                        $options['option2'] = $variants['option2'];
+                    }
                     if (!empty($variants['option3'])) {
-                        $options['option3'] = $variants['option2'];
+                        $options['option3'] = $variants['option3'];
                     }
                     foreach ($shopifyProduct['images'] as $images) {
                         if ($variants['image_id'] == $images['id']) {
@@ -170,14 +173,11 @@ class PostOdoo extends Command
                 $additional['attributes'] = array_values($additional['attributes']);
             } else {
 
+                // dump($options);
+                $additional['attributes'] = [];
+
                 // 非运费险订单才需要属性
                 if ($variant_id != env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID')) {
-
-                    if (empty($options)) {
-                        dump('options is empty');
-                        Utils::sendFeishu('attributes & options is empty --order_id=' . $id) . ' website:' . $postOrder['website_name'];
-                        continue;
-                    }
 
                     $i = 0;
                     foreach ($options as $option) {
@@ -185,10 +185,8 @@ class PostOdoo extends Command
                             $i++;
                             continue;
                         }
-                        $attrName = $shopifyProduct['options'][$i];
+                        $attrName = $shopifyProduct['options'][$i]['name'];
                         $attrValue = $option;
-                        $additional['attributes']['attribute_name'] = $attrName;
-                        $additional['attributes']['option_label'] = $attrValue;
 
                         $additional['attributes'][] = [
                             'attribute_name' => $attrName,
