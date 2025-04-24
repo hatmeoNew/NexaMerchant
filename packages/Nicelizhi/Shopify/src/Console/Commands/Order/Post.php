@@ -90,15 +90,6 @@ class Post extends Command
             //$lists = Order::where(['status'=>'processing'])->orderBy("updated_at", "desc")->select(['id'])->limit(100)->get();
         }
 
-        try {
-            Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order_id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
-            $this->info('push odoo success. id=' . $order_id);
-        } catch (\Throwable $th) {
-            $this->info('push odoo fail. id=' . $order_id);
-            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($th->getMessage() . ' --order_id=' . $order_id);
-        }
-
-
         //$this->checkLog();
 
         foreach($lists as $key=>$list) {
