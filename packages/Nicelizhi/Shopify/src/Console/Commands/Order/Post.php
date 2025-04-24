@@ -88,12 +88,16 @@ class Post extends Command
 
         $order_id = $this->option("order_id");
 
+        echo $order_id." start debug \r\n";
+
         if(!empty($order_id)) {
             $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
         }else{
             $lists = [];
             //$lists = Order::where(['status'=>'processing'])->orderBy("updated_at", "desc")->select(['id'])->limit(100)->get();
         }
+
+        echo json_encode($lists)." start debug \r\n";
 
         //$this->checkLog();
 
