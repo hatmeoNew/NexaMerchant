@@ -88,14 +88,6 @@ class Post extends Command
 
         $order_id = $this->option("order_id");
 
-        try {
-            Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order_id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
-            $this->info('push odoo success. id=' . $order_id);
-        } catch (\Throwable $th) {
-            $this->info('push odoo fail. id=' . $order_id);
-            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($th->getMessage() . ' --order_id=' . $order_id);
-        }
-
         if(!empty($order_id)) {
             $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
         }else{
