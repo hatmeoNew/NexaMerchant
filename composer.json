@@ -75,7 +75,7 @@
         "maatwebsite/excel": "^3.1.46",
         "nexa-merchant/apis": "^1.2.6",
         "nexa-merchant/apps": "^1.0",
-        "nexa-merchant/checkoutcod": "dev-main",
+        "nexa-merchant/checkoutcod": "^1.1.4",
         "nexa-merchant/feeds": "dev-main",
         "nexa-merchant/googleplaces": "^1.0",
         "nexa-merchant/klaviyo": "dev-main",
