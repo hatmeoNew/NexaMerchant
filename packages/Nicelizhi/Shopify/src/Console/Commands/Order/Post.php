@@ -608,7 +608,7 @@ class Post extends Command
 
             // order check
             Artisan::queue("GooglePlaces:check-order",['--order_id'=>$id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
-
+            Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
         }
 
         echo $id." end post \r\n";
