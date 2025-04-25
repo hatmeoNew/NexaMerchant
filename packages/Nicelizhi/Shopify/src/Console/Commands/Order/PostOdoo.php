@@ -16,6 +16,7 @@ use Webkul\Core\Models\CountryState;
 use Webkul\Product\Models\Product;
 use Nicelizhi\Shopify\Models\ShopifyProduct;
 use Webkul\Customer\Repositories\CustomerRepository;
+use Webkul\Product\Models\ProductAttributeValue;
 
 class PostOdoo extends Command
 {
@@ -120,21 +121,20 @@ class PostOdoo extends Command
             $line_item['requires_shipping'] = true;
             $line_item['discount_amount'] = $orderItem['discount_amount'];
             $line_item['qty_ordered'] = $orderItem['qty_ordered'];
-            $line_item['default_code'] = $orderItem['sku'];
 
             $additional = $orderItem['additional'];
-            // dd($additional['product_sku']);
 
             if (!empty($additional['selected_configurable_option'])) {
                 $variant_id = $additional['selected_configurable_option'];
             } else {
                 $variant_id = $additional['product_id'];//表示运费险订单
             }
+
+            $line_item['is_shipping'] = $variant_id == env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID');
+
             $shopifyInfo = Product::query()->where('id', $variant_id)->value('sku');
             list($shopify_product_id, $shopify_variant_id) = explode('-', $shopifyInfo);
-            // dump($shopifyInfo);
             $shopifyProduct = ShopifyProduct::query()->where('product_id', $shopify_product_id)->select('variants', 'images', 'options')->first();
-            // dd($shopifyProduct);
             if (empty($shopifyProduct)) {
                 dump('shopifyProduct is empty');
                 Utils::sendFeishu('shopifyProduct is empty --order_id=' . $id . ' website:' . $postOrder['website_name']);
@@ -172,7 +172,6 @@ class PostOdoo extends Command
             if (!empty($additional['attributes'])) {
                 $additional['attributes'] = array_values($additional['attributes']);
             } else {
-
                 // dump($options);
                 $additional['attributes'] = [];
 
@@ -198,11 +197,15 @@ class PostOdoo extends Command
                 }
             }
 
+            $url_key = ProductAttributeValue::query()->where('product_id', $variant_id)->where('attribute_id', 3)->value('text_value');
+            if (!$line_item['is_shipping'] && !empty($url_key)) {
+                $additional['product_url'] = rtrim(env('SHOP_URL'), '/') . '/products/' . $url_key;
+            } else {
+                $additional['product_url'] = '';
+            }
+
             $line_item['sku'] = $additional;
 
-            dump($orderItem['sku'] . '~~~' . $orderItem['qty_ordered'] . ' ~~~~~'  . $orderItem['price'] . ' ~~~~~' . $orderItem['discount_amount']);
-
-            // dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
             array_push($line_items, $line_item);
         }
 
@@ -281,55 +284,48 @@ class PostOdoo extends Command
 
         $pOrder['order'] = $postOrder;
 
-        if (1 || config('odoo_api.enable')) {
-            $odoo_url = config('odoo_api.host') . "/api/nexamerchant/order";
-            try {
-                $response = $client->post($odoo_url, [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . config('odoo_api.api_token'),
-                    ],
-                    'body' => json_encode($pOrder)
-                ]);
-                echo "Response Body: " . $response->getBody() . PHP_EOL;
-                // dd();
-                if ($response->getStatusCode() == 200) {
-                    $response_body = json_decode($response->getBody(), true);
-                    try {
-                        $response_data = $response_body['result'];
-                        // dd($response_data);
-                        if (!empty($response_data['success']) && $response_data['success'] == true) {
-                            // dd($response_data['data']);
-                            try {
+        $odoo_url = config('odoo_api.host') . "/api/nexamerchant/external_order";
+        try {
+            $response = $client->post($odoo_url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . config('odoo_api.api_token'),
+                ],
+                'body' => json_encode($pOrder)
+            ]);
+            echo "Response Body: " . $response->getBody() . PHP_EOL;
+            if ($response->getStatusCode() == 200) {
+                $response_body = json_decode($response->getBody(), true);
+                try {
+                    $response_data = $response_body['result'];
+                    if (!empty($response_data['success']) && $response_data['success'] == true) {
+                        try {
+                            if (!empty($response_data['data'])) {
                                 $this->syncOdooLog($response_data['data']);
-                            } catch (\Throwable $th) {
-                                echo $th->getMessage(), PHP_EOL;
                             }
-                            echo $id . " post success \r\n";
-                            return true;
-                        } else {
-                            echo $id . " post failed \r\n";
-                            Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
-                            return false;
+                        } catch (\Throwable $th) {
+                            echo $th->getMessage(), PHP_EOL;
                         }
-                    } catch (\Throwable $th) {
-                        echo $th->getMessage(), PHP_EOL;
-                        Utils::sendFeishu($response->getBody() . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
+                        echo $id . " post success \r\n";
+                        return true;
+                    } else {
+                        echo $id . " post failed \r\n";
+                        Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
                         return false;
                     }
+                } catch (\Throwable $th) {
+                    echo $th->getMessage(), PHP_EOL;
+                    Utils::sendFeishu($response->getBody() . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
+                    return false;
                 }
-                // dd($response);
-                // dd();
-            } catch (ClientException $e) {
-                //var_dump($e);
-                var_dump($e->getMessage());
-                Log::error(json_encode($e->getMessage()));
-                Utils::send($e->getMessage() . '--' . $id . " fix check it ");
-                echo $e->getMessage() . " post failed";
-                //continue;
-                return false;
             }
+        } catch (ClientException $e) {
+            var_dump($e->getMessage());
+            Log::error(json_encode($e->getMessage()));
+            Utils::send($e->getMessage() . '--' . $id . " fix check it ");
+            echo $e->getMessage() . " post failed";
+            return false;
         }
 
         echo $id . " end post \r\n";
