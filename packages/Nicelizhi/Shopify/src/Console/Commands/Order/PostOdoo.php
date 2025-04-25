@@ -13,6 +13,7 @@ use Nicelizhi\Shopify\Models\OdooCustomer;
 use Nicelizhi\Shopify\Models\OdooProducts;
 use Webkul\Core\Models\CountryState;
 use Webkul\Customer\Repositories\CustomerRepository;
+use Webkul\Product\Models\ProductAttributeValue;
 
 class PostOdoo extends Command
 {
@@ -108,10 +109,8 @@ class PostOdoo extends Command
         $client = new Client();
 
         $order = $this->Order->findOrFail($id);
-        // dd($order->toArray());
 
         $orderPayment = $order->payment;
-        // dd($orderPayment->toArray());
 
         $postOrder = [];
 
@@ -128,16 +127,15 @@ class PostOdoo extends Command
             $line_item['requires_shipping'] = true;
             $line_item['discount_amount'] = $orderItem['discount_amount'];
             $line_item['qty_ordered'] = $orderItem['qty_ordered'];
-            $line_item['default_code'] = $orderItem['sku'];
 
             $additional = $orderItem['additional'];
-            // dd($additional);
-
+            $variant_id = $additional['selected_configurable_option'] ?: $orderItem['product_id'];
             if (empty($additional['product_sku'])) {
-                $variant_id = $additional['selected_configurable_option'];
                 $additional['product_sku'] = $this->product->where('id', $variant_id)->value('sku');
                 $additional['img'] = $this->product_image->where('product_id', $variant_id)->value('path');
             }
+
+            $line_item['is_shipping'] = $variant_id == env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID');
 
             if (!empty($additional['attributes'])) {
                 $additional['attributes'] = array_values($additional['attributes']);
@@ -145,15 +143,22 @@ class PostOdoo extends Command
                 $additional['attributes'] = [];
             }
 
+            $url_key = ProductAttributeValue::query()->where('product_id', $variant_id)->where('attribute_id', 3)->value('text_value');
+            if (!$line_item['is_shipping'] && !empty($url_key)) {
+                $additional['product_url'] = rtrim(env('SHOP_URL'), '/') . '/products/' . $url_key;
+            } else {
+                $additional['product_url'] = '';
+            }
+
             $line_item['sku'] = $additional;
 
-            dump($orderItem['sku'] . '~~~' . $orderItem['qty_ordered'] . ' ~~~~~'  . $orderItem['price'] . ' ~~~~~' . $orderItem['discount_amount']);
+            // 是否是运费险订单
+            $line_item['is_shipping'] = $additional['product_id'] == env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID') ? true : false;
 
-            // dump($line_item['sku']['product_id'] . ' ~ ' . $line_item['default_code']);
             array_push($line_items, $line_item);
         }
 
-        // dd();
+        // dd($line_items);
 
         $shipping_address = $order->shipping_address;
         $postOrder['line_items'] = $line_items;
@@ -227,56 +232,55 @@ class PostOdoo extends Command
         $postOrder['website_name'] = self::getRootDomain(config('odoo_api.website_url'));
 
         $pOrder['order'] = $postOrder;
+        // dd($pOrder);
 
-        if (1 || config('odoo_api.enable')) {
-            $odoo_url = config('odoo_api.host') . "/api/nexamerchant/order";
-            try {
-                $response = $client->post($odoo_url, [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . config('odoo_api.api_token'),
-                    ],
-                    'body' => json_encode($pOrder)
-                ]);
-                echo "Response Body: " . $response->getBody() . PHP_EOL;
-                // dd();
-                if ($response->getStatusCode() == 200) {
-                    $response_body = json_decode($response->getBody(), true);
-                    try {
-                        $response_data = $response_body['result'];
-                        // dd($response_data);
-                        if (!empty($response_data['success']) && $response_data['success'] == true) {
-                            // dd($response_data['data']);
-                            try {
-                                $this->syncOdooLog($response_data['data']);
-                            } catch (\Throwable $th) {
-                                echo $th->getMessage(), PHP_EOL;
-                            }
-                            echo $id . " post success \r\n";
-                            return true;
-                        } else {
-                            echo $id . " post failed \r\n";
-                            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
-                            return false;
+        $odoo_url = config('odoo_api.host') . "/api/nexamerchant/external_order";
+        try {
+            $response = $client->post($odoo_url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . config('odoo_api.api_token'),
+                ],
+                'body' => json_encode($pOrder)
+            ]);
+            echo "Response Body: " . $response->getBody() . PHP_EOL;
+            // dd();
+            if ($response->getStatusCode() == 200) {
+                $response_body = json_decode($response->getBody(), true);
+                try {
+                    $response_data = $response_body['result'];
+                    // dd($response_data);
+                    if (!empty($response_data['success']) && $response_data['success'] == true) {
+                        // dd($response_data['data']);
+                        try {
+                            $this->syncOdooLog($response_data['data']);
+                        } catch (\Throwable $th) {
+                            echo $th->getMessage(), PHP_EOL;
                         }
-                    } catch (\Throwable $th) {
-                        echo $th->getMessage(), PHP_EOL;
-                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response->getBody() . ' --order_id=' . $id) . ' website:' . $postOrder['website_name'];
+                        echo $id . " post success \r\n";
+                        return true;
+                    } else {
+                        echo $id . " post failed \r\n";
+                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
                         return false;
                     }
+                } catch (\Throwable $th) {
+                    echo $th->getMessage(), PHP_EOL;
+                    \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response->getBody() . ' --order_id=' . $id) . ' website:' . $postOrder['website_name'];
+                    return false;
                 }
-                // dd($response);
-                // dd();
-            } catch (ClientException $e) {
-                //var_dump($e);
-                var_dump($e->getMessage());
-                Log::error(json_encode($e->getMessage()));
-                \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage() . '--' . $id . " fix check it ");
-                echo $e->getMessage() . " post failed";
-                //continue;
-                return false;
             }
+            // dd($response);
+            // dd();
+        } catch (ClientException $e) {
+            //var_dump($e);
+            var_dump($e->getMessage());
+            Log::error(json_encode($e->getMessage()));
+            \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage() . '--' . $id . " fix check it ");
+            echo $e->getMessage() . " post failed";
+            //continue;
+            return false;
         }
 
         echo $id . " end post \r\n";
