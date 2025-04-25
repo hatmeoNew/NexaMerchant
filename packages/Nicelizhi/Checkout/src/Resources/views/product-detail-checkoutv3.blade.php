@@ -402,7 +402,7 @@
           const timestamp1 = new Date().getTime();
 
           // 获取 <img> 标签
-          const logo1 = document.getElementById('logo');
+          const logo1 = document.getElementById('logo1');
 
           // 给图片的 src 添加时间戳
           logo1.src = `/storage/logo.webp?timestamp=${timestamp}`;
@@ -1578,7 +1578,9 @@
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/5.0.4/js/swiper.js"></script>
-  <script src="/checkout/v3/js/main.js?v=21"></script>
+  <!-- <script src="/checkout/v3/js/main.js?v=21"></script> -->
+  <!-- 添加时间戳版本 -->
+  <script src="/checkout/v3/js/main.js?v=<?php echo time(); ?>"></script>
   <script>
     $(function() {
       if (countries1 == 'fr' || countries1 == 'es') {
