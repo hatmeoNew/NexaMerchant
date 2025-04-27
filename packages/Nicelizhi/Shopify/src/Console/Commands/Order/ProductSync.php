@@ -56,7 +56,7 @@ class ProductSync extends Command
                 continue;
             }
 
-            list($default_code, $name, $product_sku, $img, $price) = $line;
+            list($default_code, $name, $product_sku, $img, $price, $product_url, $declared_price, $declared_name_cn, $declared_name_en) = $line;
 
             try {
                 list($product_name, $colorName, $sizeName) = explode('-', $product_sku);
@@ -84,13 +84,17 @@ class ProductSync extends Command
             $type = 'product';
 
             $product = [
-                'default_code' => trim($product_name),
-                'name'         => trim($product_name),
-                'product_sku'  => $product_sku,
-                'img'          => $img,
-                'price'        => $price,
-                'attributes'   => $attributes,
-                'type'         => $type,
+                'default_code'     => trim($product_name),
+                'name'             => trim($product_name),
+                'product_sku'      => $product_sku,
+                'img'              => $img,
+                'price'            => $price,
+                'attributes'       => $attributes,
+                'type'             => $type,
+                'product_url'      => $product_url,
+                'declared_price'   => $declared_price,
+                'declared_name_cn' => $declared_name_cn,
+                'declared_name_en' => $declared_name_en,
             ];
 
             $products[] = $product;
