@@ -118,7 +118,7 @@ class ProductSync extends Command
                 echo "Response Body: " . $response->getBody() . PHP_EOL;
 
             } catch (\Throwable $th) {
-                \Nicelizhi\Shopify\Helpers\Utils::send($th->getMessage());
+                \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($th->getMessage());
             }
         }
 
