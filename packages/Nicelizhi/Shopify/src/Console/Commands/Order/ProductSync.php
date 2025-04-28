@@ -49,14 +49,18 @@ class ProductSync extends Command
         $client =  new Client();
 
         // 读取csv文件
-        $file = fopen(public_path('product_list.csv'), 'r');
+        $file = fopen(public_path('product_list_v3.csv'), 'r');
         while (($line = fgetcsv($file)) !== false) {
             // 第一行 跳过
             if ($line[0] == 'default_code') {
                 continue;
             }
 
-            list($default_code, $name, $product_sku, $img, $price, $product_url, $declared_price, $declared_name_cn, $declared_name_en) = $line;
+            list($default_code, $name, $product_sku, $img, $price, $product_url, $declared_price, $declared_name_cn, $declared_name_en, $isValida) = $line;
+            if ($isValida != 'TRUE') {
+                dump('跳过');
+                continue;
+            }
 
             try {
                 list($product_name, $colorName, $sizeName) = explode('-', $product_sku);
@@ -97,6 +101,8 @@ class ProductSync extends Command
                 'declared_name_en' => $declared_name_en,
             ];
 
+            // dd($product);
+
             $products[] = $product;
 
             $odoo_url = config('odoo_api.host') . "/api/nexamerchant/sync_products";
@@ -117,6 +123,8 @@ class ProductSync extends Command
         }
 
         fclose($file);
+
+        // dd($products);
 
     }
 }
