@@ -89,13 +89,14 @@ class Toolbar
      */
     public function getAvailableLimits(): Collection
     {
+        return collect([8, 12, 24, 36, 48]);
         if ($productsPerPage = core()->getConfigData('catalog.products.storefront.products_per_page')) {
             $pages = explode(',', $productsPerPage);
 
             return collect($pages);
         }
 
-        return collect([8, 12, 24, 36, 48]);
+        
     }
 
     /**
