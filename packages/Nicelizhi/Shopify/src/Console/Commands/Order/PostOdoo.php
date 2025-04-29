@@ -59,7 +59,7 @@ class PostOdoo extends Command
             $order_id = $this->option("order_id");
 
             if (!empty($order_id)) {
-                $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
+                $lists = Order::where(['status' => 'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
                 // $lists = Order::where("id", ">=", $order_id)->select(['id'])->limit(50)->get();
                 if (count($lists) == 0) {
                     $this->info("no order");
@@ -78,7 +78,6 @@ class PostOdoo extends Command
         } catch (\Throwable $th) {
             $this->info($th->getMessage() . ' | ' . $th->getLine());
         }
-
     }
 
     /**
@@ -99,6 +98,8 @@ class PostOdoo extends Command
     public function postOrder($id)
     {
         $this->info("sync to order to odoo " . $id);
+
+        $webSiteName = self::getRootDomain(config('odoo_api.website_url'));
 
         $client = new Client();
 
@@ -127,7 +128,7 @@ class PostOdoo extends Command
             if (!empty($additional['selected_configurable_option'])) {
                 $variant_id = $additional['selected_configurable_option'];
             } else {
-                $variant_id = $additional['product_id'];//表示运费险订单
+                $variant_id = $additional['product_id']; //表示运费险订单
             }
 
             $line_item['is_shipping'] = $variant_id == env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID');
@@ -137,7 +138,7 @@ class PostOdoo extends Command
             $shopifyProduct = ShopifyProduct::query()->where('product_id', $shopify_product_id)->select('variants', 'images', 'options')->first();
             if (empty($shopifyProduct)) {
                 dump('shopifyProduct is empty');
-                Utils::sendFeishu('shopifyProduct is empty --order_id=' . $id . ' website:' . $postOrder['website_name']);
+                Utils::sendFeishu('shopifyProduct is empty --order_id=' . $id . ' website:' . $webSiteName);
                 continue;
             }
 
@@ -242,17 +243,25 @@ class PostOdoo extends Command
             }
         }
 
+        $state_code = $this->getOdooStateCode($shipping_address->country, $shipping_address->state, $shipping_address->city);
+        if (empty($state_code)) {
+            Utils::sendFeishu('state_code not found . state = ' . $shipping_address->state . '. --order_id=' . $id . ' website:' . $webSiteName);
+            return false;
+        }
+
         $shipping_address = [
             "first_name" => $shipping_address->first_name,
             "last_name" => $shipping_address->last_name,
             "address1" => $shipping_address->address1,
             "phone" => $shipping_address->phone,
             "city" => $shipping_address->city,
-            "province" => $shipping_address->state,
-            'state_name' => CountryState::where('code', $shipping_address->state)->where('country_code', $shipping_address->country)->value('default_name'),
+            "province" => $state_code,
+            // 'state_name' => CountryState::where('code', $shipping_address->state)->where('country_code', $shipping_address->country)->value('default_name'),
             "country" => $shipping_address->country,
             "zip" => $shipping_address->postcode
         ];
+
+        // dd($shipping_address);
 
         $postOrder['shipping_address'] = $shipping_address;
 
@@ -280,7 +289,7 @@ class PostOdoo extends Command
         $postOrder['name'] = config('odoo_api.order_pre') . '#' . $id;
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
-        $postOrder['website_name'] = self::getRootDomain(config('odoo_api.website_url'));
+        $postOrder['website_name'] = $webSiteName;
 
         $pOrder['order'] = $postOrder;
 
@@ -311,12 +320,12 @@ class PostOdoo extends Command
                         return true;
                     } else {
                         echo $id . " post failed \r\n";
-                        Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
+                        Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $webSiteName);
                         return false;
                     }
                 } catch (\Throwable $th) {
                     echo $th->getMessage(), PHP_EOL;
-                    Utils::sendFeishu($response->getBody() . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
+                    Utils::sendFeishu($response->getBody() . ' --order_id=' . $id . ' website:' . $webSiteName);
                     return false;
                 }
             }
@@ -457,8 +466,14 @@ class PostOdoo extends Command
         if ($count >= 2) {
             // 判断特殊的二级后缀情况，比如 .com.cn, .co.uk 等
             $commonTlds = [
-                'com.cn', 'net.cn', 'org.cn', 'gov.cn',
-                'com.hk', 'co.uk', 'org.uk', 'gov.uk',
+                'com.cn',
+                'net.cn',
+                'org.cn',
+                'gov.cn',
+                'com.hk',
+                'co.uk',
+                'org.uk',
+                'gov.uk',
             ];
             $lastTwo = $parts[$count - 2] . '.' . $parts[$count - 1];
 
@@ -470,5 +485,28 @@ class PostOdoo extends Command
         }
 
         return $host;
+    }
+
+    function getOdooStateCode($country, $state, $city)
+    {
+        if ($country != 'GB') {
+            return $state;
+        }
+        $stateMapping = config('odoo_country_state')[$country];
+        if (!empty($stateMapping[$state])) {
+            return $state;
+        }
+
+        $state = array_search($state, $stateMapping);
+
+        if (empty($state)) {
+            if (!empty($stateMapping[$city])) {
+                return $city;
+            }
+
+            $state = array_search($city, $stateMapping);
+        }
+
+        return $state;
     }
 }
