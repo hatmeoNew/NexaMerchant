@@ -405,7 +405,7 @@
           const logo1 = document.getElementById('logo1');
 
           // 给图片的 src 添加时间戳
-          logo1.src = `/storage/logo.webp?timestamp=${timestamp}`;
+          logo1.src = `/storage/logo.webp?timestamp=${timestamp1}`;
         </script>
         <div class="top-left-button">
           <!-- <p class="header-text-hide">@lang('checkout::app.v3.Description')</p> -->
@@ -1622,7 +1622,7 @@
       $('.pr-price-single > :eq(1)').text(data.package_products[1].new_price_format)
       $('#pr-price1').text(discount1)
       $('#pr-price2').text("(" + data.package_products[1].tip1 + ")")
-      if (attrList.length > 0) {
+      if (attrList.length > 0 && data.attr.attributes[0]?.label !== 'Default') {
         attrList.forEach(function(item) {
           let num = 0
           let sortedObj = sortObjectByValue(item.attr_sort);
@@ -1744,6 +1744,16 @@
       params.products = []
       params.products.push(productL1, productL2)
       getSkuListInfo();
+
+      // 当data.attr.attributes[0]?.label == 'Default' 默认选中第一项
+      if (data.attr.attributes[0]?.label == 'Default') {
+        var defaultValue = data.attr.attributes[0].options[0].label
+        params.products.forEach(function(item) {
+          item.attribute_name = defaultValue
+          item.attr_id = data.attr.attributes[0].id + '_' + data.attr.attributes[0].options[0].id
+        })
+        getVSID(data.attr.index2, defaultValue)
+      }
       if (data.attr.attributes.length == 0) {
         params.products.forEach(function(item) {
           item.product_sku = data.sku
@@ -2496,6 +2506,16 @@
         params.products.push(productL1, productL2, productL3, productL4)
         // paramsProductsinit(params.products)
       }
+
+      // 当data.attr.attributes[0]?.label == 'Default' 默认选中第一项
+      if (data.attr.attributes[0]?.label == 'Default') {
+        var defaultValue = data.attr.attributes[0].options[0].label
+        params.products.forEach(function(item) {
+          item.attribute_name = defaultValue
+          item.attr_id = data.attr.attributes[0].id + '_' + data.attr.attributes[0].options[0].id
+        })
+        getVSID(data.attr.index2, defaultValue)
+      }
       if (data.attr.attributes.length == 0) {
         params.products.forEach(function(item) {
           item.product_sku = data.sku
@@ -2760,7 +2780,7 @@
       $('#buy-select2').hide()
       $('#buy-select3').hide()
       $('#buy-select4').hide()
-      if (data.attr.attributes.length > 0) {
+      if (data.attr.attributes.length > 0 && data.attr.attributes[0]?.label !== 'Default') {
         $('#buy-select1').show()
         shopIcon()
       } else {
@@ -2784,7 +2804,7 @@
       $('#product-number').text('number: 1')
       $('#product-price').text(data.package_products[1].tip2)
       initProuctData(1, '1')
-      if (data.attr.attributes.length == 0) {
+      if (data.attr.attributes.length == 0 || data.attr.attributes[0]?.label == 'Default') {
         $('#p1-select').show()
         $('#p2-select').hide()
         $('#p3-select').hide()
@@ -2799,7 +2819,7 @@
       $('#buy-select1').hide()
       $('#buy-select3').hide()
       $('#buy-select4').hide()
-      if (data.attr.attributes.length > 0) {
+      if (data.attr.attributes.length > 0 && data.attr.attributes[0]?.label !== 'Default') {
         $('#buy-select2').show()
         shopIcon()
       } else {
@@ -2824,7 +2844,7 @@
       $('#product-number').text('number: 2')
       $('#product-price').text(data.package_products[0].tip2)
       initProuctData(0, '2')
-      if (data.attr.attributes.length == 0) {
+      if (data.attr.attributes.length == 0 || data.attr.attributes[0]?.label == 'Default') {
         $('#p2-select').show()
         $('#p1-select').hide()
         $('#p3-select').hide()
@@ -2839,7 +2859,7 @@
       $('#buy-select2').hide()
       $('#buy-select1').hide()
       $('#buy-select4').hide()
-      if (data.attr.attributes.length > 0) {
+      if (data.attr.attributes.length > 0 && data.attr.attributes[0]?.label !== 'Default') {
         $('#buy-select3').show()
         shopIcon()
       } else {
@@ -2865,7 +2885,7 @@
       $('#product-number').text('number: 3')
       $('#product-price').text(data.package_products[2].tip2)
       initProuctData(2, '3')
-      if (data.attr.attributes.length == 0) {
+      if (data.attr.attributes.length == 0 || data.attr.attributes[0]?.label == 'Default') {
         $('#p3-select').show()
         $('#p2-select').hide()
         $('#p1-select').hide()
@@ -2881,7 +2901,7 @@
       $('#buy-select2').hide()
       $('#buy-select3').hide()
       $('#buy-select1').hide()
-      if (data.attr.attributes.length > 0) {
+      if (data.attr.attributes.length > 0 && data.attr.attributes[0]?.label !== 'Default') {
         $('#buy-select4').show()
         shopIcon()
       } else {
@@ -2906,7 +2926,7 @@
       $('#product-number').text('number: 4')
       $('#product-price').text(data.package_products[3].tip2)
       initProuctData(3, '4')
-      if (data.attr.attributes.length == 0) {
+      if (data.attr.attributes.length == 0 || data.attr.attributes[0]?.label == 'Default') {
         $('#p4-select').show()
         $('#p2-select').hide()
         $('#p3-select').hide()
