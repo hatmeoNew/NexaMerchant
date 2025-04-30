@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Event;
 use GuzzleHttp\Exception\ClientException;
+use Nicelizhi\Shopify\Helpers\Utils;
 use Nicelizhi\Shopify\Models\OdooOrder;
 use Nicelizhi\Shopify\Models\OdooCustomer;
 use Nicelizhi\Shopify\Models\OdooProducts;
@@ -244,7 +245,7 @@ class PostOdoo extends Command
                 ],
                 'body' => json_encode($pOrder)
             ]);
-            echo "Response Body: " . $response->getBody() . PHP_EOL;
+            // echo "Response Body: " . $response->getBody() . PHP_EOL;
             // dd();
             if ($response->getStatusCode() == 200) {
                 $response_body = json_decode($response->getBody(), true);
@@ -259,15 +260,20 @@ class PostOdoo extends Command
                             echo $th->getMessage(), PHP_EOL;
                         }
                         echo $id . " post success \r\n";
+
+                        // 同步飞书提醒
+                        $notice = "Order " . $postOrder['name'] . "\r\n" . core()->currency($postOrder['grand_total']) . '，' . count($postOrder['line_items']) . ' items from ' . $postOrder['website_name'];
+                        Utils::sendFeishuErp($notice);
+
                         return true;
                     } else {
                         echo $id . " post failed \r\n";
-                        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
+                        Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
                         return false;
                     }
                 } catch (\Throwable $th) {
                     echo $th->getMessage(), PHP_EOL;
-                    \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($response->getBody() . ' --order_id=' . $id) . ' website:' . $postOrder['website_name'];
+                    Utils::sendFeishu($response->getBody() . ' --order_id=' . $id) . ' website:' . $postOrder['website_name'];
                     return false;
                 }
             }
@@ -277,7 +283,7 @@ class PostOdoo extends Command
             //var_dump($e);
             var_dump($e->getMessage());
             Log::error(json_encode($e->getMessage()));
-            \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage() . '--' . $id . " fix check it ");
+            Utils::send($e->getMessage() . '--' . $id . " fix check it ");
             echo $e->getMessage() . " post failed";
             //continue;
             return false;
