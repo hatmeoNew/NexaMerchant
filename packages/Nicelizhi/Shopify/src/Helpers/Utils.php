@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 
 final class Utils {
 
-    
+
     const CHECKOUT_V1 = "v1";
     const CHECKOUT_V2 = "v2";
     const CHECKOUT_V3 = "v3";
@@ -53,7 +53,7 @@ final class Utils {
         $response = $client->post($url,[
             \GuzzleHttp\RequestOptions::JSON => $argc
         ]);
-        //var_dump($response, $argc);     
+        //var_dump($response, $argc);
     }
 
     // send msg to feishu
@@ -83,7 +83,58 @@ final class Utils {
         $response = $client->post($url,[
             \GuzzleHttp\RequestOptions::JSON => $argc
         ]);
-        //var_dump($response, $argc);     
+        //var_dump($response, $argc);
+    }
+
+    public static function sendFeishuErp($text)
+    {
+        $url = config("shopify.feishu_noticle_erp_url");
+
+        if(empty($url)) return false;
+
+        $text = $text;//."\r\n".config("app.url");
+
+        $argc = self::template1($text);
+
+        $header = [];
+        $header[] = "Content-Type:application/json";
+
+        $client = new Client();
+        $client->post($url,[
+            \GuzzleHttp\RequestOptions::JSON => $argc
+        ]);
+    }
+
+    public static function template1($message): array
+    {
+        return [
+            'msg_type' => 'interactive',
+            'card'     => [
+                'config'   => [
+                    'wide_screen_mode' => true
+                ],
+                'elements' => [
+                    [
+                        'tag'     => 'markdown',
+                        'content' => '',//$message
+                    ],
+                    [
+                        'tag' => 'hr'
+                    ],
+                    [
+                        'tag'     => 'action',
+                        'actions' => []
+                    ]
+                ],
+                'header'   => [
+                    'template' => 'green',
+                    'title'    => [
+                        'content' => $message,
+                        'tag'     => 'plain_text'
+                    ],
+                ],
+            ]
+        ];
     }
 
     // base on shopify data create options data
@@ -135,7 +186,7 @@ final class Utils {
             if(strpos($option['name'], "kolor") !==false) $attr_id = 23; // pl
             if(strpos($option['name'], "szín") !==false) $attr_id = 23; // hu
 
-            
+
 
             if(empty($attr_id)) {
                 //var_dump($option['name']);
@@ -185,7 +236,7 @@ final class Utils {
                         $attr_opt_tran->save();
                     }
                 }
-                if($attr_id==23) $color[$attribute_option_id] = $attribute_option_id; //array_push($color, $attribute_option_id); 
+                if($attr_id==23) $color[$attribute_option_id] = $attribute_option_id; //array_push($color, $attribute_option_id);
                 if($attr_id==24) $size[$attribute_option_id] = $attribute_option_id;
 
                 $LocalOptions[$attr_id][] = $attribute_option_id;
@@ -204,7 +255,7 @@ final class Utils {
             if(empty($color) && empty($size)) {
                 if(empty($version)) $version = "v3";
             }
-            
+
         }
 
         if($version==null) $version = "v3";
