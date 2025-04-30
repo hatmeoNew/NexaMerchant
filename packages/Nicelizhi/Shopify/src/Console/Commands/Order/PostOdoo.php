@@ -489,7 +489,7 @@ class PostOdoo extends Command
 
     function getOdooStateCode($country, $state, $city)
     {
-        if ($country != 'GB') {
+        if (!in_array($country, ['GB', 'DE'])) {
             return $state;
         }
         $stateMapping = config('odoo_country_state')[$country];

@@ -1,6 +1,7 @@
 <?php
-
+// paypal -> odoo
 return [
+
     'GB' => [
         "A1" => "Aberdeenshire",
         "A5" => "Angus",
@@ -121,5 +122,24 @@ return [
         "Q1" => "London",
         "Q7" => "Midlothian",
         "R5" => "Norfolk"
+    ],
+
+    'DE' => [
+        'BRG' => 'BB',
+        'BER' => 'BE',
+        'BAW' => 'BW',
+        'BAY' => 'BY',
+        'BRE' => 'HB',
+        'HAM' => 'HH',
+        'HES' => 'HE',
+        'MEC' => 'MV',
+        'NDS' => 'NI',
+        'NRW' => 'NW',
+        'RHE' => 'RP',
+        'SAR' => 'SL',
+        'SAS' => 'SN',
+        'SAC' => 'ST',
+        'THE' => 'TH',
+        'SCN' => 'SH'
     ],
 ];
