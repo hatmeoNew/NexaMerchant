@@ -192,13 +192,18 @@ class PostOdoo extends Command
             }
         }
 
+        $state = $shipping_address->state;
+        if (in_array($shipping_address->country, ['CZ'])) {
+            $state = '';
+        }
+
         $shipping_address = [
             "first_name" => $shipping_address->first_name,
             "last_name" => $shipping_address->last_name,
             "address1" => $shipping_address->address1,
             "phone" => $shipping_address->phone,
             "city" => $shipping_address->city,
-            "province" => $shipping_address->state,
+            "province" => $state,
             'state_name' => CountryState::where('code', $shipping_address->state)->where('country_code', $shipping_address->country)->value('default_name'),
             "country" => $shipping_address->country,
             "zip" => $shipping_address->postcode
