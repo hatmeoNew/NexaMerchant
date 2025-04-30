@@ -243,10 +243,13 @@ class PostOdoo extends Command
             }
         }
 
-        $state_code = $this->getOdooStateCode($shipping_address->country, $shipping_address->state, $shipping_address->city);
-        if (empty($state_code)) {
-            Utils::sendFeishu('state_code not found . state = ' . $shipping_address->state . '. --order_id=' . $id . ' website:' . $webSiteName);
-            return false;
+        $state_code = $shipping_address->state;
+        if (!empty($state_code)) {
+            $format_state_code = $this->getOdooStateCode($shipping_address->country, $state_code, $shipping_address->city);
+            if (empty($format_state_code)) {
+                Utils::sendFeishu('state_code not found . state = ' . $state_code . '. --order_id=' . $id . ' website:' . $webSiteName);
+                return false;
+            }
         }
 
         $shipping_address = [
