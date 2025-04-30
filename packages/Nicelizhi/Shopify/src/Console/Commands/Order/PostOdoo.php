@@ -303,7 +303,7 @@ class PostOdoo extends Command
                 ],
                 'body' => json_encode($pOrder)
             ]);
-            echo "Response Body: " . $response->getBody() . PHP_EOL;
+            // echo "Response Body: " . $response->getBody() . PHP_EOL;
             if ($response->getStatusCode() == 200) {
                 $response_body = json_decode($response->getBody(), true);
                 try {
@@ -317,9 +317,13 @@ class PostOdoo extends Command
                             echo $th->getMessage(), PHP_EOL;
                         }
                         echo $id . " post success \r\n";
+
+                        // 同步飞书提醒
+                        $notice = "Order " . $postOrder['name'] . "\r\n" . core()->currency($postOrder['grand_total']) . '，' . count($postOrder['line_items']) . ' items from ' . $postOrder['website_name'];
+                        Utils::sendFeishuErp($notice);
                         return true;
                     } else {
-                        echo $id . " post failed \r\n";
+                        echo $id . " post failed \r\n" . $response_data['message'];
                         Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $webSiteName);
                         return false;
                     }

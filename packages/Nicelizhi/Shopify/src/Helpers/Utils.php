@@ -88,7 +88,7 @@ final class Utils {
 
     public static function sendFeishuErp($text)
     {
-        $url = config("shopify.feishu_noticle_erp_url");
+        $url = config("odoo_api.feishu_noticle_erp_url");
 
         if(empty($url)) return false;
 
