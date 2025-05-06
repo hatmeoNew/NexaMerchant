@@ -245,10 +245,15 @@ class PostOdoo extends Command
 
         $state_code = $shipping_address->state;
         if (!empty($state_code)) {
-            $state_code = $this->getOdooStateCode($shipping_address->country, $state_code, $shipping_address->city);
-            if (empty($state_code)) {
-                Utils::sendFeishu('state_code not found . state = ' . $state_code . '. --order_id=' . $id . ' website:' . $webSiteName);
-                return false;
+            // 表示AT市场在odoo无区域信息
+            if (in_array($shipping_address->country, ['AT'])) {
+                $state_code = '';
+            } else {
+                $state_code = $this->getOdooStateCode($shipping_address->country, $state_code, $shipping_address->city);
+                if (empty($state_code)) {
+                    Utils::sendFeishu('state_code not found . state = ' . $state_code . '. --order_id=' . $id . ' website:' . $webSiteName);
+                    return false;
+                }
             }
         }
 
