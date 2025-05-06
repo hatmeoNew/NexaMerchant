@@ -245,8 +245,8 @@ class PostOdoo extends Command
 
         $state_code = $shipping_address->state;
         if (!empty($state_code)) {
-            $format_state_code = $this->getOdooStateCode($shipping_address->country, $state_code, $shipping_address->city);
-            if (empty($format_state_code)) {
+            $state_code = $this->getOdooStateCode($shipping_address->country, $state_code, $shipping_address->city);
+            if (empty($state_code)) {
                 Utils::sendFeishu('state_code not found . state = ' . $state_code . '. --order_id=' . $id . ' website:' . $webSiteName);
                 return false;
             }
