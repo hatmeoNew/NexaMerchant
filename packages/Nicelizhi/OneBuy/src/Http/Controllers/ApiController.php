@@ -72,7 +72,6 @@ class ApiController extends Controller
         $currency_get = $request->input('currency');
         if(!empty($currency_get)) {
             core()->setCurrentCurrency($currency_get);
-            var_dump($currency_get);exit;
         }else{
             $currency_get = trim($_GET['currency']);
             if(!empty($currency_get)) {
