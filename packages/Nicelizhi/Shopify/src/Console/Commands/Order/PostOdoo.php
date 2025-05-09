@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Event;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Nicelizhi\Shopify\Helpers\Utils;
 use Nicelizhi\Shopify\Models\OdooOrder;
 use Nicelizhi\Shopify\Models\OdooCustomer;
@@ -254,43 +255,35 @@ class PostOdoo extends Command
             // dd();
             if ($response->getStatusCode() == 200) {
                 $response_body = json_decode($response->getBody(), true);
-                try {
-                    $response_data = $response_body['result'];
-                    // dd($response_data);
-                    if (!empty($response_data['success']) && $response_data['success'] == true) {
-                        // dd($response_data['data']);
-                        try {
-                            $this->syncOdooLog($response_data['data']);
-                        } catch (\Throwable $th) {
-                            echo $th->getMessage(), PHP_EOL;
-                        }
-                        echo $id . " post success \r\n";
+                $response_data = $response_body['result'];
+                if (!empty($response_data['success']) && $response_data['success'] == true) {
 
-                        // 同步飞书提醒
-                        $notice = "Order " . $postOrder['name'] . "\r\n" . core()->currency($postOrder['grand_total']) . '，' . count($postOrder['line_items']) . ' items from ' . $postOrder['website_name'];
-                        Utils::sendFeishuErp($notice);
+                    $this->syncOdooLog($response_data['data']);
 
-                        return true;
-                    } else {
-                        echo $id . " post failed \r\n";
-                        Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
-                        return false;
-                    }
-                } catch (\Throwable $th) {
-                    echo $th->getMessage(), PHP_EOL;
-                    Utils::sendFeishu($response->getBody() . ' --order_id=' . $id) . ' website:' . $postOrder['website_name'];
+                    // 同步飞书提醒
+                    $notice = "Order " . $postOrder['name'] . "\r\n" . core()->currency($postOrder['grand_total']) . '，' . count($postOrder['line_items']) . ' items from ' . $postOrder['website_name'];
+                    Utils::sendFeishuErp($notice);
+
+                    echo $id . " post success \r\n";
+                    return true;
+                } else {
+                    echo $id . " post failed \r\n";
+                    Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
                     return false;
                 }
             }
-            // dd($response);
-            // dd();
+        } catch (ServerException $e) {
+            $response = $e->getResponse();
+            $statusCode = $response->getStatusCode();
+            $message = "接口{$odoo_url}异常，请及时检查. status code:{$statusCode}" . PHP_EOL;
+            $message .= '--order_id=' . $id . ' website:' . $postOrder['website_name'];
+            Utils::sendFeishu($message);
+            echo $message;
+            return false;
         } catch (ClientException $e) {
-            //var_dump($e);
-            var_dump($e->getMessage());
             Log::error(json_encode($e->getMessage()));
-            Utils::send($e->getMessage() . '--' . $id . " fix check it ");
+            Utils::sendFeishu($e->getMessage() . '--' . $id . " fix check it ");
             echo $e->getMessage() . " post failed";
-            //continue;
             return false;
         }
 
