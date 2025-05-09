@@ -566,7 +566,7 @@ class Core
             return 'kr';
         }
         if($currency == "NZD") {
-            return '$';
+            return 'NZ$';
         }
         
         $code = $currency instanceof \Webkul\Core\Contracts\Currency ? $currency->code : $currency;
