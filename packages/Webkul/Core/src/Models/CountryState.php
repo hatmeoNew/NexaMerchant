@@ -13,6 +13,8 @@ class CountryState extends TranslatableModel implements CountryStateContract
 
     protected $with = ['translations'];
 
+    protected $fillable = ['country_id', 'country_code', 'code', 'default_name'];
+
     /**
      * @return array
      */
