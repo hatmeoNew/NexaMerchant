@@ -14,6 +14,7 @@ use Nicelizhi\Shopify\Models\OdooOrder;
 use Nicelizhi\Shopify\Models\OdooCustomer;
 use Nicelizhi\Shopify\Models\OdooProducts;
 use Webkul\Core\Models\CountryState;
+use Illuminate\Support\Facades\Artisan;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Product\Models\ProductAttributeValue;
 
@@ -67,7 +68,7 @@ class PostOdoo extends Command
             $order_id = $this->option("order_id");
 
             if (!empty($order_id)) {
-                $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
+                $lists = Order::where(['status' => 'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
                 // $lists = Order::where("id", ">=", $order_id)->select(['id'])->limit(50)->get();
                 if (count($lists) == 0) {
                     $this->info("no order");
@@ -86,7 +87,6 @@ class PostOdoo extends Command
         } catch (\Throwable $th) {
             $this->info($th->getMessage() . ' | ' . $th->getLine());
         }
-
     }
 
     /**
@@ -119,7 +119,7 @@ class PostOdoo extends Command
         $line_items = [];
 
         $orderItems = $order->items;
-
+        $q_ty = 0;
         foreach ($orderItems as $orderItem) {
 
             $line_item = [];
@@ -156,6 +156,8 @@ class PostOdoo extends Command
 
             // 是否是运费险订单
             $line_item['is_shipping'] = $additional['product_id'] == env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID') ? true : false;
+
+            $q_ty += $orderItem['qty_ordered'];
 
             array_push($line_items, $line_item);
         }
@@ -198,7 +200,7 @@ class PostOdoo extends Command
             $state = '';
         }
 
-        $shipping_address = [
+        $post_shipping_address = [
             "first_name" => $shipping_address->first_name,
             "last_name" => $shipping_address->last_name,
             "address1" => $shipping_address->address1,
@@ -210,7 +212,7 @@ class PostOdoo extends Command
             "zip" => $shipping_address->postcode
         ];
 
-        $postOrder['shipping_address'] = $shipping_address;
+        $postOrder['shipping_address'] = $post_shipping_address;
 
         if ($orderPayment['method'] == 'codpayment') {
             $postOrder['payment_gateway_names'] = [
@@ -259,6 +261,21 @@ class PostOdoo extends Command
                 if (!empty($response_data['success']) && $response_data['success'] == true) {
 
                     $this->syncOdooLog($response_data['data']);
+
+                    // 同步给CRM ---------------start----------------------
+                    $cnv_id = explode('-', $orderPayment['method_title']);
+                    $crm_channel = config('onebuy.crm_channel');
+                    $crm_url = config('onebuy.crm_url');
+                    $url = $crm_url . "/api/offers/callBack?refer=" . $cnv_id[1] . "&revenue=" . $order->grand_total . "&currency_code=" . $order->order_currency_code . "&channel_id=" . $crm_channel . "&q_ty=" . $q_ty . "&email=" . $shipping_address->email . "&order_id=" . $id;
+                    $res = $this->get_content($url);
+                    Log::info("post to bm 2 url " . $url . " res " . json_encode($res));
+                    // 同步给CRM ---------------end------------------------
+
+                    // order check
+                    // for cod order need check the order
+                    if ($orderPayment['method'] == 'codpayment') {
+                        Artisan::queue("GooglePlaces:check-order", ['--order_id' => $id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
+                    }
 
                     // 同步飞书提醒
                     $notice = "Order " . $postOrder['name'] . "\r\n" . core()->currency($postOrder['grand_total']) . '，' . count($postOrder['line_items']) . ' items from ' . $postOrder['website_name'];
@@ -416,8 +433,14 @@ class PostOdoo extends Command
         if ($count >= 2) {
             // 判断特殊的二级后缀情况，比如 .com.cn, .co.uk 等
             $commonTlds = [
-                'com.cn', 'net.cn', 'org.cn', 'gov.cn',
-                'com.hk', 'co.uk', 'org.uk', 'gov.uk',
+                'com.cn',
+                'net.cn',
+                'org.cn',
+                'gov.cn',
+                'com.hk',
+                'co.uk',
+                'org.uk',
+                'gov.uk',
             ];
             $lastTwo = $parts[$count - 2] . '.' . $parts[$count - 1];
 
@@ -429,5 +452,15 @@ class PostOdoo extends Command
         }
 
         return $host;
+    }
+
+    private function get_content($URL)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
     }
 }
