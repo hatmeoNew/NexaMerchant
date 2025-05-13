@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Nicelizhi\Shopify\Helpers\Utils;
 use Illuminate\Support\Facades\Event;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Nicelizhi\Shopify\Models\OdooOrder;
 use Nicelizhi\Shopify\Models\OdooCustomer;
 use Nicelizhi\Shopify\Models\OdooProducts;
@@ -341,10 +342,18 @@ class PostOdoo extends Command
                     return false;
                 }
             }
+        } catch (ServerException $e) {
+            $response = $e->getResponse();
+            $statusCode = $response->getStatusCode();
+            $message = "接口{$odoo_url}异常，请及时检查. status code:{$statusCode}" . PHP_EOL;
+            $message .= '--order_id=' . $id . ' website:' . $postOrder['website_name'];
+            Utils::sendFeishu($message);
+            echo $message;
+            return false;
         } catch (ClientException $e) {
             var_dump($e->getMessage());
             Log::error(json_encode($e->getMessage()));
-            Utils::send($e->getMessage() . '--' . $id . " fix check it ");
+            Utils::sendFeishu($e->getMessage() . '--' . $id . " fix check it ");
             echo $e->getMessage() . " post failed";
             return false;
         }
