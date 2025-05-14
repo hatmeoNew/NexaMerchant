@@ -35,6 +35,7 @@ class Product extends Model implements ProductContract
         'type',
         'attribute_family_id',
         'sku',
+        'custom_sku',
         'parent_id',
     ];
 
