@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f5b6b44fccd110eefdff3d17d975904",
+    "content-hash": "c464c2463693c6b5969e81cda76ba934",
     "packages": [
         {
             "name": "adamlc/address-format",
@@ -225,104 +225,6 @@
             "time": "2024-04-25T13:16:04+00:00"
         },
         {
-            "name": "bensampo/laravel-enum",
-            "version": "6.12.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/BenSampo/laravel-enum.git",
-                "reference": "acc0374b11015e3a9d30765cced7b9374d37fa09"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/BenSampo/laravel-enum/zipball/acc0374b11015e3a9d30765cced7b9374d37fa09",
-                "reference": "acc0374b11015e3a9d30765cced7b9374d37fa09",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "composer/class-map-generator": "^1",
-                "illuminate/contracts": "^9 || ^10 || ^11 || ^12",
-                "illuminate/support": "^9 || ^10 || ^11 || ^12",
-                "laminas/laminas-code": "^3.4 || ^4",
-                "nikic/php-parser": "^4.13.2 || ^5",
-                "php": "^8"
-            },
-            "require-dev": {
-                "doctrine/dbal": "^3.9.4",
-                "ergebnis/composer-normalize": "^2.45",
-                "larastan/larastan": "^2.9.14 || ^3.1",
-                "mll-lab/php-cs-fixer-config": "^5.10",
-                "mockery/mockery": "^1.6.12",
-                "orchestra/testbench": "^7.6.1 || ^8.33 || ^9.11 || ^10",
-                "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^1.12.19 || ^2.1.6",
-                "phpstan/phpstan-mockery": "^1.1.3 || ^2",
-                "phpstan/phpstan-phpunit": "^1.4.2 || ^2.0.4",
-                "phpunit/phpunit": "^9.5.21 || ^10.5.45 || ^11.5.10 || ^12.0.5",
-                "rector/rector": "^1.2.10 || ^2.0.9",
-                "symplify/rule-doc-generator": "^11.2 || ^12.2.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "BenSampo\\Enum\\EnumServiceProvider"
-                    ]
-                },
-                "phpstan": {
-                    "includes": [
-                        "extension.neon"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "BenSampo\\Enum\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ben Sampson",
-                    "homepage": "https://sampo.co.uk",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Benedikt Franke",
-                    "homepage": "https://franke.tech",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Simple, extensible and powerful enumeration implementation for Laravel.",
-            "homepage": "https://github.com/bensampo/laravel-enum",
-            "keywords": [
-                "bensampo",
-                "enum",
-                "laravel",
-                "package",
-                "validation"
-            ],
-            "support": {
-                "issues": "https://github.com/BenSampo/laravel-enum/issues",
-                "source": "https://github.com/BenSampo/laravel-enum/tree/6.12.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/bensampo",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-02-25T18:40:18+00:00"
-        },
-        {
             "name": "brick/math",
             "version": "0.12.3",
             "source": {
@@ -464,213 +366,6 @@
             "time": "2023-12-11T17:09:12+00:00"
         },
         {
-            "name": "casbin/casbin",
-            "version": "v3.25.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-casbin/php-casbin.git",
-                "reference": "84306e7565f26c80fdaf6dae618f6276701243ab"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-casbin/php-casbin/zipball/84306e7565f26c80fdaf6dae618f6276701243ab",
-                "reference": "84306e7565f26c80fdaf6dae618f6276701243ab",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "php": ">=7.1.0",
-                "s1lentium/iptools": "^1.1",
-                "symfony/expression-language": "^3.4|^4.0|^5.0|^6.0|^7.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.2",
-                "php-coveralls/php-coveralls": "^2.1",
-                "phpstan/phpstan": "^1.2",
-                "phpunit/phpunit": "~7.0|~8.0|~9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Casbin\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "TechLee",
-                    "email": "techlee@qq.com"
-                }
-            ],
-            "description": "a powerful and efficient open-source access control library for php projects.",
-            "keywords": [
-                "abac",
-                "access control",
-                "acl",
-                "authorization",
-                "casbin",
-                "permission",
-                "rbac"
-            ],
-            "support": {
-                "issues": "https://github.com/php-casbin/php-casbin/issues",
-                "source": "https://github.com/php-casbin/php-casbin/tree/v3.25.1"
-            },
-            "funding": [
-                {
-                    "url": "https://opencollective.com/casbin",
-                    "type": "open_collective"
-                }
-            ],
-            "time": "2024-09-04T15:14:34+00:00"
-        },
-        {
-            "name": "casbin/laravel-authz",
-            "version": "v3.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-casbin/laravel-authz.git",
-                "reference": "11ffe28750f22b0aec4bd86f6899d2c5bfc2a724"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-casbin/laravel-authz/zipball/11ffe28750f22b0aec4bd86f6899d2c5bfc2a724",
-                "reference": "11ffe28750f22b0aec4bd86f6899d2c5bfc2a724",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "casbin/casbin": "~3.1",
-                "casbin/psr3-bridge": "^1.1",
-                "illuminate/console": "~5.5|~6.0|~7.0|~8.0|~9.0|~10.0|~11.0",
-                "illuminate/database": "~5.5|~6.0|~7.0|~8.0|~9.0|~10.0|~11.0",
-                "illuminate/support": "~5.5|~6.0|~7.0|~8.0|~9.0|~10.0|~11.0",
-                "php": ">=7.1.0"
-            },
-            "require-dev": {
-                "laravel/laravel": "~5.5|~6.0|~7.0|~8.0|~9.0|~10.0|~11.0",
-                "mockery/mockery": "^1.0",
-                "php-coveralls/php-coveralls": "^2.4",
-                "phpunit/phpunit": "~7.0|~8.0|~9.0|~10.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Enforcer": "Lauthz\\Facades\\Enforcer"
-                    },
-                    "providers": [
-                        "Lauthz\\LauthzServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Lauthz\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "TechLee",
-                    "email": "techlee@qq.com"
-                }
-            ],
-            "description": "An authorization library that supports access control models like ACL, RBAC, ABAC in Laravel. ",
-            "keywords": [
-                "abac",
-                "access-control",
-                "acl",
-                "authorization",
-                "authz",
-                "casbin",
-                "laravel",
-                "permission",
-                "rbac"
-            ],
-            "support": {
-                "issues": "https://github.com/php-casbin/laravel-authz/issues",
-                "source": "https://github.com/php-casbin/laravel-authz/tree/v3.5.0"
-            },
-            "time": "2024-08-07T15:18:59+00:00"
-        },
-        {
-            "name": "casbin/psr3-bridge",
-            "version": "v1.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-casbin/psr3-bridge.git",
-                "reference": "4b8133c77f2dc1093b3adeb5fc3af1e8de3d0eb1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-casbin/psr3-bridge/zipball/4b8133c77f2dc1093b3adeb5fc3af1e8de3d0eb1",
-                "reference": "4b8133c77f2dc1093b3adeb5fc3af1e8de3d0eb1",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "casbin/casbin": "^2.0|^3.0",
-                "psr/log": "^1.1|^2.0|^3.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.2",
-                "php-coveralls/php-coveralls": "^2.1",
-                "phpunit/phpunit": "~7.0|~8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Casbin\\Bridge\\Logger\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "TechLee",
-                    "email": "techlee@qq.com"
-                }
-            ],
-            "description": "This library provides a PSR-3 compliant bridge for Casbin Logger.",
-            "keywords": [
-                "acl",
-                "casbin",
-                "logger",
-                "permission",
-                "psr-3",
-                "rbac"
-            ],
-            "support": {
-                "issues": "https://github.com/php-casbin/psr3-bridge/issues",
-                "source": "https://github.com/php-casbin/psr3-bridge/tree/v1.3.1"
-            },
-            "time": "2022-02-05T12:08:12+00:00"
-        },
-        {
             "name": "composer/ca-bundle",
             "version": "1.5.5",
             "source": {
@@ -751,85 +446,6 @@
                 }
             ],
             "time": "2025-01-08T16:17:16+00:00"
-        },
-        {
-            "name": "composer/class-map-generator",
-            "version": "1.6.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/composer/class-map-generator.git",
-                "reference": "134b705ddb0025d397d8318a75825fe3c9d1da34"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/composer/class-map-generator/zipball/134b705ddb0025d397d8318a75825fe3c9d1da34",
-                "reference": "134b705ddb0025d397d8318a75825fe3c9d1da34",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "composer/pcre": "^2.1 || ^3.1",
-                "php": "^7.2 || ^8.0",
-                "symfony/finder": "^4.4 || ^5.3 || ^6 || ^7"
-            },
-            "require-dev": {
-                "phpstan/phpstan": "^1.12 || ^2",
-                "phpstan/phpstan-deprecation-rules": "^1 || ^2",
-                "phpstan/phpstan-phpunit": "^1 || ^2",
-                "phpstan/phpstan-strict-rules": "^1.1 || ^2",
-                "phpunit/phpunit": "^8",
-                "symfony/filesystem": "^5.4 || ^6"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Composer\\ClassMapGenerator\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "https://seld.be"
-                }
-            ],
-            "description": "Utilities to scan PHP code and generate class maps.",
-            "keywords": [
-                "classmap"
-            ],
-            "support": {
-                "issues": "https://github.com/composer/class-map-generator/issues",
-                "source": "https://github.com/composer/class-map-generator/tree/1.6.1"
-            },
-            "funding": [
-                {
-                    "url": "https://packagist.com",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/composer",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-03-24T13:50:44+00:00"
         },
         {
             "name": "composer/pcre",
@@ -4402,75 +4018,6 @@
             "time": "2024-01-08T15:50:35+00:00"
         },
         {
-            "name": "laminas/laminas-code",
-            "version": "4.15.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-code.git",
-                "reference": "877ad42fe9c164785182fca8afa3f416a056884d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/877ad42fe9c164785182fca8afa3f416a056884d",
-                "reference": "877ad42fe9c164785182fca8afa3f416a056884d",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
-            },
-            "require-dev": {
-                "doctrine/annotations": "^2.0.1",
-                "ext-phar": "*",
-                "laminas/laminas-coding-standard": "^3.0.0",
-                "laminas/laminas-stdlib": "^3.18.0",
-                "phpunit/phpunit": "^10.5.37",
-                "psalm/plugin-phpunit": "^0.19.0",
-                "vimeo/psalm": "^5.15.0"
-            },
-            "suggest": {
-                "doctrine/annotations": "Doctrine\\Common\\Annotations >=1.0 for annotation features",
-                "laminas/laminas-stdlib": "Laminas\\Stdlib component"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Code\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Extensions to the PHP Reflection API, static code scanning, and code generation",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "code",
-                "laminas",
-                "laminasframework"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-code/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-code/issues",
-                "rss": "https://github.com/laminas/laminas-code/releases.atom",
-                "source": "https://github.com/laminas/laminas-code"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2024-10-25T10:15:16+00:00"
-        },
-        {
             "name": "laminas/laminas-diactoros",
             "version": "3.4.0",
             "source": {
@@ -6668,16 +6215,16 @@
         },
         {
             "name": "nexa-merchant/apis",
-            "version": "dev-main",
+            "version": "dev-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NexaMerchant/Apis.git",
-                "reference": "a5d71ea8b6db859762cd60907b8bfbae0e12ff92"
+                "reference": "62385bf99eef327df248b1a692c5d3cdd94bbef1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NexaMerchant/Apis/zipball/a5d71ea8b6db859762cd60907b8bfbae0e12ff92",
-                "reference": "a5d71ea8b6db859762cd60907b8bfbae0e12ff92",
+                "url": "https://api.github.com/repos/NexaMerchant/Apis/zipball/62385bf99eef327df248b1a692c5d3cdd94bbef1",
+                "reference": "62385bf99eef327df248b1a692c5d3cdd94bbef1",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -6687,24 +6234,15 @@
                 ]
             },
             "require": {
-                "bensampo/laravel-enum": "^6.0",
-                "casbin/laravel-authz": "^3.1",
                 "darkaonline/l5-swagger": "^8.5",
                 "ext-sodium": "*",
                 "laravel/framework": "~9.0||~10.0||~11.0"
             },
             "require-dev": {
-                "bensampo/laravel-enum": "^6.0",
-                "casbin/laravel-authz": "^3.1",
                 "laravel/framework": "~9.0||~10.0||~11.0",
                 "phpunit/phpcov": ">=6.0",
                 "phpunit/phpunit": ">=8.0"
             },
-            "suggest": {
-                "ext-sodium": "For better security, it is recommended to install the sodium extension",
-                "nexa-merchant/core": "Nexa merchant merchant package"
-            },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -6742,9 +6280,9 @@
             ],
             "support": {
                 "issues": "https://github.com/NexaMerchant/Apis/issues",
-                "source": "https://github.com/NexaMerchant/Apis/tree/V1.3.3"
+                "source": "https://github.com/NexaMerchant/Apis/tree/V1.1.1"
             },
-            "time": "2025-05-13T02:55:02+00:00"
+            "time": "2024-08-15T02:50:29+00:00"
         },
         {
             "name": "nexa-merchant/apps",
@@ -9862,67 +9400,6 @@
             "time": "2023-11-16T16:16:50+00:00"
         },
         {
-            "name": "s1lentium/iptools",
-            "version": "v1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/S1lentium/IPTools.git",
-                "reference": "88be1aaaab3c50fc131ebe778e246215ff006d8e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/S1lentium/IPTools/zipball/88be1aaaab3c50fc131ebe778e246215ff006d8e",
-                "reference": "88be1aaaab3c50fc131ebe778e246215ff006d8e",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "ext-bcmath": "*",
-                "php": "^8.0"
-            },
-            "require-dev": {
-                "php-coveralls/php-coveralls": "^2.5",
-                "phpunit/phpunit": "^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "IPTools\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Safarov Alisher",
-                    "email": "alisher.safarov@outlook.com",
-                    "homepage": "https://github.com/S1lentium"
-                }
-            ],
-            "description": "PHP Library for manipulating network addresses (IPv4 and IPv6)",
-            "keywords": [
-                "IP",
-                "IP-Tools",
-                "cidr",
-                "ipv4",
-                "ipv6",
-                "network",
-                "subnet"
-            ],
-            "support": {
-                "issues": "https://github.com/S1lentium/IPTools/issues",
-                "source": "https://github.com/S1lentium/IPTools/tree/v1.2.0"
-            },
-            "time": "2022-08-17T14:28:59+00:00"
-        },
-        {
             "name": "sabberworm/php-css-parser",
             "version": "v8.7.0",
             "source": {
@@ -11990,76 +11467,6 @@
                 }
             ],
             "time": "2024-09-25T14:20:29+00:00"
-        },
-        {
-            "name": "symfony/expression-language",
-            "version": "v6.4.13",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/expression-language.git",
-                "reference": "3524904fb026356a5230cd197f9a4e6a61e0e7df"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/expression-language/zipball/3524904fb026356a5230cd197f9a4e6a61e0e7df",
-                "reference": "3524904fb026356a5230cd197f9a4e6a61e0e7df",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "php": ">=8.1",
-                "symfony/cache": "^5.4|^6.0|^7.0",
-                "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/service-contracts": "^2.5|^3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\ExpressionLanguage\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Provides an engine that can compile and evaluate expressions",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/expression-language/tree/v6.4.13"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2024-10-09T08:40:40+00:00"
         },
         {
             "name": "symfony/finder",
