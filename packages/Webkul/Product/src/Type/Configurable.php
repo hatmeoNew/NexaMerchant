@@ -161,7 +161,7 @@ class Configurable extends AbstractType
         }
 
         foreach (array_permutation($superAttributes) as $permutation) {
-            $this->createVariant($product, $permutation);
+            $this->createVariant($product, $permutation, ['custom_sku' => $data['custom_sku']]);
         }
 
         return $product;
