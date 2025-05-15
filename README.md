@@ -1,4 +1,4 @@
-# Nexa Merchant Laravel ecommerce
+# Nexa Merchant Laravel ecommerce1
 
 [Online Document](https://nexa-merchant.vercel.app/)
 
