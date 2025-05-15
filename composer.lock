@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "72524a465bac3e788bb43c6c2353dfc1",
+    "content-hash": "0f5b6b44fccd110eefdff3d17d975904",
     "packages": [
         {
             "name": "adamlc/address-format",
@@ -226,16 +226,16 @@
         },
         {
             "name": "bensampo/laravel-enum",
-            "version": "v6.11.1",
+            "version": "6.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BenSampo/laravel-enum.git",
-                "reference": "facd826e65fe44b3c0a4f9c726c2433cf8a4a9ea"
+                "reference": "acc0374b11015e3a9d30765cced7b9374d37fa09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BenSampo/laravel-enum/zipball/facd826e65fe44b3c0a4f9c726c2433cf8a4a9ea",
-                "reference": "facd826e65fe44b3c0a4f9c726c2433cf8a4a9ea",
+                "url": "https://api.github.com/repos/BenSampo/laravel-enum/zipball/acc0374b11015e3a9d30765cced7b9374d37fa09",
+                "reference": "acc0374b11015e3a9d30765cced7b9374d37fa09",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -246,26 +246,26 @@
             },
             "require": {
                 "composer/class-map-generator": "^1",
-                "illuminate/contracts": "^9 || ^10 || ^11",
-                "illuminate/support": "^9 || ^10 || ^11",
+                "illuminate/contracts": "^9 || ^10 || ^11 || ^12",
+                "illuminate/support": "^9 || ^10 || ^11 || ^12",
                 "laminas/laminas-code": "^3.4 || ^4",
                 "nikic/php-parser": "^4.13.2 || ^5",
                 "php": "^8"
             },
             "require-dev": {
-                "doctrine/dbal": "^3.4",
-                "ergebnis/composer-normalize": "^2.28.3",
-                "larastan/larastan": "^2.6.3",
-                "mll-lab/php-cs-fixer-config": "^5.4",
-                "mockery/mockery": "^1.5",
-                "orchestra/testbench": "^7.6.1 || ^8 || ^9",
-                "phpstan/extension-installer": "^1",
-                "phpstan/phpstan": "^1.8.2",
-                "phpstan/phpstan-mockery": "^1.1",
-                "phpstan/phpstan-phpunit": "^1.1.1",
-                "phpunit/phpunit": "^9.5.21 || ^10 || ^11",
-                "rector/rector": "^1",
-                "symplify/rule-doc-generator": "^11 || ^12 || ^13"
+                "doctrine/dbal": "^3.9.4",
+                "ergebnis/composer-normalize": "^2.45",
+                "larastan/larastan": "^2.9.14 || ^3.1",
+                "mll-lab/php-cs-fixer-config": "^5.10",
+                "mockery/mockery": "^1.6.12",
+                "orchestra/testbench": "^7.6.1 || ^8.33 || ^9.11 || ^10",
+                "phpstan/extension-installer": "^1.4.3",
+                "phpstan/phpstan": "^1.12.19 || ^2.1.6",
+                "phpstan/phpstan-mockery": "^1.1.3 || ^2",
+                "phpstan/phpstan-phpunit": "^1.4.2 || ^2.0.4",
+                "phpunit/phpunit": "^9.5.21 || ^10.5.45 || ^11.5.10 || ^12.0.5",
+                "rector/rector": "^1.2.10 || ^2.0.9",
+                "symplify/rule-doc-generator": "^11.2 || ^12.2.5"
             },
             "type": "library",
             "extra": {
@@ -312,7 +312,7 @@
             ],
             "support": {
                 "issues": "https://github.com/BenSampo/laravel-enum/issues",
-                "source": "https://github.com/BenSampo/laravel-enum/tree/v6.11.1"
+                "source": "https://github.com/BenSampo/laravel-enum/tree/6.12.0"
             },
             "funding": [
                 {
@@ -320,7 +320,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-08-21T10:45:41+00:00"
+            "time": "2025-02-25T18:40:18+00:00"
         },
         {
             "name": "brick/math",
@@ -6668,7 +6668,7 @@
         },
         {
             "name": "nexa-merchant/apis",
-            "version": "V1.3.3",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NexaMerchant/Apis.git",
@@ -6704,6 +6704,7 @@
                 "ext-sodium": "For better security, it is recommended to install the sodium extension",
                 "nexa-merchant/core": "Nexa merchant merchant package"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -6822,16 +6823,16 @@
         },
         {
             "name": "nexa-merchant/blog",
-            "version": "V1.1.1",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NexaMerchant/Blog.git",
-                "reference": "33855da5467126955675ccdf2545ad22c9536024"
+                "reference": "41264548677cbaa3a2e5fb3bafd690bf21709df4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NexaMerchant/Blog/zipball/33855da5467126955675ccdf2545ad22c9536024",
-                "reference": "33855da5467126955675ccdf2545ad22c9536024",
+                "url": "https://api.github.com/repos/NexaMerchant/Blog/zipball/41264548677cbaa3a2e5fb3bafd690bf21709df4",
+                "reference": "41264548677cbaa3a2e5fb3bafd690bf21709df4",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -6848,6 +6849,7 @@
                 "phpunit/phpcov": ">=6.0",
                 "phpunit/phpunit": ">=8.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -6876,13 +6878,13 @@
             "homepage": "https://nexamerchant.github.io/docs/",
             "support": {
                 "issues": "https://github.com/NexaMerchant/Blog/issues",
-                "source": "https://github.com/NexaMerchant/Blog/tree/V1.1.1"
+                "source": "https://github.com/NexaMerchant/Blog/tree/main"
             },
-            "time": "2025-04-27T09:39:10+00:00"
+            "time": "2025-04-29T03:25:19+00:00"
         },
         {
             "name": "nexa-merchant/checkoutcod",
-            "version": "V1.1.5",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NexaMerchant/CheckoutCod.git",
@@ -6908,6 +6910,7 @@
                 "phpunit/phpcov": ">=6.0",
                 "phpunit/phpunit": ">=8.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -7148,12 +7151,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/NexaMerchant/OdooApi.git",
-                "reference": "034b0987d0514794ce2ade1a757d7f069ae6f52c"
+                "reference": "3103711ce3b82690e6fc14ae0c6853214b7f5683"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NexaMerchant/OdooApi/zipball/034b0987d0514794ce2ade1a757d7f069ae6f52c",
-                "reference": "034b0987d0514794ce2ade1a757d7f069ae6f52c",
+                "url": "https://api.github.com/repos/NexaMerchant/OdooApi/zipball/3103711ce3b82690e6fc14ae0c6853214b7f5683",
+                "reference": "3103711ce3b82690e6fc14ae0c6853214b7f5683",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -7202,7 +7205,7 @@
                 "issues": "https://github.com/NexaMerchant/OdooApi/issues",
                 "source": "https://github.com/NexaMerchant/OdooApi/tree/main"
             },
-            "time": "2025-05-10T03:46:33+00:00"
+            "time": "2025-05-14T02:13:27+00:00"
         },
         {
             "name": "nexa-merchant/shopify",
@@ -18233,6 +18236,9 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "nexa-merchant/apis": 20,
+        "nexa-merchant/blog": 20,
+        "nexa-merchant/checkoutcod": 20,
         "nexa-merchant/feeds": 20,
         "nexa-merchant/klaviyo": 20,
         "nexa-merchant/odooapi": 20,
