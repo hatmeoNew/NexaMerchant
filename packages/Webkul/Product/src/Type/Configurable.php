@@ -180,7 +180,7 @@ class Configurable extends AbstractType
 
 
 
-       
+
 
         $product = parent::update($data, $id, $attribute);
 
@@ -266,6 +266,7 @@ class Configurable extends AbstractType
             'type'                => $typeOfVariants,
             'attribute_family_id' => $product->attribute_family_id,
             'sku'                 => $data['sku'],
+            'custom_sku'          => $data['custom_sku'],
         ]);
 
         $attributeValues = [];
