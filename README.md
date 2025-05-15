@@ -1,4 +1,4 @@
-# Nexa Merchant Laravel ecommerce
+# Nexa Merchant Laravel ecommerce1
 
 [Online Document](https://nexa-merchant.vercel.app/)
 
@@ -16,7 +16,7 @@ docker pull nicesteven/nexamerchant
 ```
 
 # Docker Compose
-    
+
     ```bash
     cd docker
     docker-compose up -d
@@ -49,7 +49,7 @@ docker pull nicesteven/nexamerchant
 ## Shopee
 
 ## Issue
-[Github](https://github.com/xxl4/NexaMerchant/issues)  
+[Github](https://github.com/xxl4/NexaMerchant/issues)
 
 ## Discussions
-[Github](https://github.com/xxl4/NexaMerchant/discussions)  
+[Github](https://github.com/xxl4/NexaMerchant/discussions)

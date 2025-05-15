@@ -109,6 +109,9 @@ class ConfigurableOption
                 $productAttributeId = $productAttribute->id;
 
                 $attributeValue = $product->{$productAttribute->code};
+                if (is_null($attributeValue)) {
+                    $attributeValue = $this->getProductAttributeValue($product, $productAttribute->code);
+                }
 
                 $options[$productAttributeId][$attributeValue][] = $product->id;
 
@@ -117,6 +120,26 @@ class ConfigurableOption
         }
 
         return $options;
+    }
+
+    public function getProductAttributeValue($product, $attributeCode)
+    {
+        $match = $product->attribute_values->first(function ($item) use ($attributeCode) {
+            return $item->attribute && $item->attribute->code === $attributeCode;
+        });
+
+        return $match ? $this->extractAttributeValue($match) : null;
+    }
+
+    protected function extractAttributeValue($attributeValueModel)
+    {
+        foreach (['text_value', 'boolean_value', 'integer_value', 'float_value', 'datetime_value', 'json_value'] as $field) {
+            if (!is_null($attributeValueModel->{$field})) {
+                return $attributeValueModel->{$field};
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -155,7 +178,7 @@ class ConfigurableOption
     {
         $attributeOptionsData = [];
 
-        
+
 
         foreach ($attribute->options as $attributeOption) {
             $optionId = $attributeOption->id;

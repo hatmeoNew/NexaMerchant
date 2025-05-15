@@ -72,6 +72,13 @@ class ApiController extends Controller
         $currency_get = $request->input('currency');
         if(!empty($currency_get)) {
             core()->setCurrentCurrency($currency_get);
+            $currency = $currency_get;
+        }else{
+            $currency_get = trim($_GET['currency']);
+            if(!empty($currency_get)) {
+                core()->setCurrentCurrency($currency_get);
+                $currency = $currency_get;
+            }
         }
 
         $clean_cache = $request->input('clean_cache');
@@ -79,7 +86,7 @@ class ApiController extends Controller
       
 
         //var_dump($currency);exit;
-        //echo $this->checkout_v2_cache_key.$slug.$currency;exit;
+        //echo $this->checkout_v2_cache_key.$slug.$currency_get;exit;
         $data = Cache::get($this->checkout_v2_cache_key.$slug.$currency);
         $env = config("app.env");
         // when the env is pord use cache

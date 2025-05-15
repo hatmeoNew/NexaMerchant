@@ -32,12 +32,18 @@ function swiperDom(data) {
     id: key,
     src: value[0].large_image_url
   }));
+  console.log(result, 'result')
   var swiperList = '';
   swiperImgList.unshift(...data.images);
   swiperImgList.push(...result)
-
+  console.log(data.images, 'data.images')
+  var fliterImg = result.filter((item, index, self) => {
+    return index === self.findIndex((t) => (
+      t.src === item.src
+    ));
+  })
   var img = data.images;
-  img.push(...result)
+  img.push(...fliterImg)
   image = img[0].src;
   for (var i = 0; i < img.length; i++) {
     swiperList += `<div class="swiper-slide"><img src="${img[i].src}" width="750" height="750" loading="lazy" alt=""></div>`;

@@ -30,7 +30,7 @@ class Post extends Command
      *
      * @var string
      */
-    protected $description = 'create Order shopify:order:post';
+    protected $description = 'create Order shopify:order:post {--order_id=} ';
 
     private $shopify_store_id = null;
     private $lang = null;
@@ -88,13 +88,7 @@ class Post extends Command
 
         $order_id = $this->option("order_id");
 
-        try {
-            Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order_id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
-            $this->info('push odoo success. id=' . $order_id);
-        } catch (\Throwable $th) {
-            $this->info('push odoo fail. id=' . $order_id);
-            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($th->getMessage() . ' --order_id=' . $order_id);
-        }
+        echo $order_id." start debug \r\n";
 
         if(!empty($order_id)) {
             $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
@@ -102,6 +96,8 @@ class Post extends Command
             $lists = [];
             //$lists = Order::where(['status'=>'processing'])->orderBy("updated_at", "desc")->select(['id'])->limit(100)->get();
         }
+
+        echo json_encode($lists)." start debug \r\n";
 
         //$this->checkLog();
 
@@ -284,6 +280,14 @@ class Post extends Command
         $shipping_address->phone = str_replace('undefined', '', $shipping_address->phone);
         $shipping_address->city = empty($shipping_address->city) ? $shipping_address->state : $shipping_address->city;
 
+        // if the country is JP and the province need select the country_state table and get the name
+        if($billing_address->country=='JP') {
+            $country_state = \Webkul\Core\Models\CountryState::where('code', $billing_address->state)->where("country_code",$billing_address->country)->first();
+            if(!is_null($country_state)) {
+                $billing_address->state = $country_state->default_name;
+            }
+        }
+
         $billing_address = [
             "first_name" => $billing_address->first_name,
             "last_name" => $billing_address->last_name,
@@ -315,6 +319,14 @@ class Post extends Command
                 //var_dump($data);
 
                 $this->createCuster($data);
+            }
+        }
+
+        // if the country is JP and the province need select the country_state table and get the name
+        if($shipping_address->country=='JP') {
+            $country_state = \Webkul\Core\Models\CountryState::where('code', $shipping_address->state)->where("country_code",$shipping_address->country)->first();
+            if(!is_null($country_state)) {
+                $shipping_address->state = $country_state->default_name;
             }
         }
 
@@ -654,21 +666,23 @@ class Post extends Command
 
             // order sync to other job
 
-            $cnv_id = explode('-',$orderPayment['method_title']);
+            // $cnv_id = explode('-',$orderPayment['method_title']);
 
 
-            $crm_channel = config('onebuy.crm_channel');
+            // $crm_channel = config('onebuy.crm_channel');
 
 
-            $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$item['email']."&order_id=".$id;
-            $res = $this->get_content($url);
-            Log::info("post to bm 2 url ".$url." res ".json_encode($res));
+            // $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$item['email']."&order_id=".$id;
+            // $res = $this->get_content($url);
+            // Log::info("post to bm 2 url ".$url." res ".json_encode($res));
 
             // order check
             // for cod order need check the order
-            if($orderPayment['method']=='codpayment'){
-                Artisan::queue("GooglePlaces:check-order",['--order_id'=>$id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
-            }
+            // if($orderPayment['method']=='codpayment'){
+            //     Artisan::queue("GooglePlaces:check-order",['--order_id'=>$id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
+            // }
+
+            Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
 
         }
 

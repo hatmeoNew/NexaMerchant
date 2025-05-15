@@ -559,6 +559,16 @@ class Core
         if($currency == "RON") {
             return 'lei';
         }
+        if($currency == "SEK") {
+            return 'kr';
+        }
+        if($currency == "NOK") {
+            return 'kr';
+        }
+        if($currency == "NZD") {
+            return 'NZ$';
+        }
+        
         $code = $currency instanceof \Webkul\Core\Contracts\Currency ? $currency->code : $currency;
 
         $formatter = new \NumberFormatter(app()->getLocale() . '@currency=' . $code, \NumberFormatter::CURRENCY);

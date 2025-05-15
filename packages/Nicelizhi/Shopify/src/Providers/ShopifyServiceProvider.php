@@ -122,7 +122,9 @@ class ShopifyServiceProvider extends ServiceProvider
 
                 \Nicelizhi\Shopify\Console\Commands\Transaction\Post::class,
 
-                \Nicelizhi\Shopify\Console\Commands\Order\PostOdoo::class
+                \Nicelizhi\Shopify\Console\Commands\Order\PostOdoo::class,
+
+                \Nicelizhi\Shopify\Console\Commands\Order\ProductSync::class
             ]);
         }
     }

@@ -28,11 +28,17 @@ final class Utils {
 
         $shipping_price_key = "shipping_price"."_".$currency;
         $shipping_price = Cache::get($shipping_price_key);
+        $shipping_covert = 0;
         //var_dump($shipping_price);
         if(empty($shipping_price)) {
+            // if the currency is not channel currency, we need to convert the price
             $shipping_price = core()->getConfigData('sales.carriers.flatrate.default_rate');
-            $shipping_price = core()->convertPrice($shipping_price);
+            if($currency != core()->getChannelBaseCurrencyCode()) {
+                $shipping_price = core()->convertPrice($shipping_price);
+            }
+            //$shipping_price = core()->convertPrice($shipping_price);
             Cache::put($shipping_price_key, $shipping_price);
+            $shipping_covert = 1;
         }
         //if(empty($package_products)) {
         if(true) {
@@ -84,7 +90,7 @@ final class Utils {
                 $package_product['tip1'] = $tip1_price."% ";
                 $tip2_price = round($package_product['new_price'] / $i, 2);
                 $package_product['tip2'] = core()->currency($tip2_price);
-                $package_product['shipping_fee'] = core()->convertPrice($shipping_price); // shipping price
+                $package_product['shipping_fee'] = $shipping_price; // shipping price
                 $package_product['return_fee'] = core()->convertPrice(config('onebuy.return_fee'));
                 $popup_info['name'] = null;
                 $popup_info['old_price'] = null;
@@ -183,6 +189,10 @@ final class Utils {
      * 
      */
     private static function getCartProductPriceV2($product, $product_id, $qty) {
+
+        // get curren
+        $currency = core()->getCurrentCurrencyCode();
+
         $prices = Redis::zRange('product-quantity-price-'.$product_id, 0, -1, 'WITHSCORES');
         $rules = Redis::smembers('product-quantity-rules-'.$product_id);
         // CartRuleRepository
@@ -197,6 +207,11 @@ final class Utils {
         if($price == 0) {
             // send msg to the feishu
             //\Nicelizhi\Shopify\Helpers\Utils::sendFeishu(config('onebuy.brand').' price is eq 0  product_id:'.$product_id.'--'.$product->name.'--'.$product->sku.'--'.$product->type.'--'.$product->attribute_family_id.'--'.$product->attribute_family_name.'--'.$product->attribute_family_id);
+        }
+
+        // when the currency is not channel currency, we need to convert the price
+        if($currency != core()->getChannelBaseCurrencyCode()) {
+            $price = core()->convertPrice($price);
         }
 
         
