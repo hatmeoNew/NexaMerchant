@@ -196,7 +196,7 @@ class PostOdoo extends Command
         }
 
         $state = $shipping_address->state;
-        if (in_array($shipping_address->country, ['CZ'])) {
+        if (in_array($shipping_address->country, ['CZ', 'PL'])) {
             $state = '';
         }
 
