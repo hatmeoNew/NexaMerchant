@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Log;
 use Webkul\Paypal\Payment\SmartButton;
 use Webkul\Sales\Repositories\OrderTransactionRepository;
 use Illuminate\Support\Facades\Artisan;
+use Nicelizhi\Shopify\Console\Commands\Order\Post;
+use Nicelizhi\Shopify\Console\Commands\Order\PostOdoo;
 
 class Transaction
 {
@@ -70,7 +72,8 @@ class Transaction
 
                     // send order to shopify
                     $queue = config('app.name'). ':orders';
-                    Artisan::queue("shopify:order:post", ['--order_id'=> $invoice->order->id])->onConnection('rabbitmq')->onQueue($queue);
+                    // Artisan::queue((new Post())->getName(), ['--order_id'=> $invoice->order->id])->onConnection('rabbitmq')->onQueue($queue);
+                    Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $invoice->order->id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
 
                 }
             }

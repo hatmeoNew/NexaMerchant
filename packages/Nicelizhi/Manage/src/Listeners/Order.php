@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Nicelizhi\Shopify\Console\Commands\Order\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
-
+use Nicelizhi\Shopify\Console\Commands\Order\PostOdoo;
 
 class Order extends Base
 {
@@ -23,8 +23,9 @@ class Order extends Base
     {
         // send order to shopify
         $queue = config('app.name').':orders';
-        Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
-        
+        // Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
+        Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
+
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_order')) {
                 return;
@@ -45,7 +46,7 @@ class Order extends Base
             report($e);
         }
 
-        
+
     }
 
     /**
@@ -63,7 +64,7 @@ class Order extends Base
 
             $this->prepareMail($order, new CanceledNotification($order));
 
-            
+
 
         } catch (\Exception $e) {
             report($e);

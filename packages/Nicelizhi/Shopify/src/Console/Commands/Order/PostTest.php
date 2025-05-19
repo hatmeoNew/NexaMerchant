@@ -29,7 +29,7 @@ class PostTest extends Command
      *
      * @var string
      */
-    protected $description = 'create Order shopify:order:post';
+    protected $description = 'create Order shopify';
 
     private $shopify_store_id = null;
     private $lang = null;
@@ -48,7 +48,7 @@ class PostTest extends Command
      * @return void
      */
     public function __construct(
-        
+
     )
     {
         $this->ShopifyOrder = new ShopifyOrder();
@@ -94,7 +94,7 @@ class PostTest extends Command
             $lists = [];
             //$lists = Order::where(['status'=>'processing'])->orderBy("updated_at", "desc")->select(['id'])->limit(100)->get();
         }
-        
+
 
         //$this->checkLog();
 
@@ -106,24 +106,24 @@ class PostTest extends Command
         }
 
 
-        
+
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param object orderitem
-     * 
+     *
      */
     public function syncOrderPrice($orderItem) {
         if($orderItem->grand_total_invoiced=='0.0000') {
-            
+
             $base_grand_total_invoiced = $orderItem->base_grand_total;
             $grand_total_invoiced = $orderItem->grand_total;
             Order::where(['id'=>$orderItem->id])->update(['grand_total_invoiced'=>$grand_total_invoiced, 'base_grand_total_invoiced'=>$base_grand_total_invoiced]);
 
         }
-        
+
     }
 
     public function postOrder($id, $shopifyStore) {
@@ -145,18 +145,18 @@ class PostTest extends Command
         $shopify = $shopifyStore->toArray();
 
         /**
-         * 
+         *
          * @link https://shopify.dev/docs/api/admin-rest/2023-10/resources/order#post-orders
-         * 
+         *
          */
         $id = 2133;
         $order = $this->Order->findOrFail($id);
 
-        $orderPayment = $order->payment;  
+        $orderPayment = $order->payment;
 
-        
 
-        
+
+
 
         //var_dump($order);exit;
 
@@ -171,7 +171,7 @@ class PostTest extends Command
             $sku = $product['additional'];
 
             var_dump($sku);
-            
+
             $attributes = "";
 
             if(isset($sku['attributes'])) {
@@ -179,7 +179,7 @@ class PostTest extends Command
                     $attributes .= $sku_attribute['attribute_name'].":".$sku_attribute['option_label'].";";
                 }
             }
-            
+
             $variant_id = $sku['selected_configurable_option'];
             if(isset($sku['product_sku'])) {
                 $skuInfo = explode('-', $sku['product_sku']);
@@ -193,7 +193,7 @@ class PostTest extends Command
             if(!is_numeric($variant_id)) {
                 $variant_id = $sku['selected_configurable_option'];
             }
-            
+
 
             $line_item = [];
             $line_item['variant_id'] = $variant_id;
@@ -260,7 +260,7 @@ class PostTest extends Command
             "last_name" => $billing_address->last_name,
             "address1" => $billing_address->address1,
             //$input['phone_full'] = str_replace('undefined+','', $input['phone_full']);
-            
+
             "phone" => $shipping_address->phone,
             "city" => $billing_address->city,
             "province" => $billing_address->state,
@@ -284,11 +284,11 @@ class PostTest extends Command
                 $data['phone'] = $shipping_address->phone;
 
                 //var_dump($data);
-    
+
                 $this->createCuster($data);
             }
         }
-        
+
 
         $shipping_address = [
             "first_name" => $shipping_address->first_name,
@@ -304,7 +304,7 @@ class PostTest extends Command
         $postOrder['shipping_address'] = $shipping_address;
 
         //$postOrder['email'] = "";
-        
+
         $transactions = [];
 
         $transactions = [
@@ -319,9 +319,9 @@ class PostTest extends Command
         //     $postOrder['test'] = true;
         //     return false;
         // }
-        
 
-        
+
+
         $financial_status = "paid";
 
         if($orderPayment['method']=='codpayment') {
@@ -346,7 +346,7 @@ class PostTest extends Command
                 ]
             ];
 
-            
+
 
         }
 
@@ -382,9 +382,9 @@ class PostTest extends Command
             //\Nicelizhi\Shopify\Helpers\Utils::send($str.'--' .$id. " 需要留意查看 ");
             //continue;
             //return false;
-            $postOrder['send_receipt'] = true; 
+            $postOrder['send_receipt'] = true;
         }else{
-            $postOrder['send_receipt'] = true; 
+            $postOrder['send_receipt'] = true;
         }
 
         $total_shipping_price_set = [
@@ -400,7 +400,7 @@ class PostTest extends Command
 
         $postOrder['total_shipping_price_set'] = $total_shipping_price_set;
 
-        
+
 
         $postOrder['current_total_discounts'] = $order->discount_amount;
         $current_total_discounts_set = [
@@ -453,7 +453,7 @@ class PostTest extends Command
 
         $postOrder['shipping_lines'][] = $shipping_lines;
 
-        $postOrder['buyer_accepts_marketing'] = true; // 
+        $postOrder['buyer_accepts_marketing'] = true; //
 
         $postOrder['name'] = config('shopify.order_pre').'#'.$id;
         $postOrder['order_number'] = $id;
@@ -518,7 +518,7 @@ class PostTest extends Command
             return false;
         }
 
-        
+
 
         $body = json_decode($response->getBody(), true);
         var_dump($body);

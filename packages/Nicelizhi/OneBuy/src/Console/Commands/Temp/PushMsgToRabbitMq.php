@@ -5,7 +5,7 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Illuminate\Support\Facades\Artisan;
 use Nicelizhi\Shopify\Console\Commands\Order\Post;
-
+use Nicelizhi\Shopify\Console\Commands\Order\PostOdoo;
 
 class PushMsgToRabbitMq extends Command {
 
@@ -13,19 +13,19 @@ class PushMsgToRabbitMq extends Command {
     protected $description = 'push msg to rabbitmq';
 
     public function handle()
-    { 
+    {
 
         $this->info("Push msg to rabbitMQ queue");
 
         // push msg to rabbitmq queue use laravel queue
-        
+
         // $msg = [
         //     'msg' => 'hello rabbitmq'
         // ];
 
         // $msg = json_encode($msg);
 
-        
+
         // $rabbitmq_host = config('queue.connections.rabbitmq.hosts');
         // var_dump($rabbitmq_host);
         // $host = $rabbitmq_host[0]['host'];
@@ -46,7 +46,7 @@ class PushMsgToRabbitMq extends Command {
         // $channel->basic_publish($msg, '', 'hello');
 
         // echo " [x] Sent 'Hello World!'\n";
-        
+
         // var_dump($connection, $channel);
 
         $id = 1;
@@ -55,7 +55,8 @@ class PushMsgToRabbitMq extends Command {
 
         $this->info("Push msg to rabbitMQ queue: ".$queue);
 
-        Artisan::queue((new Post())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue($queue);
+        // Artisan::queue((new Post())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue($queue);
+        Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
 
 
 
