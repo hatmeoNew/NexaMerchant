@@ -80,11 +80,10 @@ class CmsRepository extends Repository
      * @param  string  $urlKey
      * @return bool
      */
-    public function isUrlKeyUnique($id, $urlKey, $locale='en')
+    public function isUrlKeyUnique($id, $urlKey)
     {
         $exists = CmsPageTranslationProxy::modelClass()::where('cms_page_id', '<>', $id)
             ->where('url_key', $urlKey)
-            ->where('locale', $locale)
             ->limit(1)
             ->select(\DB::raw(1))
             ->exists();
