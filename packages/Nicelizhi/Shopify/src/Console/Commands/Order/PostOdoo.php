@@ -32,7 +32,7 @@ class PostOdoo extends Command
      *
      * @var string
      */
-    protected $description = 'create Order odoo:order:post';
+    protected $description = 'create Order odoo:order:post erp';
 
     private $customerRepository = null;
     private $product_image = null;
