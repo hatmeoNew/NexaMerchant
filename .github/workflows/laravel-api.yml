@@ -63,3 +63,17 @@ jobs:
           git pull
           ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
           echo "Script started in the background. Check output.log for details."
+    - name: Sync to Server 4 and Do it
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA_X: ${GITHUB_SHA}
+      with:
+        host: ${{ secrets.SSH_JP_HOST }}
+        username: ${{ secrets.SSH_JP_USERNAME }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: ${{secrets.SSH_JP_PORT }}
+        script: |
+          cd /www/wwwroot/shell
+          git pull
+          ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
+          echo "Script started in the background. Check output.log for details."
