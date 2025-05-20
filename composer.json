@@ -73,7 +73,7 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^4.0",
         "maatwebsite/excel": "^3.1.46",
-        "nexa-merchant/apis": "^1.3.3",
+        "nexa-merchant/apis": "^1.3.5",
         "nexa-merchant/apps": "^1.0",
         "nexa-merchant/checkoutcod": "1.1.6",
         "nexa-merchant/feeds": "dev-main",
