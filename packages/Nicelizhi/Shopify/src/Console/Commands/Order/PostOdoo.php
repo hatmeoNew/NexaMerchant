@@ -135,7 +135,7 @@ class PostOdoo extends Command
             if (empty($additional['product_sku'])) {
                 $additional['img'] = $this->product_image->where('product_id', $variant_id)->value('path');
             }
-            $additional['product_sku'] = $this->product->where('id', $variant_id)->value('sku');
+            $additional['product_sku'] = $this->product->where('id', $variant_id)->value('custom_sku');
 
             $line_item['is_shipping'] = $variant_id == env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID');
 
