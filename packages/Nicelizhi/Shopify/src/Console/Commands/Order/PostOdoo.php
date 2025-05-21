@@ -32,7 +32,7 @@ class PostOdoo extends Command
      *
      * @var string
      */
-    protected $description = 'create Order odoo:order:post';
+    protected $description = 'create Order odoo:order:post erp';
 
     private $customerRepository = null;
     private $product_image = null;
@@ -133,9 +133,9 @@ class PostOdoo extends Command
             $additional = $orderItem['additional'];
             $variant_id = $additional['selected_configurable_option'] ?: $orderItem['product_id'];
             if (empty($additional['product_sku'])) {
-                $additional['product_sku'] = $this->product->where('id', $variant_id)->value('sku');
                 $additional['img'] = $this->product_image->where('product_id', $variant_id)->value('path');
             }
+            $additional['product_sku'] = $this->product->where('id', $variant_id)->value('custom_sku');
 
             $line_item['is_shipping'] = $variant_id == env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID');
 

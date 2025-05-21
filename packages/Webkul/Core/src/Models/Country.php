@@ -14,6 +14,8 @@ class Country extends Model implements CountryContract
 
     //protected $with = ['translations'];
 
+    protected $fillable = ['code', 'name'];
+
     /**
      * Get the States.
      */

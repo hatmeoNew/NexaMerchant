@@ -180,7 +180,7 @@ class Configurable extends AbstractType
 
 
 
-       
+
 
         $product = parent::update($data, $id, $attribute);
 
@@ -266,6 +266,7 @@ class Configurable extends AbstractType
             'type'                => $typeOfVariants,
             'attribute_family_id' => $product->attribute_family_id,
             'sku'                 => $data['sku'],
+            'custom_sku'          => $data['custom_sku'] ?? '',
         ]);
 
         $attributeValues = [];
@@ -379,7 +380,7 @@ class Configurable extends AbstractType
     {
         $variant = $this->productRepository->find($id);
 
-        $variant->update(['sku' => $data['sku']]);
+        $variant->update(['sku' => $data['sku'], 'custom_sku' => $data['custom_sku'] ?? '']);
 
         //Log::info('updateVariant fillableTypes: '.json_encode($this->fillableTypes));
 
