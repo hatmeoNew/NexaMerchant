@@ -809,13 +809,7 @@ class ApiController extends Controller
                 
             // }
             Log::info("palpay status ".json_encode($order));
-            // if($order->result->status != "COMPLETED" || $order->result->payments[0]->status != "COMPLETED") {
-            //     return new JsonResource([
-            //         'redirect' => true,
-            //         'message' => "Order status not eq completed",
-            //         'data'     => route('shop.checkout.cart.index'),
-            //     ]); 
-            // }
+            
 
             $cartId = $request->input('orderData.cartId');
             if(empty($cartId)) {
@@ -881,7 +875,7 @@ class ApiController extends Controller
                 // if the status not eq completed, then capture the order
 
                 if($order->result->status != "COMPLETED") {
-                    $this->smartButton->captureOrder(request()->input('orderData.orderID'));
+                    $captureOrder = $this->smartButton->captureOrder(request()->input('orderData.orderID'));
                 }
                 //$this->smartButton->captureOrder(request()->input('orderData.orderID'));
     
@@ -942,10 +936,23 @@ class ApiController extends Controller
                 }
     
                 if($order['result']->status != "COMPLETED") {
-                    $this->smartButton->captureOrder(request()->input('orderData.orderID'));
+                    $captureOrder = $this->smartButton->captureOrder(request()->input('orderData.orderID'));
                 }
-    
 
+            }
+
+
+            //$order = $smartButton->getOrder($orderID);
+            $paypalOrder = $this->smartButton->getOrder(request()->input('orderData.orderID'));
+
+            Log::info("paypal detail order". json_encode($paypalOrder));
+
+            if($paypalOrder->result->status != "COMPLETED" && $paypalOrder->result->purchase_units[0]->payments->captures[0]->status != "COMPLETED") {
+                return new JsonResource([
+                    'redirect' => true,
+                    'message' => "Order status not eq completed",
+                    'data'     => route('shop.checkout.cart.index'),
+                ]); 
             }
 
             $orderRes = $this->saveOrder();
