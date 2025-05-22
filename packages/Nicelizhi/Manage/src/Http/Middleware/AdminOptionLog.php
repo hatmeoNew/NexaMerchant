@@ -22,6 +22,8 @@ class AdminOptionLog
             'method'  => $request->method(),
             'ip'      => $request->getClientIp(),
             'input'   => json_encode($request->input()),
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
         ];
 
         try {

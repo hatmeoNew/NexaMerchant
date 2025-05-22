@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AdminOperationLog extends Model
 {
 
-    protected $fillable = ['user_id', 'path', 'method', 'ip', 'input'];
+    protected $fillable = ['user_id', 'path', 'method', 'ip', 'input', 'created_at', 'updated_at'];
 
     public static $methodColors = [
         'GET'    => 'green',

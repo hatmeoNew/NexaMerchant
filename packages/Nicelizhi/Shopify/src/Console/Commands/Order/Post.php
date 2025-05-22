@@ -236,7 +236,7 @@ class Post extends Command
 
             $line_item['title'] = $product['name'].$product['sku'].$attributes;
             $line_item['name'] = $product['name'].$product['sku'].$attributes;
-            $variant_sku = $this->product->where('id', $variant_id)->value('sku');
+            $variant_sku = $this->product->where('id', $variant_id)->value('custom_sku');
             $line_item['sku'] = $variant_sku;
             if(empty($variant_sku)) {
                 $line_item['sku'] = $sku['product_sku'];
