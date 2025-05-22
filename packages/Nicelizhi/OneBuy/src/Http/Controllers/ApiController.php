@@ -808,13 +808,14 @@ class ApiController extends Controller
             //     $this->smartButton->captureOrder(request()->input('orderData.orderID'));
                 
             // }
-            if($order->result->status != "COMPLETED" || $order->result->payments[0]->status != "COMPLETED") {
-                return new JsonResource([
-                    'redirect' => true,
-                    'message' => "Order status not eq completed",
-                    'data'     => route('shop.checkout.cart.index'),
-                ]); 
-            }
+            Log::info(" paypal pay status  ".json_encode($order));
+            // if($order->result->status != "COMPLETED" || $order->result->payments[0]->status != "COMPLETED") {
+            //     return new JsonResource([
+            //         'redirect' => true,
+            //         'message' => "Order status not eq completed",
+            //         'data'     => route('shop.checkout.cart.index'),
+            //     ]); 
+            // }
 
             $cartId = $request->input('orderData.cartId');
             if(empty($cartId)) {
