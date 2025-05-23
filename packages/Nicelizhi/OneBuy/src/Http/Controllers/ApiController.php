@@ -876,6 +876,9 @@ class ApiController extends Controller
 
                 if($order->result->status != "COMPLETED") {
                     $captureOrder = $this->smartButton->captureOrder(request()->input('orderData.orderID'));
+                    if($captureOrder->result->purchase_units[0]->payments->captures[0]->status != "COMPLETED") {
+                        throw new \Exception("PayPal capture order failed". json_encode($captureOrder));
+                    }
                 }
                 //$this->smartButton->captureOrder(request()->input('orderData.orderID'));
     
@@ -937,6 +940,9 @@ class ApiController extends Controller
     
                 if($order['result']->status != "COMPLETED") {
                     $captureOrder = $this->smartButton->captureOrder(request()->input('orderData.orderID'));
+                    if($captureOrder->result->purchase_units[0]->payments->captures[0]->status != "COMPLETED") {
+                        throw new \Exception("PayPal capture order failed". json_encode($captureOrder));
+                    }
                 }
 
             }
@@ -947,10 +953,20 @@ class ApiController extends Controller
 
             Log::info("paypal detail order". json_encode($paypalOrder));
 
+            Log::info("paypal detail order". json_encode($paypalOrder));
+            if(!isset($paypalOrder->result->purchase_units[0]->payments)) {
+                return new JsonResource([
+                    'code' => 400,
+                    'redirect' => true,
+                    'message' => $paypalOrder,
+                    'data'     => route('shop.checkout.cart.index'),
+                ]); 
+            }
+
             if($paypalOrder->result->status != "COMPLETED" && $paypalOrder->result->purchase_units[0]->payments->captures[0]->status != "COMPLETED") {
                 return new JsonResource([
                     'redirect' => true,
-                    'message' => "Order status not eq completed",
+                    'message' => $paypalOrder,
                     'data'     => route('shop.checkout.cart.index'),
                 ]); 
             }
@@ -1139,11 +1155,16 @@ class ApiController extends Controller
 
         $billingAddressLines = $this->getAddressLines($cart->billing_address->address1);
 
+        $shipping_preference = "GET_FROM_FILE";
+        if($paypal_credit_card == 1) {
+            $shipping_preference = "SET_PROVIDED_ADDRESS";
+        }
+
         $data = [
             'intent' => 'CAPTURE',
             'application_context' => [
                 //'shipping_preference' => 'NO_SHIPPING',
-                'shipping_preference' => 'GET_FROM_FILE', // 用户选择自己的地址内容
+                'shipping_preference' => $shipping_preference, // 用户选择自己的地址内容
             ],
             
 
@@ -1193,11 +1214,11 @@ class ApiController extends Controller
 
         if (
             $cart->haveStockableItems()
-            && $cart->shipping_address
+            && $cart->shipping_address && $paypal_credit_card == 1
         ) {
             //$data['application_context']['shipping_preference'] = 'SET_PROVIDED_ADDRESS';
 
-            /*
+            
             $data['purchase_units'][0] = array_merge($data['purchase_units'][0], [
                 'shipping' => [
                     'address' => [
@@ -1210,7 +1231,7 @@ class ApiController extends Controller
                     ],
                 ],
             ]);
-            */
+            
         }
 
         $input['payment_vault'] = isset($input['payment_vault']) ? $input['payment_vault'] : "0";
