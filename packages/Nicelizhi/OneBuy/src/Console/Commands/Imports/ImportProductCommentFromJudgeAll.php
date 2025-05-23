@@ -19,7 +19,7 @@ class ImportProductCommentFromJudgeAll extends Command
      *
      * @var string
      */
-    protected $signature = 'onebuy:import:products:comment:from:judge:all';
+    protected $signature = 'onebuy:import:products:comment:from:judge:all {prod_id?}';
 
     /**
      * The console command description.
@@ -59,6 +59,12 @@ class ImportProductCommentFromJudgeAll extends Command
 
         $shop_domain = config("onebuy.judge.shop_domain");
         $api_token = config("onebuy.judge.api_token");
+
+        if ($this->argument('prod_id')) {
+            $this->prod_id = $this->argument("prod_id");
+        }
+
+        echo $this->prod_id . "\r\n";
 
         $client = new Client();
 
@@ -118,6 +124,11 @@ class ImportProductCommentFromJudgeAll extends Command
 
 
         foreach ($body['reviews'] as $item) {
+
+
+            if (!empty($this->prod_id)) {
+                if($item['product_external_id']!=$this->prod_id) continue;
+            }
 
             if ($item['published'] != true) continue;
             if ($item['rating'] < 4) continue; // only get the rating >= 4

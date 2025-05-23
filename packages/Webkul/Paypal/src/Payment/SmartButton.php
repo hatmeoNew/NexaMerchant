@@ -106,6 +106,7 @@ class SmartButton extends Paypal
 
         $result = $this->client()->execute($request);
         Log::info("capture order ". json_encode($result));
+        return $result;
     }
 
     /**
