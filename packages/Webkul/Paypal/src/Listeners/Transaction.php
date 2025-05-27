@@ -5,6 +5,7 @@ namespace Webkul\Paypal\Listeners;
 use Illuminate\Support\Facades\Log;
 use Webkul\Paypal\Payment\SmartButton;
 use Webkul\Sales\Repositories\OrderTransactionRepository;
+use Illuminate\Support\Facades\Artisan;
 
 class Transaction
 {
@@ -66,6 +67,8 @@ class Transaction
                             )
                         ),
                     ]);
+
+                    Artisan::queue("shopify:order:post", ['--order_id'=> $invoice->order->id])->onConnection('redis')->onQueue('commands');
                 }
             }
         } elseif ($invoice->order->payment->method == 'paypal_standard') {
