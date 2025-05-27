@@ -5,6 +5,8 @@ namespace Webkul\Product\Type;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Webkul\Product\Models\Product as ProductModel;
 use Nicelizhi\Manage\Validations\ConfigurableUniqueSku;
 use Webkul\Checkout\Models\CartItem as CartItemModel;
 use Webkul\Product\DataTypes\CartItemValidationResult;
@@ -178,53 +180,64 @@ class Configurable extends AbstractType
     public function update(array $data, $id, $attribute = 'id')
     {
 
+        return DB::transaction(function () use ($data, $id, $attribute) {
 
+            $product = parent::update($data, $id, $attribute);
 
+            $this->updateDefaultVariantId();
 
+            if (request()->route()?->getName() == 'admin.catalog.products.mass_update') {
+                return $product;
+            }
 
-        $product = parent::update($data, $id, $attribute);
+            $previousVariantIds = $product->variants->pluck('id');
 
-        $this->updateDefaultVariantId();
+            if (isset($data['variants'])) {
+                $updateVariantsIds = [];
+                foreach ($data['variants'] as $variantId => $variantData) {
+                    if (Str::contains($variantId, 'variant_')) {
+                        $permutation = [];
 
-        if (request()->route()?->getName() == 'admin.catalog.products.mass_update') {
-            return $product;
-        }
+                        //var_dump($product->super_attributes);exit;
 
-        $previousVariantIds = $product->variants->pluck('id');
+                        foreach ($product->super_attributes as $superAttribute) {
+                            $permutation[$superAttribute->id] = $variantData[$superAttribute->code];
+                        }
 
-        if (isset($data['variants'])) {
-            foreach ($data['variants'] as $variantId => $variantData) {
-                if (Str::contains($variantId, 'variant_')) {
-                    $permutation = [];
+                        $this->createVariant($product, $permutation, $variantData);
+                    } else {
+                        if (is_numeric($index = $previousVariantIds->search($variantId))) {
+                            $previousVariantIds->forget($index);
+                        }
 
-                    //var_dump($product->super_attributes);exit;
+                        $variantData['channel'] = $data['channel'];
 
-                    foreach ($product->super_attributes as $superAttribute) {
-                        $permutation[$superAttribute->id] = $variantData[$superAttribute->code];
+                        $variantData['locale'] = $data['locale'];
+
+                        $variantData['tax_category_id'] = $data['tax_category_id'] ?? null;
+
+                        // 临时修改SKU
+                        $variantData['sku'] = $variantData['sku'] . '_tmp';
+                        $updateVariantsIds[] = $variantId;
+
+                        $this->updateVariant($variantData, $variantId);
                     }
-
-                    $this->createVariant($product, $permutation, $variantData);
-                } else {
-                    if (is_numeric($index = $previousVariantIds->search($variantId))) {
-                        $previousVariantIds->forget($index);
-                    }
-
-                    $variantData['channel'] = $data['channel'];
-
-                    $variantData['locale'] = $data['locale'];
-
-                    $variantData['tax_category_id'] = $data['tax_category_id'] ?? null;
-
-                    $this->updateVariant($variantData, $variantId);
                 }
             }
-        }
 
-        foreach ($previousVariantIds as $variantId) {
-            $this->productRepository->delete($variantId);
-        }
+            // 去掉临时后缀
+            if ($updateVariantsIds) {
+                ProductModel::whereIn('id', $updateVariantsIds)->update([
+                    'sku' => DB::raw("REPLACE(sku, '_tmp', '')")
+                ]);
+            }
 
-        return $product;
+            foreach ($previousVariantIds as $variantId) {
+                $this->productRepository->delete($variantId);
+            }
+
+            return $product;
+        });
     }
 
     /**
