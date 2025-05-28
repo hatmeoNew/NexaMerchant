@@ -203,6 +203,7 @@ class ConfigurableOption
                 'id'           => $optionId,
                 'label'        => $attributeOption->label ? $attributeOption->label : $attributeOption->admin_name,
                 'swatch_value' => $attribute->swatch_type == 'image' ? $attributeOption->swatch_value_url : $attributeOption->swatch_value,
+                'sort_order'   => $attributeOption->sort_order,
                 'products'     => $options[$attribute->id][$optionId],
                 'sku'          => $attributeOptions,
             ];
