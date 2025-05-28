@@ -29,6 +29,18 @@ class Handler extends BaseHandler
     }
 
     /**
+     * Report or log an exception.
+     *
+     * @param  \Throwable  $exception
+     * @return void
+     */
+    public function report(Throwable $exception)
+    {
+        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(json_encode($exception->getMessage()). " File is ".$exception->getFile()." Line is ". $exception->getLine()." please check the log file for more details");
+        parent::report($exception);
+    }
+
+    /**
      * Convert an authentication exception into a response.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -81,8 +93,8 @@ class Handler extends BaseHandler
             return $this->response($path, 404);
         } elseif ($exception instanceof PDOException) {
 
-            
-            
+
+
             //\Nicelizhi\Shopify\Helpers\Utils::send(json_encode($exception->getMessage()). " code is 500  url is".$request->fullUrl()." please check the log file for more details");
             \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(json_encode($exception->getMessage()). " File is ".$exception->getFile()." url is ".$request->fullUrl()." Line is ". $exception->getLine()." please check the log file for more details");
 
@@ -95,15 +107,15 @@ class Handler extends BaseHandler
             // $pos = strpos($mystring, $findme);
 
             // if ($pos === false) {
-                
+
             // } else {
               //  \Nicelizhi\Shopify\Helpers\Utils::send(json_encode($exception->getMessage()). " File is ".$exception->getFile()." url is ".$request->fullUrl()." please check the log file for more details");
                 \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(json_encode($exception->getMessage()). " File is ".$exception->getFile()." url is ".$request->fullUrl()." Line is ". $exception->getLine() ." please check the log file for more details");
 
 
             //}
-            
-            
+
+
 
             return parent::render($request, $exception);
         }
