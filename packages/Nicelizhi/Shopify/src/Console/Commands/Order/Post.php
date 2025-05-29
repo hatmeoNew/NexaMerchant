@@ -672,9 +672,7 @@ class Post extends Command
             $crm_channel = config('onebuy.crm_channel');
 
 
-            $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$item['email']."&order_id=".$id;
-            $res = $this->get_content($url);
-            Log::info("post to bm 2 url ".$url." res ".json_encode($res));
+
 
             // order check
             // for cod order need check the order
@@ -682,8 +680,13 @@ class Post extends Command
                 Artisan::queue("GooglePlaces:check-order",['--order_id'=>$id])->onConnection('redis')->onQueue('order-checker'); // push to queue for check order
             }
 
-            // Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
-
+            if (config('onebuy.is_sync_erp')) {
+                Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
+            } else {
+                $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$item['email']."&order_id=".$id;
+                $res = $this->get_content($url);
+                Log::info("post to bm 2 url ".$url." res ".json_encode($res));
+            }
         }
 
         // post the order to odoo erp

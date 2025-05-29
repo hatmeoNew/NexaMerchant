@@ -55,9 +55,11 @@ class PushMsgToRabbitMq extends Command {
 
         $this->info("Push msg to rabbitMQ queue: ".$queue);
 
-        // Artisan::queue((new Post())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue($queue);
-        Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
-
+        if (config('onebuy.is_sync_erp')) {
+            Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
+        } else {
+            Artisan::queue((new Post())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue($queue);
+        }
 
 
         // get msg from rabbitmq queue use laravel queue
