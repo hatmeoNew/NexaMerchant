@@ -76,7 +76,7 @@
         "nexa-merchant/apis": "^1.4.0",
         "nexa-merchant/apps": "^1.0",
         "nexa-merchant/blog": "^1.1.1",
-        "nexa-merchant/checkoutcod": "1.1.6",
+        "nexa-merchant/checkoutcod": "1.1.7",
         "nexa-merchant/feeds": "dev-main",
         "nexa-merchant/googleplaces": "^1.0",
         "nexa-merchant/klaviyo": "dev-main",
