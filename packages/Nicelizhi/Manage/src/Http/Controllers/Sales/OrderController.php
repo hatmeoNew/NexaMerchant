@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\DB;
 use Nicelizhi\Manage\Http\Controllers\Controller;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Repositories\OrderCommentRepository;
-use Nicelizhi\Manage\DataGrids\Sales\OrderDataGrid;
 use Nicelizhi\Manage\Helpers\SSP;
 use Illuminate\Support\Facades\Artisan;
+use Nicelizhi\Shopify\Console\Commands\Order\Post;
+use Nicelizhi\Shopify\Console\Commands\Order\PostOdoo;
 
 class OrderController extends Controller
 {
@@ -38,7 +39,7 @@ class OrderController extends Controller
 
             // Table's primary key
             $primaryKey = 'id';
-            
+
             $columns = array(
                 //array( 'db' => 'id', 'dt' => 0 ),
                 array( 'db' => '`o`.`id`',  'dt' => 'id', 'field'=>'id','formatter' => function($d, $row){
@@ -85,7 +86,7 @@ class OrderController extends Controller
 
             // Table's primary key
             $primaryKey = 'id';
-            
+
             $columns = array(
                 //array( 'db' => 'id', 'dt' => 0 ),
                 array( 'db' => '`o`.`id`',  'dt' => 'id', 'field'=>'id','formatter' => function($d, $row){
@@ -127,7 +128,7 @@ class OrderController extends Controller
 
             // Table's primary key
             $primaryKey = 'id';
-            
+
             $columns = array(
                 //array( 'db' => 'id', 'dt' => 0 ),
                 array( 'db' => '`o`.`id`',  'dt' => 'id', 'field'=>'id','formatter' => function($d, $row){
@@ -165,7 +166,7 @@ class OrderController extends Controller
 
             // Table's primary key
             $primaryKey = 'id';
-            
+
             $columns = array(
                 //array( 'db' => 'id', 'dt' => 0 ),
                 array( 'db' => '`o`.`id`',  'dt' => 'id', 'field'=>'id','formatter' => function($d, $row){
@@ -201,16 +202,16 @@ class OrderController extends Controller
     }
 
     /**
-     * 
+     *
      * confirm payment
      * @param int $id
-     * 
+     *
      */
     public function confirmpayment($id){
         $order = $this->orderRepository->findOrFail($id);
 
         $status = ['closed', 'pending','completed'];
-        
+
         if(!in_array($order->status, $status)) exit(1);
 
         //edit the order to processing
@@ -221,7 +222,8 @@ class OrderController extends Controller
 
         // send order to shopify
         $queue = config('app.name'). ':orders';
-        Artisan::queue("shopify:order:post", ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
+        // Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
+        Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
 
         return redirect()->route('admin.sales.orders.abnormal');
 
@@ -229,10 +231,11 @@ class OrderController extends Controller
 
     public function repush($id) {
         $order = $this->orderRepository->findOrFail($id);
-        
+
         if($order->status!='processing') exit(1);
         $queue = config('app.name'). ':orders';
-        Artisan::queue("shopify:order:post", ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
+        // Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue($queue);
+        Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
 
         return redirect()->route('admin.sales.orders.unpost');
     }

@@ -59,7 +59,7 @@ class ApiController extends Controller
         protected ThemeCustomizationRepository $themeCustomizationRepository
     )
     {
-        
+
     }
 
     public function productDetail($slug, Request $request) {
@@ -83,7 +83,7 @@ class ApiController extends Controller
 
         $clean_cache = $request->input('clean_cache');
 
-      
+
 
         //var_dump($currency);exit;
         //echo $this->checkout_v2_cache_key.$slug.$currency_get;exit;
@@ -108,12 +108,12 @@ class ApiController extends Controller
             $productViewHelper = new \Webkul\Product\Helpers\ConfigurableOption();
             $attributes = $productViewHelper->getConfigurationConfig($product);
 
-    
+
             $redis = Redis::connection('default');
 
             $product_attr_sort_cache_key = "product_attr_sort_23_".$product->id;
             $product_attr_sort = $redis->hgetall($product_attr_sort_cache_key); // get sku sort
-    
+
             foreach($attributes['attributes'] as $key=>$attribute) {
 
                 $product_attr_sort_cache_key = "product_attr_sort_".$attribute['id']."_".$product->id;
@@ -122,7 +122,7 @@ class ApiController extends Controller
             }
 
             foreach($attributes['index'] as $key=>$index) {
-                
+
                 $sku_products = $this->productRepository->where("id", $key)->select(['sku'])->first();
                 $attributes['index'][$key]['sku'] = $sku_products->sku;
                 $index2 = "";
@@ -142,7 +142,7 @@ class ApiController extends Controller
             }
 
             //var_dump($product->id, $attributes);exit;
-    
+
             $package_products = [];
             $package_products = \Nicelizhi\OneBuy\Helpers\Utils::makeProducts($product, [2,1,3,4]);
             $product = new ProductResource($product);
@@ -151,30 +151,30 @@ class ApiController extends Controller
             $data['sku'] = $product->sku;
             $data['attr'] = $attributes;
             $data['family_id'] = $product->attribute_family_id;
-            
-    
+
+
             $countries = config("countries");
-    
+
             $default_country = config('onebuy.default_country');
-    
+
             $airwallex_method = config('onebuy.airwallex.method');
-    
+
             $payments = config('onebuy.payments'); // config the payments status
-    
+
             $payments_default = config('onebuy.payments_default');
             $brand = config('onebuy.brand');
-    
+
             $gtag = config('onebuy.gtag');
-    
+
             $fb_ids = config('onebuy.fb_ids');
             $ob_adv_id = config('onebuy.ob_adv_id');
-    
+
             $crm_channel = config('onebuy.crm_channel');
-    
+
             $quora_adv_id = config('onebuy.quora_adv_id');
-    
+
             $paypal_client_id = core()->getConfigData('sales.payment_methods.paypal_smart_button.client_id');
-    
+
             $data['countries'] = $countries;
             $data['default_country'] = $default_country;
             $data['airwallex_method'] = $airwallex_method;
@@ -190,29 +190,29 @@ class ApiController extends Controller
             $data['env'] = config("app.env");
             $data['sellPoints'] = $redis->hgetall("sell_points_".$slug);
             $data['sell-points'] = $redis->hgetall("sell_points_".$slug);
-    
+
             $ads = []; // add ads
-            
+
             $productBgAttribute = $this->productAttributeValueRepository->findOneWhere([
                 'product_id'   => $product->id,
                 'attribute_id' => 29,
             ]);
-    
-    
+
+
             $productBgAttribute_mobile = $this->productAttributeValueRepository->findOneWhere([
                 'product_id'   => $product->id,
                 'attribute_id' => 30,
             ]);
-    
+
             $productSizeImage = $this->productAttributeValueRepository->findOneWhere([
                 'product_id'   => $product->id,
                 'attribute_id' => 32,
             ]);
-    
+
             $ads['pc']['img'] = isset($productBgAttribute->text_value) ? $productBgAttribute->text_value : config("app.url")."/checkout/onebuy/banners/".$default_country."_pc.jpg";
             $ads['mobile']['img'] = isset($productBgAttribute_mobile->text_value) ? $productBgAttribute_mobile->text_value : config("app.url")."/checkout/onebuy/banners/".$default_country."_mobile.jpg";
             $ads['size']['img'] = isset($productSizeImage->text_value) ? $productSizeImage->text_value : "";
-    
+
             $data['ads'] = $ads;
 
             // countdown
@@ -257,14 +257,14 @@ class ApiController extends Controller
 
         }
 
-        
+
         //json decode to array
 
         $data = json_decode($data);
         $data = (array)$data;
         $data['paypal_id_token'] = $paypal_id_token;
         $data['paypal_access_token'] = $paypal_access_token;
-        
+
 
         return response()->json($data);
     }
@@ -288,7 +288,7 @@ class ApiController extends Controller
         $refer = isset($input['refer']) ? trim($input['refer']) : "";
 
         $products = $request->input("products");
-        // 
+        //
         Cart::deActivateCart();
         foreach($products as $key=>$product) {
             //var_dump($product);
@@ -320,7 +320,7 @@ class ApiController extends Controller
         $this->returnInsurance($input, $cart);
 
 
-        // 
+        //
         $addressData = [];
 
 
@@ -480,7 +480,7 @@ class ApiController extends Controller
                 ], Response::HTTP_FORBIDDEN);
             }
 
-            
+
             Cart::collectTotals();
             $this->validateOrder();
             $cart = Cart::getCart();
@@ -499,7 +499,7 @@ class ApiController extends Controller
             $data['order'] = $order;
             if ($order) {
                 $orderId = $order->id;
-                
+
                 // save utm for order
                 $utm_source = $request->input("utm_source");
                 $utm_medium = $request->input("utm_medium");
@@ -603,10 +603,10 @@ class ApiController extends Controller
                     $attr = explode('_', $attr_id);
                     $super_attribute[$attr[0]] = $attr[1];
                 }
-    
+
                 $product['super_attribute'] = $super_attribute;
             }
-            
+
             //Log::info("add product into cart ". json_encode($product));
             $cart = Cart::addProduct($product['product_id'], $product);
             if (
@@ -728,7 +728,7 @@ class ApiController extends Controller
 
         // when enable the upselling and can config the upselling rule for carts
         if(config("Upselling.enable")) {
-               
+
             $upselling = app('NexaMerchant\Upselling\Upselling');
             $upselling->setCouponCode("upselling50");
             $upselling->applyUpselling($cart);
@@ -761,7 +761,7 @@ class ApiController extends Controller
         $order_id = $request->input("order_id");
 
         $order = $this->orderRepository->find($order_id);
-        
+
         $transactionManager = $this->airwallex->confirmPayment($payment_intent_id, $order);
 
         $data = [];
@@ -806,10 +806,10 @@ class ApiController extends Controller
             // when the order status eq completed and the paypal_credit_card eq 1 and need check the payments captures status eq COMPLETED
             // if($order->result->status == "COMPLETED" && $order->result->payments[0]->status == "COMPLETED" && $paypal_credit_card == 1) {
             //     $this->smartButton->captureOrder(request()->input('orderData.orderID'));
-                
+
             // }
             Log::info("palpay status ".json_encode($order));
-            
+
 
             $cartId = $request->input('orderData.cartId');
             if(empty($cartId)) {
@@ -817,15 +817,15 @@ class ApiController extends Controller
             }
 
             if(!empty($cartId)) {
-                
+
                 $cart = $this->cartRepository->find($cartId);
                 Cart::setCart($cart);
-                
+
             }
 
             $refer = $request->input("refer");
 
-        
+
             $params = request()->input("params");
             if(!empty($params)) {
 
@@ -842,7 +842,7 @@ class ApiController extends Controller
                 $addressData['billing']['phone'] = $params['phone_full'];
                 $addressData['billing']['phone'] = $params['phone_full'];
                 $addressData['billing']['address1'] = $address1;
-                
+
                 $addressData['billing']['state'] = $params['province'];
                 $addressData['billing']['postcode'] = $params['code'];
 
@@ -858,7 +858,7 @@ class ApiController extends Controller
                 if(!isset($addressData['shipping']['email'])) {
                     $addressData['shipping'] = $addressData['billing'];
                 }
-                
+
 
                 Log::error("paypal pay address ".$refer.'--'.json_encode($addressData));
 
@@ -881,9 +881,9 @@ class ApiController extends Controller
                     }
                 }
                 //$this->smartButton->captureOrder(request()->input('orderData.orderID'));
-    
+
                 //$this->smartButton->AuthorizeOrder(request()->input('orderData.orderID'));
-    
+
                 //$request->session()->put('last_order_id', request()->input('orderData.orderID'));
 
             }else{
@@ -937,7 +937,7 @@ class ApiController extends Controller
                         'data'     => route('shop.checkout.cart.index'),
                     ]);
                 }
-    
+
                 if($order['result']->status != "COMPLETED") {
                     $captureOrder = $this->smartButton->captureOrder(request()->input('orderData.orderID'));
                     if($captureOrder->result->purchase_units[0]->payments->captures[0]->status != "COMPLETED") {
@@ -968,7 +968,7 @@ class ApiController extends Controller
                     'redirect' => true,
                     'message' => $paypalOrder,
                     'data'     => route('shop.checkout.cart.index'),
-                ]); 
+                ]);
             }
 
             $orderRes = $this->saveOrder();
@@ -1021,8 +1021,8 @@ class ApiController extends Controller
 
 
     private function returnInsurance($input, $cart) {
-        // when return insurance eq 1 and auto add the insurance product into cart 
-        $input['return_insurance'] = isset($input['return_insurance']) ? $input['return_insurance'] : 0; 
+        // when return insurance eq 1 and auto add the insurance product into cart
+        $input['return_insurance'] = isset($input['return_insurance']) ? $input['return_insurance'] : 0;
         if($input['return_insurance']==1) {
 
             Cart::addProduct(config('onebuy.return_shipping_insurance.product_id'), [
@@ -1039,10 +1039,10 @@ class ApiController extends Controller
     }
 
     /**
-     * 
+     *
      * check the coupon info
      * @param string code
-     * 
+     *
      */
     public function CheckCoupon(Request $request) {
         $couponCode = $request->input("code");
@@ -1142,9 +1142,9 @@ class ApiController extends Controller
     }
 
     /**
-     * 
+     *
      * @link https://developer.paypal.com/docs/multiparty/checkout/save-payment-methods/during-purchase/js-sdk/paypal/
-     * 
+     *
      */
     protected function buildRequestBody($input)
     {
@@ -1166,7 +1166,7 @@ class ApiController extends Controller
                 //'shipping_preference' => 'NO_SHIPPING',
                 'shipping_preference' => $shipping_preference, // 用户选择自己的地址内容
             ],
-            
+
 
             'purchase_units' => [
                 [
@@ -1275,7 +1275,7 @@ class ApiController extends Controller
                             ]
                         ]
                     ];
-                }           
+                }
         }
 
         Log::info("paypal pay data ". json_encode($data));
@@ -1388,11 +1388,11 @@ class ApiController extends Controller
 
 
     /**
-     * 
-     * 
+     *
+     *
      * faq interface
-     * 
-     * 
+     *
+     *
      */
 
     public function faq() {
@@ -1406,12 +1406,12 @@ class ApiController extends Controller
             'code' => 200,
             'message' => 'success'
         ], 200);
-        
+
     }
 
     /**
-     * 
-     * 
+     *
+     *
      */
     public function cms($slug, Request $request) {
         $page = $this->cmsRepository->findByUrlKeyOrFail($slug);

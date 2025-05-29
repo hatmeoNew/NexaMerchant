@@ -523,20 +523,20 @@ class Post extends Command
 
         $crm_url = config('onebuy.crm_url');
 
-        // $app_env = config("app.env");
-        // if($app_env=='demo') {
+        $app_env = config("app.env");
+        if($app_env=='demo') {
 
-        //     $cnv_id = explode('-',$orderPayment['method_title']);
+            $cnv_id = explode('-',$orderPayment['method_title']);
 
 
-        //     $crm_channel = config('onebuy.crm_channel');
+            $crm_channel = config('onebuy.crm_channel');
 
-        //     $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$shipping_address->email;
-        //     $res = $this->get_content($url);
-        //     Log::info("post to bm 2 url ".$url." res ".json_encode($res));
-        //     return true;
+            $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$shipping_address->email;
+            $res = $this->get_content($url);
+            Log::info("post to bm 2 url ".$url." res ".json_encode($res));
+            return true;
 
-        // }
+        }
 
         try {
             $response = $client->post($shopify['shopify_app_host_name'].'/admin/api/2023-10/orders.json', [
