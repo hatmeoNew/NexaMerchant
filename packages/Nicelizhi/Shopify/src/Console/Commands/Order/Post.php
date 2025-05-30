@@ -91,7 +91,7 @@ class Post extends Command
 
         echo $order_id." start debug \r\n";
 
-        Artisan::queue((new \NexaMerchant\Feeds\Console\Commands\Klaviyo\Push())->getName(), ['--order_id'=> $order_id])->onConnection('rabbitmq')->onQueue('klaviyo:profiles');
+        Artisan::queue((new \NexaMerchant\Feeds\Console\Commands\Klaviyo\Push())->getName(), ['--order_id'=> $order_id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_profiles');
 
         if(!empty($order_id)) {
             $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
