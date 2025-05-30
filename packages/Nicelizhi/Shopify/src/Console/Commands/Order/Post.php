@@ -9,6 +9,7 @@ use Webkul\Sales\Repositories\OrderRepository;
 use Illuminate\Support\Facades\Cache;
 use Nicelizhi\Shopify\Models\ShopifyOrder;
 use Nicelizhi\Shopify\Models\ShopifyStore;
+
 use Webkul\Sales\Models\Order;
 use Illuminate\Http\Client\RequestException;
 use GuzzleHttp\Exception\ClientException;
@@ -89,6 +90,8 @@ class Post extends Command
         $order_id = $this->option("order_id");
 
         echo $order_id." start debug \r\n";
+
+        Artisan::queue((new \NexaMerchant\Feeds\Console\Commands\Klaviyo\Push())->getName(), ['--order_id'=> $order_id])->onConnection('rabbitmq')->onQueue('klaviyo:profiles');
 
         if(!empty($order_id)) {
             $lists = Order::where(['status'=>'processing'])->where("id", $order_id)->select(['id'])->limit(1)->get();
@@ -683,6 +686,7 @@ class Post extends Command
             if (config('onebuy.is_sync_erp')) {
                 Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
             } else {
+                PushOrderToKlaviyo::dispatch($order->id)->onConnection('rabbitmq')->onQueue('klaviyo:profiles');
                 $url = $crm_url."/api/offers/callBack?refer=".$cnv_id[1]."&revenue=".$order->grand_total."&currency_code=".$order->order_currency_code."&channel_id=".$crm_channel."&q_ty=".$q_ty."&email=".$item['email']."&order_id=".$id;
                 $res = $this->get_content($url);
                 Log::info("post to bm 2 url ".$url." res ".json_encode($res));
