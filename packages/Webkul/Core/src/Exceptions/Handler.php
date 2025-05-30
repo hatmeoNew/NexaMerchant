@@ -36,7 +36,23 @@ class Handler extends BaseHandler
      */
     public function report(Throwable $exception)
     {
-        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(json_encode($exception->getMessage()). " File is ".$exception->getFile()." Line is ". $exception->getLine()." please check the log file for more details");
+        $errorMsg = $exception->getMessage();
+        $whitePattern = '@the route@i';
+
+        // 检查是否包含白名单关键词
+        if (preg_match($whitePattern, $errorMsg)) {
+            return;
+        }
+
+        // 发送飞书报警（优化参数格式）
+        $message = sprintf(
+            '错误信息：%s | 文件路径：%s | 行号：%d',
+            $errorMsg,
+            $exception->getFile(),
+            $exception->getLine()
+        );
+        \Nicelizhi\Shopify\Helpers\Utils::sendFeishu($message);
+
         parent::report($exception);
     }
 
@@ -96,7 +112,7 @@ class Handler extends BaseHandler
 
 
             //\Nicelizhi\Shopify\Helpers\Utils::send(json_encode($exception->getMessage()). " code is 500  url is".$request->fullUrl()." please check the log file for more details");
-            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(json_encode($exception->getMessage()). " File is ".$exception->getFile()." url is ".$request->fullUrl()." Line is ". $exception->getLine()." please check the log file for more details");
+            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(json_encode($exception->getMessage()) . " File is " . $exception->getFile() . " url is " . $request->fullUrl() . " Line is " . $exception->getLine() . " please check the log file for more details");
 
 
             return $this->response($path, 500);
@@ -109,8 +125,8 @@ class Handler extends BaseHandler
             // if ($pos === false) {
 
             // } else {
-              //  \Nicelizhi\Shopify\Helpers\Utils::send(json_encode($exception->getMessage()). " File is ".$exception->getFile()." url is ".$request->fullUrl()." please check the log file for more details");
-                \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(json_encode($exception->getMessage()). " File is ".$exception->getFile()." url is ".$request->fullUrl()." Line is ". $exception->getLine() ." please check the log file for more details");
+            //  \Nicelizhi\Shopify\Helpers\Utils::send(json_encode($exception->getMessage()). " File is ".$exception->getFile()." url is ".$request->fullUrl()." please check the log file for more details");
+            \Nicelizhi\Shopify\Helpers\Utils::sendFeishu(json_encode($exception->getMessage()) . " File is " . $exception->getFile() . " url is " . $request->fullUrl() . " Line is " . $exception->getLine() . " please check the log file for more details");
 
 
             //}
