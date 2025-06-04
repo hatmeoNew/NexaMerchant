@@ -102,6 +102,7 @@ class ShopifyServiceProvider extends ServiceProvider
                 \Nicelizhi\Shopify\Console\Commands\Order\Post::class,
                 \Nicelizhi\Shopify\Console\Commands\Order\PostOdoo::class,
                 \Nicelizhi\Shopify\Console\Commands\Order\PostTest::class,
+                \Nicelizhi\Shopify\Console\Commands\Order\RepushCRM::class,
 
                 \Nicelizhi\Shopify\Console\Commands\Order\Create::class,
                 \Nicelizhi\Shopify\Console\Commands\Order\Put::class,
