@@ -351,7 +351,7 @@ class PostOdoo extends Command
                         return true;
                     } else {
                         echo $id . " post failed \r\n" . $response_data['message'];
-                        Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $webSiteName);
+                        Utils::sendFeishu($response_data['message'] . ' post failed --order_id=' . $id . ' website:' . $webSiteName);
                         return false;
                     }
                 } catch (\Throwable $th) {
