@@ -12,9 +12,9 @@ use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Repositories\OrderTransactionRepository;
 use Illuminate\Support\Facades\Artisan;
-use Nicelizhi\Shopify\Console\Commands\Order\Post;  
+use Nicelizhi\Shopify\Console\Commands\Order\Post;
 use Nicelizhi\Airwallex\Helpers\WebHook;
-
+use Nicelizhi\Shopify\Console\Commands\Order\PostOdoo;
 
 class AirwallexController extends Controller
 {
@@ -91,7 +91,7 @@ class AirwallexController extends Controller
             $this->order = $order;
 
             if ($order) {
-                Log::info("airwallex notification received for order id:" . $transactionId);    
+                Log::info("airwallex notification received for order id:" . $transactionId);
                 $status = isset($input['data']['object']['status']) ? $input['data']['object']['status'] : null;
                 if ($status === 'SUCCEEDED' && $input['name']==='payment_intent.succeeded') {
 
@@ -114,15 +114,19 @@ class AirwallexController extends Controller
                         }
 
                         // send order to shopify
-                        Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('redis')->onQueue('commands');
+                        if (config('onebuy.is_sync_erp')) {
+                            Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
+                        } else {
+                            Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection('redis')->onQueue('commands');
+                        }
 
                         if ($order->canInvoice()) {
                             request()->merge(['can_create_transaction' => 1]);
-                            
+
                             $this->invoiceRepository->create($this->prepareInvoiceData());
                         } else {
                             $invoice = $this->invoiceRepository->findOneWhere(['order_id' => $order->id]);
-    
+
                             if ($invoice) {
                                 $invoice->state = 'paid';
                                 $invoice->save();
@@ -157,7 +161,7 @@ class AirwallexController extends Controller
                 } else {
                     $this->webhookProcess($input['name'], $input); // process other webhook events
                 }
-                
+
                 return response('OK', 200);
             } else {
 

@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Log;
 use Webkul\Paypal\Payment\SmartButton;
 use Webkul\Sales\Repositories\OrderTransactionRepository;
 use Illuminate\Support\Facades\Artisan;
+use Nicelizhi\Shopify\Console\Commands\Order\PostOdoo;
+use Nicelizhi\Shopify\Console\Commands\Order\Post;
 
 class Transaction
 {
@@ -68,7 +70,11 @@ class Transaction
                         ),
                     ]);
 
-                    Artisan::queue("shopify:order:post", ['--order_id'=> $invoice->order->id])->onConnection('redis')->onQueue('commands');
+                    if (config('onebuy.is_sync_erp')) {
+                        Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $invoice->order->id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
+                    } else {
+                        Artisan::queue((new Post())->getName(), ['--order_id'=> $invoice->order->id])->onConnection('redis')->onQueue('commands');
+                    }
                 }
             }
         } elseif ($invoice->order->payment->method == 'paypal_standard') {
