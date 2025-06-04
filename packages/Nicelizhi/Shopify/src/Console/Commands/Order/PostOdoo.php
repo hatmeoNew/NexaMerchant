@@ -356,7 +356,7 @@ class PostOdoo extends Command
                     }
                 } catch (\Throwable $th) {
                     echo $th->getMessage(), PHP_EOL;
-                    Utils::sendFeishu($response->getBody() . ' --order_id=' . $id . ' website:' . $webSiteName);
+                    Utils::sendFeishu($th->getMessage(). ' --order_id=' . $id . ' website:' . $webSiteName);
                     return false;
                 }
             }
