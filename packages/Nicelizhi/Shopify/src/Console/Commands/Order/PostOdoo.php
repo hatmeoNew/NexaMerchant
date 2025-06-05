@@ -101,6 +101,14 @@ class PostOdoo extends Command
     {
         $this->info("sync to order to odoo " . $id);
 
+        $odooOrder = OdooOrder::query()->where([
+            'origin' => $id
+        ])->first();
+        if (!is_null($odooOrder)) {
+            $this->info("order " . $id . " already posted to odoo, skip");
+            return false;
+        }
+
         $webSiteName = self::getRootDomain(config('odoo_api.website_url'));
 
         $client = new Client();
