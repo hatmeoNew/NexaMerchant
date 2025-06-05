@@ -110,6 +110,14 @@ class PostOdoo extends Command
     {
         $this->info("sync to order to odoo " . $id);
 
+        $odooOrder = OdooOrder::query()->where([
+            'origin' => $id
+        ])->first();
+        if (!is_null($odooOrder)) {
+            $this->info("order " . $id . " already posted to odoo, skip");
+            return false;
+        }
+
         $client = new Client();
 
         $order = $this->Order->findOrFail($id);
