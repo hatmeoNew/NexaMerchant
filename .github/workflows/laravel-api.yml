@@ -27,9 +27,9 @@ jobs:
         GITHUB_SHA_X: ${GITHUB_SHA}
       with:
         host: ${{ secrets.SSH_HOST_US }}
-        username: ${{ secrets.SSH_USERNAME_US }}
-        key: ${{ secrets.DEPLOY_KEY_US }}
-        port: ${{secrets.SSH_PORT_US }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: ${{secrets.SSH_PORT }}
         script: |
           cd /www/wwwroot/shell
           git pull
