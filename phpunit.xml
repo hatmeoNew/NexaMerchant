@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+    cacheResult="false"
+    bootstrap="vendor/autoload.php"
+    colors="true"
+>
+    <testsuites>
+        <!-- DataGrid package testsuites. -->
+        <testsuite name="DataGrid Unit Test">
+            <directory suffix="Test.php">./packages/Webkul/DataGrid/tests/Unit</directory>
+        </testsuite>
+        <testsuite name="DataGrid Feature Test">
+            <directory suffix="Test.php">./packages/Webkul/DataGrid/tests/Feature</directory>
+        </testsuite>
+
+        <!-- Shop package testsuites. -->
+        <testsuite name="Shop Unit Test">
+            <directory suffix="Test.php">./packages/Webkul/Shop/tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Shop Feature Test">
+            <directory suffix="Test.php">./packages/Webkul/Shop/tests/Feature</directory>
+        </testsuite>
+
+        <!-- Checkout package testsuites. -->
+        <testsuite name="Checkout Unit Test">
+            <directory suffix="Test.php">./packages/Nicelizhi/Checkout/tests/Feature</directory>
+        </testsuite>
+
+         <!-- Binom package testsuites. -->
+        <testsuite name="Binom Unit Test">
+            <directory suffix="Test.php">./packages/Nicelizhi/Binom/tests/Feature</directory>
+        </testsuite>
+
+        <!-- OneBuy package testsuites. -->
+        <testsuite name="Binom Unit Test">
+            <directory suffix="Test.php">./packages/Nicelizhi/OneBuy/tests/Feature</directory>
+        </testsuite>
+
+        <!-- Shopify package testsuites. -->
+        <testsuite name="Shopify Unit Test">
+            <directory suffix="Test.php">./packages/Nicelizhi/Shopify/tests/Feature</directory>
+        </testsuite>
+
+        <!-- Shopify package testsuites. -->
+        <testsuite name="Lp Unit Test">
+            <directory suffix="Test.php">./packages/Nicelizhi/Lp/tests/Feature</directory>
+        </testsuite>
+
+        <!-- Comments package testsuites. -->
+        <testsuite name="Shopify Unit Test">
+            <directory suffix="Test.php">./packages/Nicelizhi/Comments/tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">./app</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <!-- <env name="DB_CONNECTION" value="sqlite"/> -->
+        <!-- <env name="DB_DATABASE" value=":memory:"/> -->
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
+    </php>
+</phpunit>

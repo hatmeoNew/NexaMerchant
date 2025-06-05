@@ -1,0 +1,14 @@
+vendor
+.env
+storage/logs/*.log
+storage/debugbar
+storage/db
+public/storage
+public/size
+public/storage_old
+.git
+.github
+docs
+docker/.configs/mysql-data
+docker/.configs/redis-data
+docker/.configs/elasticsearch-data

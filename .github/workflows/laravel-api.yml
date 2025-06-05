@@ -1,0 +1,79 @@
+name: API Laravel CI/CD
+
+on:
+  push:
+    branches:
+      - 'main_api'
+    paths-ignore:
+      - 'README.md'
+      - .github/**
+      - docs/**
+      - 'Dockerfile'
+  pull_request:
+    branches:
+      - 'main_api'
+    paths-ignore:
+      - 'README.md'
+      - 'Dockerfile'
+      - .github/**
+      - docs/**
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Sync to Server 1 and Do it
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA_X: ${GITHUB_SHA}
+      with:
+        host: ${{ secrets.SSH_HOST_US }}
+        username: ${{ secrets.SSH_USERNAME_US }}
+        key: ${{ secrets.DEPLOY_KEY_US }}
+        port: ${{secrets.SSH_PORT_US }}
+        script: |
+          cd /www/wwwroot/shell
+          git pull
+          ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
+          echo "Script started in the background. Check output.log for details."
+    - name: Sync to Server 2 and Do it
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA_X: ${GITHUB_SHA}
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: ${{secrets.SSH_PORT }}
+        script: |
+          cd /www/wwwroot/shell
+          git pull
+          ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
+          echo "Script started in the background. Check output.log for details."
+    - name: Sync to Server 3 and Do it
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA_X: ${GITHUB_SHA}
+      with:
+        host: ${{ secrets.SSH_HOST_EURO_2 }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: ${{secrets.SSH_PORT }}
+        script: |
+          cd /www/wwwroot/shell
+          git pull
+          ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
+          echo "Script started in the background. Check output.log for details."
+    - name: Sync to Server 4 and Do it
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA_X: ${GITHUB_SHA}
+      with:
+        host: ${{ secrets.SSH_JP_HOST }}
+        username: ${{ secrets.SSH_JP_USERNAME }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: ${{secrets.SSH_JP_PORT }}
+        script: |
+          cd /www/wwwroot/shell
+          git pull
+          ./batch_shell_composer_local.sh $GITHUB_SHA_X > output.log 2>&1 &
+          echo "Script started in the background. Check output.log for details."

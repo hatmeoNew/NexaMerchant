@@ -1,0 +1,29 @@
+name: 'GitHub Actions Mirror'
+
+on: [push, delete]
+
+jobs:
+  mirror_to_coding:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v1
+      - name: 'Mirror to coding'
+        uses: yesolutions/mirror-action@master
+        with:
+            REMOTE: ${{ secrets.SYNC_GIT_HOST }}
+            GIT_USERNAME: Steve
+            GIT_PASSWORD: ${{ secrets.GITLAB_KEY }}
+      
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Sync to GitLab
+        env:
+          SYNC_GIT_HOST: ${{ secrets.SYNC_GIT_HOST }}
+          SYNC_GIT_TOKEN: ${{ secrets.SYNC_GIT_TOKEN }}
+        run: |
+          git remote add gitlab $SYNC_GIT_HOST
+          git push gitlab --all
+          git push gitlab --tags
+            

@@ -1,0 +1,3 @@
+[submodule "public/resources"]
+	path = public/resources
+	url = git@github.com:xxl4/lp_resource.git

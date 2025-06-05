@@ -1,0 +1,237 @@
+[
+  {
+    "CountryCode": "JP",
+    "StateCode": "01",
+    "StateName": "北海道"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "02",
+    "StateName": "青森県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "03",
+    "StateName": "岩手県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "04",
+    "StateName": "宮城県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "05",
+    "StateName": "秋田県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "06",
+    "StateName": "山形県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "07",
+    "StateName": "福島県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "08",
+    "StateName": "茨城県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "09",
+    "StateName": "栃木県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "10",
+    "StateName": "群馬県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "11",
+    "StateName": "埼玉県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "12",
+    "StateName": "千葉県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "13",
+    "StateName": "東京都"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "14",
+    "StateName": "神奈川県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "15",
+    "StateName": "新潟県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "16",
+    "StateName": "富山県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "17",
+    "StateName": "石川県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "18",
+    "StateName": "福井県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "19",
+    "StateName": "山梨県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "20",
+    "StateName": "長野県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "21",
+    "StateName": "岐阜県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "22",
+    "StateName": "静岡県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "23",
+    "StateName": "愛知県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "24",
+    "StateName": "三重県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "25",
+    "StateName": "滋賀県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "26",
+    "StateName": "京都府"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "27",
+    "StateName": "大阪府"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "28",
+    "StateName": "兵庫県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "29",
+    "StateName": "奈良県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "30",
+    "StateName": "和歌山県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "31",
+    "StateName": "鳥取県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "32",
+    "StateName": "島根県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "33",
+    "StateName": "岡山県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "34",
+    "StateName": "広島県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "35",
+    "StateName": "山口県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "36",
+    "StateName": "徳島県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "37",
+    "StateName": "香川県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "38",
+    "StateName": "愛媛県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "39",
+    "StateName": "高知県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "40",
+    "StateName": "福岡県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "41",
+    "StateName": "佐賀県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "42",
+    "StateName": "長崎県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "43",
+    "StateName": "熊本県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "44",
+    "StateName": "大分県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "45",
+    "StateName": "宮崎県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "46",
+    "StateName": "鹿児島県"
+  },
+  {
+    "CountryCode": "JP",
+    "StateCode": "47",
+    "StateName": "沖縄県"
+  }
+]
