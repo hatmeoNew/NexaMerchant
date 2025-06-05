@@ -159,7 +159,7 @@ class Category extends TranslatableModel implements CategoryContract
         if ($categoryTranslation = $this->translate(core()->getCurrentLocale()->code)) {
             return url($categoryTranslation->url_path);
         }
-        
+
         return url($this->translate(core()->getDefaultChannelLocaleCode())->url_path);
     }
 
@@ -224,5 +224,15 @@ class Category extends TranslatableModel implements CategoryContract
     protected static function newFactory(): Factory
     {
         return CategoryFactory::new();
+    }
+
+    /**
+     * Get the repository instance.
+     *
+     * @return \Webkul\Category\Repositories\CategoryRepository
+     */
+    public function getProductsCountAttribute()
+    {
+        return $this->products()->count();
     }
 }
