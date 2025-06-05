@@ -77,7 +77,7 @@
         "nexa-merchant/apps": "^1.0",
         "nexa-merchant/blog": "^1.1.5",
         "nexa-merchant/checkoutcod": "1.1.7",
-        "nexa-merchant/feeds": "dev-main",
+        "hatmeo/feeds": "dev-main",
         "nexa-merchant/googleplaces": "^1.0",
         "nexa-merchant/klaviyo": "dev-main",
         "nexa-merchant/odooapi": "dev-main",
