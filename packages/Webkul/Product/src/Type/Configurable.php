@@ -192,8 +192,8 @@ class Configurable extends AbstractType
 
             $previousVariantIds = $product->variants->pluck('id');
 
+            $updateVariantsIds = [];
             if (isset($data['variants'])) {
-                $updateVariantsIds = [];
                 foreach ($data['variants'] as $variantId => $variantData) {
                     if (Str::contains($variantId, 'variant_')) {
                         $permutation = [];
