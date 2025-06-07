@@ -210,7 +210,7 @@ class PostOdoo extends Command
             $state = '';
         }
 
-        $state = $this->getOdooStateCode($shipping_address->country, $shipping_address->state, $shipping_address->city);
+        $state = $this->getOdooStateCode($shipping_address->country, $state, $shipping_address->city);
         $post_shipping_address = [
             "first_name" => $shipping_address->first_name,
             "last_name" => $shipping_address->last_name,
