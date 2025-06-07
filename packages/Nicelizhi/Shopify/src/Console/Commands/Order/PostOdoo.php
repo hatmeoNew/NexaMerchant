@@ -210,6 +210,7 @@ class PostOdoo extends Command
             $state = '';
         }
 
+        $state = $this->getOdooStateCode($shipping_address->country, $shipping_address->state, $shipping_address->city);
         $post_shipping_address = [
             "first_name" => $shipping_address->first_name,
             "last_name" => $shipping_address->last_name,
@@ -472,5 +473,26 @@ class PostOdoo extends Command
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
+    }
+
+    function getOdooStateCode($country, $state, $city)
+    {
+        if (!in_array($country, ['GB'])) {
+            return $state;
+        }
+        $stateMapping = config('odoo_country_state')[$country];
+        if (!empty($stateMapping[$state])) {
+            return $state;
+        }
+        $state = array_search(strtolower($state), array_map('strtolower', $stateMapping));
+        if (empty($state)) {
+            if (!empty($stateMapping[$city])) {
+                return $city;
+            }
+
+            $state = array_search($city, $stateMapping);
+        }
+
+        return $state;
     }
 }
