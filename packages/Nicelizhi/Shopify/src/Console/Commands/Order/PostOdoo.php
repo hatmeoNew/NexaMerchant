@@ -544,7 +544,7 @@ class PostOdoo extends Command
             return $state;
         }
 
-        $state = array_search($state, $stateMapping);
+        $state = array_search(strtolower($state), array_map('strtolower', $stateMapping));
 
         if (empty($state)) {
             if (!empty($stateMapping[$city])) {
