@@ -2594,7 +2594,8 @@
         bill_code: "",
         paypal_credit_card: 0,
         return_insurance: 1,
-        error: false
+        error: false,
+        refer: "<?php echo $refer; ?>"
       },
       currency = '{{ core()->getCurrentCurrencyCode() }}',
       paypalId = '',
