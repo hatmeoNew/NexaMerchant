@@ -3,7 +3,7 @@ return [
     'countries' => env('ONEBUY_COUNTRIES'),
     'lang' => env('ONEBUY_DEFAULT_LANG'),
     'default_country' => env('ONEBUY_DEFAULT_COUNTRY'),
-    'brand' => env('ONEBUY_BRAND', 'Hatme'),
+    'brand' => env('ONEBUY_BRAND'),
     'gtag' => env('ONEBUY_GTAG', ""),
     'gtm' => env('ONEBUY_GTM', ""),
     'fb_ids' => env('FB_IDS'),
