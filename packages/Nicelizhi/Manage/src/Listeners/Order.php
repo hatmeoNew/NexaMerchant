@@ -28,6 +28,7 @@ class Order extends Base
 
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_order')) {
+                Log::info('new_order config is not enabled111');
                 return;
             }
 
