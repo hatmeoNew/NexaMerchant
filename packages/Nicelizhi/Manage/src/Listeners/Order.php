@@ -31,7 +31,11 @@ class Order extends Base
                 return;
             }
 
-            $this->prepareMail($order, new CreatedNotification($order));
+            if (config('onebuy.is_sync_klaviyo')) {
+                Log::info('klaviyo_event_place_order');
+            } else {
+                $this->prepareMail($order, new CreatedNotification($order));
+            }
 
         } catch (\Exception $e) {
             report($e);
