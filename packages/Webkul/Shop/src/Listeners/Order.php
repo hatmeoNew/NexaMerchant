@@ -23,6 +23,7 @@ class Order extends Base
     {
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_order')) {
+                Log::info('send email config continue: ' . $order->id);
                 return;
             }
 
