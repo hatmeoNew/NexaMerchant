@@ -45,6 +45,11 @@ return [
             'verify_peer' => false,
         ],
 
+        'klaviyo' => [
+            'transport' => 'klaviyo',
+            'api_key' => env('KLAVIYO_API_KEY'),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],
