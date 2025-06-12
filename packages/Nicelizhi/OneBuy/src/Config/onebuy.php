@@ -37,5 +37,6 @@ return [
         'product_id' => env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_ID', 0),
         'product_sku' => env('ONEBUY_RETURN_SHIPPING_INSURANCE_PRODUCT_SKU', ''),
     ],
-    'is_sync_erp'  => env('IS_SYNC_ERP', 0),
+    'is_sync_erp' => env('IS_SYNC_ERP', 0),
+    'is_sync_klaviyo' => env('IS_SYNC_KLAVIYO', 0),
 ];
