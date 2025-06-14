@@ -35,7 +35,7 @@ class Order extends Base
             $order->key = $key;
 
             //Log::info('Order created listener order info: ' . $order);
-            Log::info('order->status:' . $order->status, ' order->id:' . $order->id);
+            Log::info('order->status:' . $order->status . ' order->id:' . $order->id);
             // send email
             if (config('onebuy.is_sync_klaviyo')) {
                 Log::info('klaviyo_event_place_order222');
