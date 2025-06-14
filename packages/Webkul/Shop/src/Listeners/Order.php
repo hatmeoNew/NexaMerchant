@@ -25,7 +25,7 @@ class Order extends Base
                 return;
             }
 
-            if (config('onebuy.is_sync_klaviyo')) {
+            if (config('onebuy.is_sync_klaviyo') && $order->status == 'processing') {
                 Log::info('klaviyo_event_place_order222');
                 Artisan::queue((new SendKlaviyoEvent())->getName(), ['--order_id'=> $order->id, '--metric_type' => 100])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_event_place_order');
             } else {
