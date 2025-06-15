@@ -5,6 +5,8 @@ namespace Nicelizhi\Shopify\Console\Commands\Fulfillments;
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use Webkul\Sales\Models\Order;
+use Webkul\Product\Models\Product;
+use Webkul\Sales\Repositories\ShipmentRepository;
 
 class CreateOdoo extends Command
 {
@@ -23,9 +25,28 @@ class CreateOdoo extends Command
     {
         $orderId = $this->option('order_id');
         $order = Order::findOrFail($orderId);
+
+        $line_items = [];
+        foreach ($order->items as $orderItem) {
+
+            $line_item = [];
+
+            $line_item['additional'] = $orderItem['additional'];
+            $variant_id = $orderItem['additional']['selected_configurable_option'] ?: $orderItem['product_id'];
+            $line_item['product_sku'] = Product::where('id', $variant_id)->value('custom_sku');
+            $line_item['name'] = $orderItem['name'];
+            $line_item['order_item_id'] = $orderItem['id'];
+            $line_item['price'] = $orderItem['price'];
+
+            array_push($line_items, $line_item);
+        }
+
+        // dd($line_items);
+
         // dd($order->items->toArray());
         // 根据接口获取面单数据
         $shipments = $this->getShipments($order);
+        // dd($shipments);
         $createData = [];
         foreach ($shipments as $shipment) {
             $createData['order_id'] = $order->id;
@@ -34,23 +55,46 @@ class CreateOdoo extends Command
             $createData['order_address_id'] = $order->shipping_address->id;
             $createData['inventory_source_id'] = 1;
             $createData['inventory_source_name'] = 'Default';
+            $createData['source'] = 1;
 
-            foreach ($order->items as $orderItem) {
-                dd($orderItem);
+            $shipment_items = [];
+            foreach ($line_items as $line_item) {
+                foreach ($shipment['product_list'] as $shipment_product) {
+                    if ($shipment_product['default_code'] == $line_item['product_sku'] || $shipment_product['name'] == $line_item['product_sku']) {
+                        $shipment_items[$line_item['order_item_id']] = [
+                            'name' => $line_item['name'],
+                            'sku' => $line_item['product_sku'],
+                            'order_item_id' => $line_item['order_item_id'],
+                            'qty' => $line_item['additional']['quantity'],
+                            'price' => $line_item['price'],
+                            'product_id' => $line_item['additional']['selected_configurable_option'],
+                            'additional' => json_encode($line_item['additional']),
+                            '1' => 1
+                        ];
+                        break;
+                    }
+                }
             }
+            // dd($shipment_items);
 
-            $createData['items'] = [
-                'order_item_id' => $shipment['order_item_id'],
-                'qty' => $shipment['qty'],
-            ];
+            $createData['items'] = $shipment_items;
 
+            // dd($createData);
+            $data['shipment'] = $createData;
+
+            $shipment = app(ShipmentRepository::class);
+            $shipment->create(array_merge($data, [
+                'order_id' => $order->id,
+            ]));
         }
+
+
     }
 
     public function getShipments($order)
     {
         $name = config('odoo_api.order_pre') . '#' . $order->id;
-        $name = "KundiesDe#118";
+        // $name = "KundiesDe#118";
 
         // 获取发货单数据
         $client = new Client();
