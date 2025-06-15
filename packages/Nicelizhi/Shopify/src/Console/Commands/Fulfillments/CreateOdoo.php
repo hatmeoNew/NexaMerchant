@@ -44,9 +44,6 @@ class CreateOdoo extends Command
             array_push($line_items, $line_item);
         }
 
-        // dd($line_items);
-
-        // dd($order->items->toArray());
         // 根据接口获取面单数据
         $shipments = $this->getShipments($order);
         // dd($shipments);
