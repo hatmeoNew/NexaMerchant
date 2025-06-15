@@ -45,8 +45,15 @@ class CreateOdoo extends Command
             array_push($line_items, $line_item);
         }
 
+        // dd($line_items);
+
         // 根据接口获取面单数据
         $shipments = $this->getShipments($order);
+        if (empty($shipments)) {
+            Utils::sendFeishu('shipments is empty! order_id=' . $order->id . '. website:' . config('odoo_api.website_url'));
+            return false;
+        }
+
         // dd($shipments);
         $createData = [];
         foreach ($shipments as $shipment) {
@@ -79,7 +86,7 @@ class CreateOdoo extends Command
             // dd($shipment_items);
 
             if (empty($shipment_items)) {
-                Utils::sendFeishu('shipment_items is empty! order_id=' . $order->id . 'website:' . config('odoo_api.website_url'));
+                Utils::sendFeishu('shipment_items is empty! order_id=' . $order->id . '. website:' . config('odoo_api.website_url'));
                 return false;
             }
 
@@ -91,9 +98,9 @@ class CreateOdoo extends Command
             $shipment = app(ShipmentRepository::class);
             $ok = $shipment->create(array_merge($data, [
                 'order_id' => $order->id,
-            ]));
+            ]), Order::STATUS_COMPLETED);
 
-            Log::info('shipment->create:' . $ok);
+            // Log::info('shipment->create:' . $ok);
 
             if ($ok) {
                 // 发起邮件通知
