@@ -6,13 +6,15 @@ use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use Webkul\Sales\Models\Order;
 use Webkul\Product\Models\Product;
+use Illuminate\Support\Facades\Artisan;
 use Webkul\Sales\Repositories\ShipmentRepository;
+use NexaMerchant\Feeds\Console\Commands\Klaviyo\SendKlaviyoEvent;
 
 class CreateOdoo extends Command
 {
     protected $signature = 'odoo:fulfillments:create {--order_id=}';
 
-    protected $description = '获取订单面单数据，写入表中，并更新订单状态为已完成';
+    protected $description = '获取订单面单数据，写入表中，并更新订单状态为已完成，发起邮件通知任务';
 
     const ODOO_URL = 'https://erp.heomai.com/jsonrpc';
 
@@ -83,9 +85,19 @@ class CreateOdoo extends Command
             $data['shipment'] = $createData;
 
             $shipment = app(ShipmentRepository::class);
-            $shipment->create(array_merge($data, [
+            $ok = $shipment->create(array_merge($data, [
                 'order_id' => $order->id,
             ]));
+
+            if ($ok) {
+                // 查询订单状态是否已完成
+                $order = Order::findOrFail($orderId);
+                if ($order->status == 'completed') {
+                    // 发起邮件通知
+                    Artisan::queue((new SendKlaviyoEvent())->getName(), ['--order_id'=> $order->id, '--metric_type' => 200])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_event_place_order');
+                    return;
+                }
+            }
         }
 
 
@@ -106,7 +118,7 @@ class CreateOdoo extends Command
             ["name", "=", $name],
             ["delivery_status", "in", ["full", "partial"]]
         ];
-        $fields = ["picking_ids"];
+        $fields = ["picking_ids", "delivery_status", "carrier_id"];
         $response = $client->get(self::ODOO_URL, [
             'headers' => $headers,
             'body' => $this->formatBody("sale.order", $where, $fields)
@@ -116,22 +128,32 @@ class CreateOdoo extends Command
         $shipments = [];
         if ($data['result']) {
             foreach ($data['result'] as $k1 => $saleOrder) {
+
+                // 获取快递商
+                $where4 = [["id", "=", $saleOrder['carrier_id'][0]]];
+                $fields4 = ['delivery_type'];
+                $response4 = $client->get(self::ODOO_URL, [
+                    'headers' => $headers,
+                    'body' => $this->formatBody("delivery.carrier", $where4, $fields4)
+                ]);
+                $carrier_data = json_decode($response4->getBody(), true);
+                $delivery_type = $carrier_data['result'][0]['delivery_type'];
+
+                // 获取发货单
                 $picking_ids = $saleOrder['picking_ids'];
-                // dd($picking_ids);
                 $where1 = [["id", "in", $picking_ids]];
                 $fields1 = ['carrier_tracking_ref', 'delivery_type', 'move_ids'];
                 $response1 = $client->get(self::ODOO_URL, [
                     'headers' => $headers,
                     'body' => $this->formatBody("stock.picking", $where1, $fields1)
                 ]);
-
                 $picking_data = json_decode($response1->getBody(), true);
                 if ($picking_data) {
-                    // dd($picking_data['result']);
+
                     // 处理每个发货单
                     foreach ($picking_data['result'] as $picking) {
                         $delivery = [
-                            "delivery_type" => $picking['delivery_type'],
+                            "delivery_type" => $delivery_type,
                             "track_number" => $picking['carrier_tracking_ref'],
                         ];
 
