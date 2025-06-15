@@ -43,6 +43,7 @@ class Simple extends AbstractType
      */
     public function haveSufficientQuantity(int $qty): bool
     {
+        return true;
         if (! $this->product->manage_stock){
             return true;
         }

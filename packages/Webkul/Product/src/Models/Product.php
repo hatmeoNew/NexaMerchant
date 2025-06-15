@@ -370,6 +370,7 @@ class Product extends Model implements ProductContract
      */
     public function haveSufficientQuantity(int $qty): bool
     {
+        return true;
         return $this->getTypeInstance()
             ->haveSufficientQuantity($qty);
     }
