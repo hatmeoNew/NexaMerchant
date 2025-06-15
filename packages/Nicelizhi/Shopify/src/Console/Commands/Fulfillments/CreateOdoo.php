@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use Webkul\Sales\Models\Order;
 use Webkul\Product\Models\Product;
 use Illuminate\Support\Facades\Log;
+use Nicelizhi\Shopify\Helpers\Utils;
 use Illuminate\Support\Facades\Artisan;
 use Webkul\Sales\Repositories\ShipmentRepository;
 use NexaMerchant\Feeds\Console\Commands\Klaviyo\SendKlaviyoEvent;
@@ -76,6 +77,11 @@ class CreateOdoo extends Command
                 }
             }
             // dd($shipment_items);
+
+            if (empty($shipment_items)) {
+                Utils::sendFeishu('shipment_items is empty! order_id=' . $order->id . 'website:' . config('odoo_api.website_url'));
+                return false;
+            }
 
             $createData['items'] = $shipment_items;
 
