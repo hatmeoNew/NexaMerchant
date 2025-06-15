@@ -12,7 +12,7 @@ class CreateOdoo extends Command
 {
     protected $signature = 'odoo:fulfillments:create {--order_id=}';
 
-    protected $description = '获取订单面单数据，写入表中，并发起邮件通知队列';
+    protected $description = '获取订单面单数据，写入表中，并更新订单状态为已完成';
 
     const ODOO_URL = 'https://erp.heomai.com/jsonrpc';
 
