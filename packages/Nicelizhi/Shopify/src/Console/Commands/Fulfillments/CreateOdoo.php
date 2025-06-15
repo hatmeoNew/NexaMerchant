@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use Webkul\Sales\Models\Order;
 use Webkul\Product\Models\Product;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Artisan;
 use Webkul\Sales\Repositories\ShipmentRepository;
 use NexaMerchant\Feeds\Console\Commands\Klaviyo\SendKlaviyoEvent;
@@ -62,7 +63,7 @@ class CreateOdoo extends Command
             $shipment_items = [];
             foreach ($line_items as $line_item) {
                 foreach ($shipment['product_list'] as $shipment_product) {
-                    if ($shipment_product['default_code'] == $line_item['product_sku'] || $shipment_product['name'] == $line_item['product_sku']) {
+                    if ($shipment_product['external_sku'] == $line_item['product_sku']) {
                         $shipment_items[$line_item['order_item_id']] = [
                             'name' => $line_item['name'],
                             'sku' => $line_item['product_sku'],
@@ -89,18 +90,15 @@ class CreateOdoo extends Command
                 'order_id' => $order->id,
             ]));
 
+            Log::info('shipment->create:' . $ok);
+
             if ($ok) {
-                // 查询订单状态是否已完成
-                $order = Order::findOrFail($orderId);
-                if ($order->status == 'completed') {
-                    // 发起邮件通知
-                    Artisan::queue((new SendKlaviyoEvent())->getName(), ['--order_id'=> $order->id, '--metric_type' => 200])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_event_place_order');
-                    return;
-                }
+                // 发起邮件通知
+                Log::info('SendKlaviyoEvent-200:' . $orderId);
+                Artisan::queue((new SendKlaviyoEvent())->getName(), ['--order_id'=> $order->id, '--metric_type' => 200])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_event_place_order');
+                return;
             }
         }
-
-
     }
 
     public function getShipments($order)
@@ -169,11 +167,11 @@ class CreateOdoo extends Command
                             return $item['product_id'][0];
                         }, $move_data['result']);
                         // dd($product_ids);
-                        $where3 = [["id", "in", $product_ids]];
-                        $fields3 = ['default_code', 'name'];
+                        $where3 = [["product_id", "in", $product_ids]];
+                        $fields3 = ['external_sku'];
                         $response3 = $client->get(self::ODOO_URL, [
                             'headers' => $headers,
-                            'body' => $this->formatBody("product.product", $where3, $fields3)
+                            'body' => $this->formatBody("external.sku.mapping", $where3, $fields3)
                         ]);
                         $product_data = json_decode($response3->getBody(), true);
                         $delivery['product_list'] = $product_data['result'];
