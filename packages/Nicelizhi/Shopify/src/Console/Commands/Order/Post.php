@@ -198,7 +198,7 @@ class Post extends Command
         foreach($products as $key=>$product) {
             $sku = $product['additional'];
 
-            var_dump($sku);
+            // var_dump($sku);
 
             $attributes = "";
 
@@ -520,7 +520,7 @@ class Post extends Command
         $postOrder['currency'] = $order->order_currency_code;
         $postOrder['presentment_currency'] = $order->order_currency_code;
         $pOrder['order'] = $postOrder;
-        var_dump($pOrder);
+        // var_dump($pOrder);
 
         //exit;
 
