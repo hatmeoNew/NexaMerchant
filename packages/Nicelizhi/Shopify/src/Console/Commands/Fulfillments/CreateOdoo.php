@@ -50,7 +50,8 @@ class CreateOdoo extends Command
         // 根据接口获取面单数据
         $shipments = $this->getShipments($order);
         if (empty($shipments)) {
-            Utils::sendFeishu('shipments is empty! order_id=' . $order->id . '. website:' . config('odoo_api.website_url'));
+            echo 'shipments is empty! order_id=' . $order->id . '. website:' . config('odoo_api.website_url'), PHP_EOL;
+            // Utils::sendFeishu('shipments is empty! order_id=' . $order->id . '. website:' . config('odoo_api.website_url'));
             return false;
         }
 

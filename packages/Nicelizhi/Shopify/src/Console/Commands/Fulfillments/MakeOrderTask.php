@@ -12,29 +12,15 @@ class MakeOrderTask extends Command
 
     protected $description = '获取待发货订单, 发起同步数据脚本';
 
-    public $diffDay = 1;
-
     public function handle()
     {
-        // 获取待发货订单ID
-        $maxId = 0;
-        $i = 0;
-        $limit = 100;
-        while (true) {
-            $ids = Order::where('status', 'processing')->where('id', '>', $maxId)->orderBy('id', 'ASC')->limit($limit)->pluck('id');
-            $i = $i + $limit;
-
-            if (empty($ids)) {
-                break;
-            }
-            foreach ($ids as $id) {
-                dump($id);
+        Order::where('status', 'processing')->chunkById(100, function ($orders) {
+            foreach ($orders as $order) {
+                dump($order->id);
                 Artisan::call((new CreateOdoo())->getName(), [
-                    '--order_id' => $id,
+                    '--order_id' => $order->id,
                 ]);
-
-                $maxId = $id;
             }
-        }
+        });
     }
 }
