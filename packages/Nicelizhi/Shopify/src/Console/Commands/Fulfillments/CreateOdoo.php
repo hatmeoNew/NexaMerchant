@@ -9,6 +9,7 @@ use Webkul\Product\Models\Product;
 use Illuminate\Support\Facades\Log;
 use Nicelizhi\Shopify\Helpers\Utils;
 use Illuminate\Support\Facades\Artisan;
+use Nicelizhi\Shopify\Models\ShopifyProduct;
 use Webkul\Sales\Repositories\ShipmentRepository;
 use NexaMerchant\Feeds\Console\Commands\Klaviyo\SendKlaviyoEvent;
 
@@ -35,12 +36,27 @@ class CreateOdoo extends Command
 
             $line_item = [];
 
-            $line_item['additional'] = $orderItem['additional'];
-            $variant_id = $orderItem['additional']['selected_configurable_option'] ?: $orderItem['product_id'];
-            $line_item['product_sku'] = Product::where('id', $variant_id)->value('custom_sku');
+            $additional = $orderItem['additional'];
+            $variant_id = $additional['selected_configurable_option'] ?: $orderItem['product_id'];
+            if (!empty($additional['selected_configurable_option'])) {
+                $variant_id = $additional['selected_configurable_option'];
+            } else {
+                $variant_id = $additional['product_id']; //表示运费险订单
+            }
+            $shopifyInfo = Product::query()->where('id', $variant_id)->value('sku');
+            list($shopify_product_id, $shopify_variant_id) = explode('-', $shopifyInfo);
+            $shopifyProduct = ShopifyProduct::query()->where('product_id', $shopify_product_id)->select('variants', 'images', 'options')->first();
+            foreach ($shopifyProduct['variants'] as $variants) {
+                if ($variants['id'] == $shopify_variant_id) {
+                    $line_item['product_sku'] = $variants['sku'];
+                    break;
+                }
+            }
+
             $line_item['name'] = $orderItem['name'];
             $line_item['order_item_id'] = $orderItem['id'];
             $line_item['price'] = $orderItem['price'];
+            $line_item['additional'] = $additional;
 
             array_push($line_items, $line_item);
         }
