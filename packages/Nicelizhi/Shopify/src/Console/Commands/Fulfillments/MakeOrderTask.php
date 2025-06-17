@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Artisan;
 
 class MakeOrderTask extends Command
 {
-    protected $signature = 'make:order:task';
+    protected $signature = 'make:order:task {minId}';
 
     protected $description = '获取待发货订单, 发起同步数据脚本';
 
     public function handle()
     {
-        Order::where('status', 'processing')->chunkById(100, function ($orders) {
+        Order::where('status', 'processing')->where('id', '>=', $this->arguments('minId'))->chunkById(100, function ($orders) {
             foreach ($orders as $order) {
                 dump($order->id);
                 Artisan::call((new CreateOdoo())->getName(), [
