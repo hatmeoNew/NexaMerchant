@@ -14,7 +14,7 @@ class MakeOrderTask extends Command
 
     public function handle()
     {
-        Order::where('status', 'processing')->where('id', '>=', $this->arguments('minId'))->chunkById(100, function ($orders) {
+        Order::where('status', 'processing')->where('id', '>=', $this->argument('minId'))->chunkById(100, function ($orders) {
             foreach ($orders as $order) {
                 dump($order->id);
                 Artisan::call((new CreateOdoo())->getName(), [
