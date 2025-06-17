@@ -25,7 +25,7 @@ class Refund extends Base
                 return;
             }
 
-            $this->prepareMail($refund, new RefundedNotification($refund));
+            // $this->prepareMail($refund, new RefundedNotification($refund));
         } catch (\Exception $e) {
             report($e);
         }
@@ -76,7 +76,7 @@ class Refund extends Base
             }catch (Exception $e) {
                 Log::error($paypalOrderID."--refund captureID". json_encode($e->getMessage()));
                 \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage());
-            } 
+            }
             //$captureID = $smartButton->getCaptureId($paypalOrderID);
 
             //Log::info("refund captureID". json_encode($captureID));
@@ -92,7 +92,7 @@ class Refund extends Base
             }catch (Exception $e) {
                 var_dump($e->getMessage());
                 //exit;
-                \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage());   
+                \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage());
             } finally  {
                 //echo " Error plese check the log ";exit;
             }
@@ -112,7 +112,7 @@ class Refund extends Base
 
             $payment_intent_id = $order->transactions[0]->transaction_id;
 
-            
+
 
 
             $paymentConfig = [
@@ -125,7 +125,7 @@ class Refund extends Base
                 $sdk->createReRefund($payment_intent_id, $order->id, round($refund->grand_total, 2));
             }catch (Exception $e) {
                 \Nicelizhi\Shopify\Helpers\Utils::send($e->getMessage());
-            }  
+            }
         }
 
         $queue = config('app.name').':shopify-refund';

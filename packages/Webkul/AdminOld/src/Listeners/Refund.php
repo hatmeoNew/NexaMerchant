@@ -22,7 +22,7 @@ class Refund extends Base
                 return;
             }
 
-            $this->prepareMail($refund, new RefundedNotification($refund));
+            // $this->prepareMail($refund, new RefundedNotification($refund));
         } catch (\Exception $e) {
             report($e);
         }

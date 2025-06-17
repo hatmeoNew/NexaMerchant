@@ -23,7 +23,7 @@ class Invoice extends Base
                 return;
             }
 
-            $this->prepareMail($invoice, new InvoicedNotification($invoice));
+            // $this->prepareMail($invoice, new InvoicedNotification($invoice));
         } catch (\Exception $e) {
             report($e);
         }

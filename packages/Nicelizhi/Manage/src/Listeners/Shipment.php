@@ -24,14 +24,14 @@ class Shipment extends Base
                 return;
             }
 
-            $this->prepareMail($shipment, new ShippedNotification($shipment));
+            // $this->prepareMail($shipment, new ShippedNotification($shipment));
 
 
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_inventory_source')) {
                 return;
             }
 
-            $this->prepareMail($shipment, new InventorySourceNotification($shipment));
+            // $this->prepareMail($shipment, new InventorySourceNotification($shipment));
         } catch (\Exception $e) {
             report($e);
         }

@@ -23,7 +23,7 @@ class Shipment extends Base
                 return;
             }
 
-            $this->prepareMail($shipment, new ShippedNotification($shipment));
+            // $this->prepareMail($shipment, new ShippedNotification($shipment));
         } catch (\Exception $e) {
             report($e);
         }

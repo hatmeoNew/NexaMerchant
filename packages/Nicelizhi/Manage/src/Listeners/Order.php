@@ -46,11 +46,11 @@ class Order extends Base
             //Log::info('Order created listener order info: ' . $order);
 
             // send email
-            if (config('onebuy.is_sync_klaviyo')) {
+            if (1 || config('onebuy.is_sync_klaviyo')) {
                 Log::info('klaviyo_event_place_order000');
                 // Artisan::queue((new SendKlaviyoEvent())->getName(), ['--order_id'=> $order->id, '--metric_type' => 100])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_event_place_order');
             } else {
-                $this->prepareMail($order, new CreatedNotification($order));
+                // $this->prepareMail($order, new CreatedNotification($order));
             }
 
         } catch (\Exception $e) {
@@ -73,7 +73,7 @@ class Order extends Base
                 return;
             }
 
-            $this->prepareMail($order, new CanceledNotification($order));
+            // $this->prepareMail($order, new CanceledNotification($order));
 
 
 

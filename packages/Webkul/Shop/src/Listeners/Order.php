@@ -41,7 +41,7 @@ class Order extends Base
                 Log::info('klaviyo_event_place_order222');
                 Artisan::queue((new SendKlaviyoEvent())->getName(), ['--order_id'=> $order->id, '--metric_type' => 100])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_event_place_order');
             } else {
-                $this->prepareMail($order, new CreatedNotification($order));
+                // $this->prepareMail($order, new CreatedNotification($order));
             }
         } catch (\Exception $e) {
             report($e);
@@ -61,7 +61,7 @@ class Order extends Base
                 return;
             }
 
-            $this->prepareMail($order, new CanceledNotification($order));
+            // $this->prepareMail($order, new CanceledNotification($order));
         } catch (\Exception $e) {
             report($e);
         }
@@ -83,7 +83,7 @@ class Order extends Base
             /**
              * Email to customer.
              */
-            $this->prepareMail($comment, new CommentedNotification($comment));
+            // $this->prepareMail($comment, new CommentedNotification($comment));
         } catch (\Exception $e) {
             report($e);
         }
