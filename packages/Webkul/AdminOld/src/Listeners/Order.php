@@ -23,7 +23,7 @@ class Order extends Base
             }
 
             // send email
-            if (config('onebuy.is_sync_klaviyo')) {
+            if (1 || config('onebuy.is_sync_klaviyo')) {
                 Log::info('klaviyo_event_place_order111');
                 Artisan::queue((new SendKlaviyoEvent())->getName(), ['--order_id'=> $order->id, '--metric_type' => 100])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_event_place_order');
             } else {
