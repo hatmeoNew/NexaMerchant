@@ -1,8 +1,6 @@
 <?php
 
 return [
-    'payment' => 'Payment',
-    'billing_address' => 'Billing address',
-    'shipping_address' => 'Shipping address',
-    'shipped_confirmation' => 'Shipped Order Confirmation'
+    'shipped_confirmation' => 'Shipped Order Confirmation',
+    'new_order_confirmation' => 'Confirmación de nuevo pedido'
 ];
