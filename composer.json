@@ -94,7 +94,8 @@
         "spatie/laravel-analytics": "^5.3",
         "spatie/laravel-responsecache": "^7.4",
         "spatie/laravel-sitemap": "^7.0",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.1"
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.1",
+        "giggsey/libphonenumber-for-php": "^9.0"
     },
     "require-dev": {
         "barryvdh\/laravel-debugbar": "^3.8",
