@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Webkul\Category\Contracts\CategoryTranslation as CategoryTranslationContract;
 use Webkul\Category\Database\Factories\CategoryTranslationFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class CategoryTranslation
@@ -39,5 +40,10 @@ class CategoryTranslation extends Model implements CategoryTranslationContract
     protected static function newFactory(): Factory
     {
         return CategoryTranslationFactory::new();
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(CategoryTranslation::class, 'category_id', 'id');
     }
 }
