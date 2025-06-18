@@ -122,6 +122,8 @@ class ShopifyServiceProvider extends ServiceProvider
 
                 \Nicelizhi\Shopify\Console\Commands\Fulfillments\CreateOdoo::class,
 
+                \Nicelizhi\Shopify\Console\Commands\Fulfillments\EmailRepush::class,
+
                 \Nicelizhi\Shopify\Console\Commands\Fulfillments\MakeOrderTask::class,
 
                 \Nicelizhi\Shopify\Console\Commands\Transaction\Post::class,
