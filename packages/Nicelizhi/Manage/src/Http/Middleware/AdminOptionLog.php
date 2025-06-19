@@ -2,6 +2,7 @@
 
 namespace Nicelizhi\Manage\Http\Middleware;
 
+use Carbon\Carbon;
 use Closure;
 
 class AdminOptionLog
@@ -15,6 +16,7 @@ class AdminOptionLog
      */
     public function handle($request, Closure $next)
     {
+        $now = Carbon::now(); // 使用Carbon对象
         $user_id = auth()->guard('admin')->user()->id;
         $log = [
             'user_id' => $user_id,
@@ -22,8 +24,8 @@ class AdminOptionLog
             'method'  => $request->method(),
             'ip'      => $request->getClientIp(),
             'input'   => json_encode($request->input()),
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'created_at' => $now,
+            'updated_at' => $now,
         ];
 
         try {
