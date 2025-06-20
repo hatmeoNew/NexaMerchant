@@ -600,6 +600,9 @@ class ApiController extends Controller
             if(!isset($product['amount'])) continue; // when the amount eq 0
             $product['quantity'] = $product['amount'];
             $product['selected_configurable_option'] = $product['variant_id'];
+            $product['variant_data'] = $this->productRepository->findOneWhere([
+                'id' => $product['variant_id'],
+            ], ['sku', 'custom_sku']);
             if(!empty($product['attr_id'])) {
                 $attr_ids = explode(',', $product['attr_id']);
                 foreach($attr_ids as $key=>$attr_id) {
