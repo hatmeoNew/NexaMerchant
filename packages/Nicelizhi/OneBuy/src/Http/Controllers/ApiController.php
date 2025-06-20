@@ -294,6 +294,9 @@ class ApiController extends Controller
             //var_dump($product);
             $product['quantity'] = $product['amount'];
             $product['selected_configurable_option'] = $product['variant_id'];
+            $product['variant_data'] = $this->productRepository->findOneWhere([
+                'id' => $product['variant_id'],
+            ], ['sku', 'custom_sku']);
             if(!empty($product['attr_id'])) {
                 $attr_ids = explode(',', $product['attr_id']);
                 foreach($attr_ids as $key=>$attr_id) {
@@ -960,7 +963,7 @@ class ApiController extends Controller
                     'redirect' => true,
                     'message' => $paypalOrder,
                     'data'     => route('shop.checkout.cart.index'),
-                ]); 
+                ]);
             }
 
             if($paypalOrder->result->status != "COMPLETED" && $paypalOrder->result->purchase_units[0]->payments->captures[0]->status != "COMPLETED") {
@@ -1218,7 +1221,7 @@ class ApiController extends Controller
         ) {
             //$data['application_context']['shipping_preference'] = 'SET_PROVIDED_ADDRESS';
 
-            
+
             $data['purchase_units'][0] = array_merge($data['purchase_units'][0], [
                 'shipping' => [
                     'address' => [
@@ -1231,7 +1234,7 @@ class ApiController extends Controller
                     ],
                 ],
             ]);
-            
+
         }
 
         $input['payment_vault'] = isset($input['payment_vault']) ? $input['payment_vault'] : "0";
