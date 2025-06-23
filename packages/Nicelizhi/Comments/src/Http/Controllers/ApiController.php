@@ -15,7 +15,7 @@ class ApiController extends Controller {
         protected ProductRepository $productRepository
     )
     {
-        
+
     }
 
     /**
@@ -58,10 +58,10 @@ class ApiController extends Controller {
         $product_id = request()->get('product_id', null);
         $product_id = request()->get('product_id', null);
 
-        
+
 
         $product = $this->productRepository->findBySlug($product_id);
-        
+
         if(is_null($product)) {
             return response()->json([
                 'message' => 'Product not found'
@@ -81,7 +81,7 @@ class ApiController extends Controller {
 
             $reviews = \Webkul\Product\Models\ProductReviewProxy::where("status","approved")->where("product_id", $product['id'])->orderBy("sort","desc")->orderBy("id","desc")->skip($page*$per_page)->take($per_page)->get();
 
-            Log::info("product_comment_".$product['id']."_".$page."_".$per_page. " ". json_encode($reviews));
+            // Log::info("product_comment_".$product['id']."_".$page."_".$per_page. " ". json_encode($reviews));
 
             $reviews = $reviews->map(function($review) {
                 $review->customer = $review->customer;
@@ -95,7 +95,7 @@ class ApiController extends Controller {
 
         //$reviews = $product->reviews->where('status', 'approved')->skip($page*$per_page)->take($per_page);
 
-        
+
 
 
         $data = [];
