@@ -321,8 +321,8 @@ class PostOdoo extends Command
     public function syncOdooLog($data)
     {
         $orderData = $data['order_data'];
-        $customerData = $data['customer_data'];
-        $productsData = $data['product_data'];
+        // $customerData = $data['customer_data'];
+        // $productsData = $data['product_data'];
 
         OdooOrder::create([
             'name'                => $orderData['name'],
@@ -333,7 +333,7 @@ class PostOdoo extends Command
             'currency_id'         => $orderData['currency_id'],
             'payment_term_id'     => $orderData['payment_term_id'],
             'team_id'             => $orderData['team_id'],
-            'user_id'             => $orderData['user_id'],
+            'user_id'             => $orderData['id'] ?? 0,
             'company_id'          => $orderData['company_id'],
             'warehouse_id'        => $orderData['warehouse_id'],
             'client_order_ref'    => $orderData['client_order_ref'],
@@ -348,56 +348,56 @@ class PostOdoo extends Command
             'updated_at'          => date('Y-m-d H:i:s'),
         ]);
 
-        OdooCustomer::create([
-            'name'                  => $customerData['name'],
-            'email'                 => $customerData['email'],
-            'phone'                 => $customerData['phone'],
-            'mobile'                => $customerData['mobile'],
-            'street'                => $customerData['street'],
-            'street2'               => $customerData['street2'],
-            'zip'                   => $customerData['zip'],
-            'city'                  => $customerData['city'],
-            'state_id'              => $customerData['state_id'],
-            'country_id'            => $customerData['country_id'],
-            'vat'                   => $customerData['vat'],
-            'function'              => $customerData['function'],
-            'title'                 => $customerData['title'],
-            'company_id'            => $customerData['company_id'],
-            'category_id'           => $customerData['category_id'],
-            'user_id'               => $customerData['user_id'],
-            'team_id'               => $customerData['team_id'],
-            'lang'                  => $customerData['lang'],
-            'tz'                    => $customerData['tz'],
-            'active'                => $customerData['active'],
-            'company_type'          => $customerData['company_type'],
-            'is_company'            => $customerData['is_company'],
-            'color'                 => $customerData['color'],
-            'partner_share'         => $customerData['partner_share'],
-            'commercial_partner_id' => $customerData['commercial_partner_id'],
-            'type'                  => $customerData['type'],
-            'signup_token'          => $customerData['signup_token'],
-            'signup_type'           => $customerData['signup_type'],
-            'signup_expiration'     => $customerData['signup_expiration'],
-            'signup_url'            => $customerData['signup_url'],
-            'partner_gid'           => $customerData['partner_gid'],
-            'created_at'            => date('Y-m-d H:i:s'),
-            'updated_at'            => date('Y-m-d H:i:s'),
-        ]);
+        // OdooCustomer::create([
+        //     'name'                  => $customerData['name'],
+        //     'email'                 => $customerData['email'],
+        //     'phone'                 => $customerData['phone'],
+        //     'mobile'                => $customerData['mobile'],
+        //     'street'                => $customerData['street'],
+        //     'street2'               => $customerData['street2'],
+        //     'zip'                   => $customerData['zip'],
+        //     'city'                  => $customerData['city'],
+        //     'state_id'              => $customerData['state_id'],
+        //     'country_id'            => $customerData['country_id'],
+        //     'vat'                   => $customerData['vat'],
+        //     'function'              => $customerData['function'],
+        //     'title'                 => $customerData['title'],
+        //     'company_id'            => $customerData['company_id'],
+        //     'category_id'           => $customerData['category_id'],
+        //     'user_id'               => $customerData['user_id'],
+        //     'team_id'               => $customerData['team_id'],
+        //     'lang'                  => $customerData['lang'],
+        //     'tz'                    => $customerData['tz'],
+        //     'active'                => $customerData['active'],
+        //     'company_type'          => $customerData['company_type'],
+        //     'is_company'            => $customerData['is_company'],
+        //     'color'                 => $customerData['color'],
+        //     'partner_share'         => $customerData['partner_share'],
+        //     'commercial_partner_id' => $customerData['commercial_partner_id'],
+        //     'type'                  => $customerData['type'],
+        //     'signup_token'          => $customerData['signup_token'],
+        //     'signup_type'           => $customerData['signup_type'],
+        //     'signup_expiration'     => $customerData['signup_expiration'],
+        //     'signup_url'            => $customerData['signup_url'],
+        //     'partner_gid'           => $customerData['partner_gid'],
+        //     'created_at'            => date('Y-m-d H:i:s'),
+        //     'updated_at'            => date('Y-m-d H:i:s'),
+        // ]);
 
-        foreach ($productsData as $productData) {
-            OdooProducts::create([
-                'name'         => $productData['name'],
-                'product_id'   => $productData['product_id'],
-                'default_code' => $productData['default_code'],
-                'type'         => $productData['type'],
-                'list_price'   => $productData['list_price'],
-                'currency_id'  => $productData['currency_id'],
-                'uom_id'       => $productData['uom_id'],
-                'categ_id'     => $productData['categ_id'],
-                'created_at'   => date('Y-m-d H:i:s'),
-                'updated_at'   => date('Y-m-d H:i:s'),
-            ]);
-        }
+        // foreach ($productsData as $productData) {
+        //     OdooProducts::create([
+        //         'name'         => $productData['name'],
+        //         'product_id'   => $productData['product_id'],
+        //         'default_code' => $productData['default_code'],
+        //         'type'         => $productData['type'],
+        //         'list_price'   => $productData['list_price'],
+        //         'currency_id'  => $productData['currency_id'],
+        //         'uom_id'       => $productData['uom_id'],
+        //         'categ_id'     => $productData['categ_id'],
+        //         'created_at'   => date('Y-m-d H:i:s'),
+        //         'updated_at'   => date('Y-m-d H:i:s'),
+        //     ]);
+        // }
     }
 
     public function createCuster($data)
