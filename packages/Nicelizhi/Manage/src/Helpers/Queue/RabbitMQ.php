@@ -55,7 +55,7 @@ class RabbitMQ implements QueueInterface
             Utils::sendFeishu($message);
         }
         try {
-            $this->channel->queue_declare($channel, false, true, false, false);
+            $this->channel->queue_declare($channel, false, false, false, false);
         } catch (\Exception $e) {
             $this->reConnect();
             echo "MQ Connection reconnect " . PHP_EOL;
@@ -95,7 +95,7 @@ class RabbitMQ implements QueueInterface
             $message = "消费队列名为空 时间 :" . date('Y-m-d H:i:s') . PHP_EOL;
             Utils::sendFeishu($message);
         }
-        $this->channel->queue_declare($channel, false, true, false, false);
+        $this->channel->queue_declare($channel, false, false, false, false);
         $exitFlag = false; // 新增退出标志
         $callback = function ($message) use ($handler, &$exitFlag) {
             if ($handler instanceof \Closure) {

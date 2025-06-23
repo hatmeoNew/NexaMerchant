@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Webkul\Sales\Models\Order;
 use Illuminate\Support\Facades\Artisan;
 use Nicelizhi\Manage\Helpers\Queue\RabbitMQ;
-use Obuchmann\OdooJsonRpc\Odoo\OdooModel;
+use Nicelizhi\Shopify\Models\OdooOrder;
 
 class MakeOrderTask extends Command
 {
@@ -33,14 +33,15 @@ class MakeOrderTask extends Command
         $prefix = env('SHOPIFY_ORDER_PRE');
 
         $rabbitMQ = new RabbitMQ();
-        $channel = str_replace(' ', '_', strtolower($prefix)) + '_order_shipping';
+        $channel = str_replace(' ', '_', strtolower($prefix)) . '_order_shipping';
+        // dd($channel);
         $rabbitMQ->consume($channel, function ($message) {
 
             $taskInfo = json_decode($message, true);
-
             $erp_orderId = $taskInfo['order_id'];
-            $odooOrder = OdooModel::query()->where('user_id', '=', $erp_orderId)->first();
+            $odooOrder = OdooOrder::query()->where('user_id', '=', $erp_orderId)->first();
             if (!$odooOrder) {
+                dump('not found');
                 return true;
             }
 
