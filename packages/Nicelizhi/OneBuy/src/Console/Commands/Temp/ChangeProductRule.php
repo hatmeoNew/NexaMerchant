@@ -141,18 +141,18 @@ class ChangeProductRule extends Command
 
         $upselling50Id = $cartRuleModel->where('name', 'upselling50')->value('id');
         // dd($upselling50Id);
-
+        // dd($rules);
         foreach ($rules as $key => $product_id) {
 
             $this->info('Product ID: ' . $product_id);
 
-            $product = \Webkul\Product\Models\Product::where('id', $product_id)->first();
-            if (is_null($product)) {
+            // if the product has been processed
+            if (Redis::get('product-quantity-prices-' . $product_id . '-done')) {
                 continue;
             }
 
-            // if the product has been processed
-            if (Redis::get('product-quantity-prices-' . $product_id . '-done')) {
+            $product = \Webkul\Product\Models\Product::where('id', $product_id)->first();
+            if (is_null($product)) {
                 continue;
             }
 
@@ -184,7 +184,14 @@ class ChangeProductRule extends Command
 
             $postRules = [];
             $i = 1;
+            $usePrice = [];
+            if (count($ruleInfo) > 4) {
+                dump('Too many rules for product ID============================================= ' . $product_id);
+            }
             foreach ($ruleInfo as $price) {
+                if (in_array(round($price, 2), $usePrice)) {
+                    continue;
+                }
 
                 $attributes = [
                     [
@@ -207,13 +214,17 @@ class ChangeProductRule extends Command
                     "attributes" => $attributes
                 ];
                 $i++;
+
+                $usePrice[] = round($price, 2);
             }
             $postData = [
                 "product_id" => $product_id,
                 "rules" => $postRules
             ];
-
             // dd($postData);
+            if (count($postData['rules']) > 4) {
+                dd('Too many rules for product ID: ' . $product_id);
+            }
 
             // var_dump($postData);
             // exit;
