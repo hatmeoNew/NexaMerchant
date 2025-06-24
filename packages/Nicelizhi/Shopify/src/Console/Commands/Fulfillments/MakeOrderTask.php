@@ -14,7 +14,7 @@ class MakeOrderTask extends Command
 
     protected $description = '获取待发货订单, 发起同步数据脚本';
 
-    public function handle1()
+    public function handle()
     {
         Order::where('status', 'processing')->where('id', '>=', $this->argument('minId'))->chunkById(100, function ($orders) {
             foreach ($orders as $order) {
@@ -26,7 +26,7 @@ class MakeOrderTask extends Command
         });
     }
 
-    public function handle()
+    public function handle1()
     {
         set_time_limit(0);
 
