@@ -117,6 +117,8 @@ class ChangeProductRule extends Command
             return false;
         }
 
+        $cartRuleProduct = app(\Webkul\CartRule\Repositories\CartRuleProductRepository::class);
+
         // get all products rules price
         $keys = Redis::keys('product-quantity-price-*');
 
@@ -126,6 +128,9 @@ class ChangeProductRule extends Command
             $product_id = str_replace("product-quantity-price-", "", $key);
 
             $prices = Redis::zRange('product-quantity-price-' . $product_id, 0, -1, 'WITHSCORES');
+
+            // delete table rows
+            $cartRuleProduct::query()->where('product_id', $product_id)->delete();
 
             // add the price to the temp cache key
             Redis::zadd($redis_temp_price_cache_key, $product_id, json_encode($prices));
