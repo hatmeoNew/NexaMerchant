@@ -118,6 +118,7 @@ class ChangeProductRule extends Command
         }
 
         $cartRuleProduct = app(\Webkul\CartRule\Repositories\CartRuleProductRepository::class);
+        $cartRuleModel = app(\Webkul\CartRule\Repositories\CartRuleRepository::class);
 
         // get all products rules price
         $keys = Redis::keys('product-quantity-price-*');
@@ -129,9 +130,6 @@ class ChangeProductRule extends Command
 
             $prices = Redis::zRange('product-quantity-price-' . $product_id, 0, -1, 'WITHSCORES');
 
-            // delete table rows
-            $cartRuleProduct::query()->where('product_id', $product_id)->delete();
-
             // add the price to the temp cache key
             Redis::zadd($redis_temp_price_cache_key, $product_id, json_encode($prices));
         }
@@ -141,37 +139,49 @@ class ChangeProductRule extends Command
         //exit;
         $client = new \GuzzleHttp\Client();
 
-        foreach ($rules as $key => $rule) {
+        $upselling50Id = $cartRuleModel->where('name', 'upselling50')->value('id');
+        // dd($upselling50Id);
 
-            // if the product has been processed
-            if (Redis::get('product-quantity-prices-' . $rule . '-done')) {
-                continue;
-            }
+        foreach ($rules as $key => $product_id) {
 
-            $product = \Webkul\Product\Models\Product::where('id', $rule)->first();
+            $this->info('Product ID: ' . $product_id);
+
+            $product = \Webkul\Product\Models\Product::where('id', $product_id)->first();
             if (is_null($product)) {
                 continue;
             }
 
-            // delete the redis key
-            Redis::del('product-quantity-price-' . $rule);
-            Redis::del('product-quantity-rules-' . $rule);
+            // if the product has been processed
+            if (Redis::get('product-quantity-prices-' . $product_id . '-done')) {
+                continue;
+            }
 
-            $url = config('app.url') . "/api/v1/admin/promotions/cart-rules/" . $rule . "/product-quantity-rules";
+            try {
+                $ruleIds = Redis::sMembers('product-quantity-rules-' . $product_id);
+                if ($ruleIds) {
+                    // 排除$upselling50Id
+                    $ruleIds = array_filter($ruleIds, function($item) use ($upselling50Id) {
+                        return $item !== $upselling50Id;
+                    });
+                    if ($ruleIds) {
+                        $cartRuleModel->whereIn('id', $ruleIds)->delete();
+                    }
+                }
+            } catch (\Exception $e) {
+                echo "执行 SMEMBERS 失败: " . $e->getMessage();
+            }
+
+            // delete table rows
+            $cartRuleProduct->where('product_id', $product_id)->delete();
+
+            // delete the redis key
+            Redis::del('product-quantity-price-' . $product_id);
+            Redis::del('product-quantity-rules-' . $product_id);
+
+            $url = config('app.url') . "/api/v1/admin/promotions/cart-rules/" . $product_id . "/product-quantity-rules";
             $this->info($url);
             $ruleInfo = json_decode($key, true);
-            //exit;
 
-            $product = \Webkul\Product\Models\Product::where('id', $rule)->first();
-            $this->info('Product ID: ' . $rule);
-
-            /**
-             *
-             {"product_id":1207,
-             "rules":[
-             {"id":109,"price":1299,"action_type":"by_fixed","attributes":[{"value":"1","operator":"==","attribute":"cart|items_qty","attribute_type":"integer"},{"value":875,"operator":"==","attribute":"product|attribute_family_id","attribute_type":"integer"}]},{"id":110,"price":2078.4,"action_type":"by_fixed","attributes":[{"value":"2","operator":"==","attribute":"cart|items_qty","attribute_type":"integer"},{"value":875,"operator":"==","attribute":"product|attribute_family_id","attribute_type":"integer"}]},{"id":111,"price":2727.9,"action_type":"by_fixed","attributes":[{"value":"3","operator":"==","attribute":"cart|items_qty","attribute_type":"integer"},{"value":875,"operator":"==","attribute":"product|attribute_family_id","attribute_type":"integer"}]},{"id":112,"price":3117.6,"action_type":"by_fixed","attributes":[{"value":"4","operator":"==","attribute":"cart|items_qty","attribute_type":"integer"},{"value":875,"operator":"==","attribute":"product|attribute_family_id","attribute_type":"integer"}]}]}
-             *
-             */
             $postRules = [];
             $i = 1;
             foreach ($ruleInfo as $price) {
@@ -199,9 +209,11 @@ class ChangeProductRule extends Command
                 $i++;
             }
             $postData = [
-                "product_id" => $rule,
+                "product_id" => $product_id,
                 "rules" => $postRules
             ];
+
+            // dd($postData);
 
             // var_dump($postData);
             // exit;
@@ -217,9 +229,9 @@ class ChangeProductRule extends Command
             $this->info($response->getBody());
 
             // add a mark for the product
-            Redis::set('product-quantity-prices-' . $rule . '-done', 1);
+            Redis::set('product-quantity-prices-' . $product_id . '-done', 1);
 
-
+            // dd();
 
             sleep(2);
         }
