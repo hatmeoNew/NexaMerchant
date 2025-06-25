@@ -155,7 +155,7 @@ class PostOdoo extends Command
                 $additional['attributes'] = [];
             }
 
-            $url_key = ProductAttributeValue::query()->where('product_id', $variant_id)->where('attribute_id', 3)->value('text_value');
+            $url_key = ProductAttributeValue::query()->where('product_id', $orderItem['product_id'])->where('attribute_id', 3)->value('text_value');
             if (!$line_item['is_shipping'] && !empty($url_key)) {
                 $additional['product_url'] = rtrim(env('SHOP_URL'), '/') . '/products/' . $url_key;
             } else {
