@@ -31,23 +31,25 @@ class MakeOrderTask extends Command
 
         $prefix = env('SHOPIFY_ORDER_PRE');
 
-        try {
-            $rabbitMQ = new RabbitMQ();
-            $channel = str_replace(' ', '_', strtolower($prefix)) . '_order_shipping';
-            // dd($channel);
-            $rabbitMQ->consume($channel, function ($message) {
+        while (true) {
+            try {
+                $rabbitMQ = new RabbitMQ();
+                $channel = str_replace(' ', '_', strtolower($prefix)) . '_order_shipping';
+                // dd($channel);
+                $rabbitMQ->consume($channel, function ($message) {
 
-                $taskInfo = json_decode($message, true);
-                $orderId = explode('#', $taskInfo['name'])[1];
-                dump($orderId);
-                Artisan::call((new CreateOdoo())->getName(), [
-                    '--order_id' => $orderId
-                ]);
+                    $taskInfo = json_decode($message, true);
+                    $orderId = explode('#', $taskInfo['name'])[1];
+                    dump($orderId);
+                    Artisan::call((new CreateOdoo())->getName(), [
+                        '--order_id' => $orderId
+                    ]);
 
-                return true;
-            });
-        } catch (\Throwable $th) {
-            dump($th->getMessage());
+                    return true;
+                });
+            } catch (\Throwable $th) {
+                dump($th->getMessage());
+            }
         }
     }
 }
