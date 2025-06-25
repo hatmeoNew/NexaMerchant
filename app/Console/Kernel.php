@@ -31,6 +31,8 @@ class Kernel extends ConsoleKernel
         //$schedule->command('shopify:customers:get')->hourly()->withoutOverlapping()->timezone('Asia/Shanghai')->between('9:00', '19:00'); // shopify customer sync
         $schedule->command('shopify:customers:post')->hourly()->withoutOverlapping()->timezone('Asia/Shanghai')->between('9:00', '19:00'); // shopify customer post sync
 
+        $schedule->command('erp:shipping_order:sync')->description('同步erp已发货订单')->hourly()->runInBackground();
+
     }
 
     /**
