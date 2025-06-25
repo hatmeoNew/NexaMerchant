@@ -147,7 +147,7 @@ class ChangeProductRule extends Command
             $this->info('Product ID: ' . $product_id);
 
             // if the product has been processed
-            if (Redis::get('product-quantity-prices-' . $product_id . '-done')) {
+            if (Redis::get(date('Ymd') . ':product-quantity-prices-' . $product_id . '-done')) {
                 continue;
             }
 
@@ -240,7 +240,7 @@ class ChangeProductRule extends Command
             $this->info($response->getBody());
 
             // add a mark for the product
-            Redis::set('product-quantity-prices-' . $product_id . '-done', 1);
+            Redis::set(date('Ymd') . ':product-quantity-prices-' . $product_id . '-done', 1);
 
             // dd();
 
