@@ -187,6 +187,7 @@ class ChangeProductRule extends Command
             $usePrice = [];
             if (count($ruleInfo) > 4) {
                 dump('Too many rules for product ID============================================= ' . $product_id);
+                continue;
             }
             foreach ($ruleInfo as $price) {
                 if (in_array(round($price, 2), $usePrice)) {
@@ -223,7 +224,8 @@ class ChangeProductRule extends Command
             ];
             // dd($postData);
             if (count($postData['rules']) > 4) {
-                dd('Too many rules for product ID: ' . $product_id);
+                dump('Too many rules for product ID: ' . $product_id);
+                continue;
             }
 
             // var_dump($postData);
