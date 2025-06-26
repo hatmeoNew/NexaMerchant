@@ -602,10 +602,10 @@ class CartRule
 
         $query = $this->cartRuleRepository
             ->select('cart_rules.*', 'cart_rule_customer_groups.customer_group_id', 'cart_rule_channels.channel_id')
-            ->leftJoin('cart_rule_customer_groups', 'cart_rules.id', '=',
-                'cart_rule_customer_groups.cart_rule_id')
-            ->leftJoin('cart_rule_channels', 'cart_rules.id', '=', 'cart_rule_channels.cart_rule_id')
-            ->where('cart_rule_customer_groups.customer_group_id', $customerGroup->id)
+            ->leftJoin('cart_rule_customer_groups', 'cart_rules.id', '=', 'cart_rule_customer_groups.cart_rule_id')
+            ->leftJoin('cart_rule_channels', 'cart_rules.id', '=', 'cart_rule_channels.cart_rule_id');
+
+        $query->where('cart_rule_customer_groups.customer_group_id', $customerGroup->id)
             ->where('cart_rule_channels.channel_id', core()->getCurrentChannel()->id)
             ->where(function ($query) {
                 /** @var Builder $query1 */
@@ -621,9 +621,38 @@ class CartRule
             ->orderBy('sort_order', 'asc');
 
         if ($productIds) {
-            $query->leftJoin('cart_rule_products', 'cart_rules.id', '=', 'cart_rule_products.cart_rule_id')
-              ->whereIn('cart_rule_products.product_id', $productIds);
+            $query->leftJoin('cart_rule_products', 'cart_rules.id', '=', 'cart_rule_products.cart_rule_id');
+            $query->where(function ($subQuery) use ($productIds) {
+                $subQuery->where('cart_rules.is_global', 1)
+                    ->orWhereIn('cart_rule_products.product_id', $productIds);
+            });
         }
+
+        // $sql = $query->toSql();
+        // $bindings = $query->getBindings();
+
+        // // 处理每个绑定参数，适用于预编译语句中的 ? 占位符
+        // foreach ($bindings as $key => $value) {
+        //     // 处理字符串类型，添加引号
+        //     if (is_string($value)) {
+        //         $value = "'" . addslashes($value) . "'";
+        //     }
+        //     // 处理布尔值
+        //     elseif (is_bool($value)) {
+        //         $value = $value ? '1' : '0';
+        //     }
+        //     // 处理 null
+        //     elseif (is_null($value)) {
+        //         $value = 'NULL';
+        //     }
+
+        //     // 替换占位符
+        //     $sql = preg_replace('/\?/', $value, $sql, 1);
+        // }
+
+        // Log::info('sql:', [
+        //     $sql
+        // ]);
 
         return $query;
     }

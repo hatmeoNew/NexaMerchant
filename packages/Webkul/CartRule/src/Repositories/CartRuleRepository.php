@@ -13,7 +13,6 @@ use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Repositories\CountryRepository;
 use Webkul\Core\Repositories\CountryStateRepository;
 use Webkul\Tax\Repositories\TaxCategoryRepository;
-use Webkul\Category\Models\Category as CategoryModel;
 
 class CartRuleRepository extends Repository
 {
@@ -452,67 +451,83 @@ class CartRuleRepository extends Repository
      */
     public function generateCartRuleProducts(array $data, $cartRuleId, $isUpdate = false)
     {
-        if (empty($data['conditions'])) {
-            return false;
-        }
-
         $cartRuleProductRepo = app(\Webkul\CartRule\Repositories\CartRuleProductRepository::class);
         $productModel = app(\Webkul\Product\Models\Product::class);
         $conditions = $data['conditions'];
 
-        // Log::info('生成折扣规则产品关联', [
-        //     'cartRuleId' => $cartRuleId,
-        //     'isUpdate' => $isUpdate,
-        //     'conditions' => $conditions
-        // ]);
+        // 从条件中解析出新的产品ID集合
+        $newProductIds = [];
 
-        // 开启数据库事务确保数据一致性
-        DB::transaction(function () use ($cartRuleProductRepo, $cartRuleId, $conditions, $isUpdate, $productModel) {
-            // 如果是更新操作，先删除旧的关联记录
-            if ($isUpdate) {
-                $cartRuleProductRepo->deleteWhere(['cart_rule_id' => $cartRuleId]);
-                // Log::info("删除旧的关联记录: cart_rule_id={$cartRuleId}");
-            }
+        foreach ($conditions as $condition) {
+            list($tableEntity, $tableField) = explode('|', $condition['attribute']);
 
-            $now = Carbon::now();
-            $productIds = []; // 用于去重的产品ID集合
+            if ($tableEntity !== 'product') continue;
 
-            foreach ($conditions as $condition) {
-                list($tableEntity, $tableField) = explode('|', $condition['attribute']);
+            switch ($tableField) {
+                // 指定商品
+                case 'id':
+                    if ($condition['operator'] == '{}') {
+                        $product_ids = array_filter($condition['value'], 'is_numeric');
+                        foreach ($product_ids as $productId) {
+                            $newProductIds[(int)$productId] = true;
+                        }
+                    }
+                    break;
 
-                // 暂只处理产品和分类相关条件
-                if ($tableEntity !== 'product') continue;
+                // 商品系列
+                case 'category_ids':
+                    if ($condition['operator'] == '{}') {
+                        $category_ids = array_filter($condition['value'], 'is_numeric');
+                        if (!empty($category_ids)) {
+                            $products = $productModel::whereHas('categories', function ($query) use ($category_ids) {
+                                $query->whereIn('id', $category_ids);
+                            })->pluck('id')->toArray();
 
-                switch ($tableField) {
-                    case 'id':
-                        if ($condition['operator'] == '{}') {
-                            $product_ids = array_filter($condition['value'], 'is_numeric');
-                            foreach ($product_ids as $productId) {
-                                $productIds[(int)$productId] = true;
+                            foreach ($products as $productId) {
+                                $newProductIds[$productId] = true;
                             }
                         }
-                        break;
+                    }
+                    break;
 
-                    case 'category_ids':
-                        if ($condition['operator'] == '{}') {
-                            $category_ids = array_filter($condition['value'], 'is_numeric');
-                            if (!empty($category_ids)) {
-                                // 获取分类下的所有产品ID（优化查询）
-                                $products = $productModel::whereHas('categories', function ($query) use ($category_ids) {
-                                    $query->whereIn('id', $category_ids);
-                                })->pluck('id')->toArray();
+            }
+        }
 
-                                foreach ($products as $productId) {
-                                    $productIds[$productId] = true;
-                                }
-                            }
-                        }
-                        break;
-                }
+        $newProductIds = array_keys($newProductIds);
+
+        if ($isUpdate) {
+            // 获取当前已关联的产品ID集合
+            $currentProductIds = $cartRuleProductRepo
+                ->where('cart_rule_id', $cartRuleId)
+                ->pluck('product_id')
+                ->toArray();
+
+            // 计算需要添加和删除的产品ID
+            $idsToAdd = array_diff($newProductIds, $currentProductIds);
+            $idsToDelete = array_diff($currentProductIds, $newProductIds);
+        } else {
+            $idsToAdd = $newProductIds;
+            $idsToDelete = [];
+        }
+
+        // 如果没有变化，直接返回
+        if (empty($idsToAdd) && empty($idsToDelete)) {
+            Log::info("无需更新: cart_rule_id={$cartRuleId}");
+            return true;
+        }
+
+        // 开启数据库事务
+        DB::transaction(function () use ($cartRuleProductRepo, $cartRuleId, $idsToAdd, $idsToDelete) {
+            // 删除不再关联的产品
+            if (!empty($idsToDelete)) {
+                $cartRuleProductRepo->where('cart_rule_id', $cartRuleId)
+                    ->whereIn('product_id', $idsToDelete)
+                    ->delete();
             }
 
-            // 批量插入去重后的关联记录
-            if (!empty($productIds)) {
+            // 添加新关联的产品
+            if (!empty($idsToAdd)) {
+                $now = Carbon::now();
                 $batchData = array_map(function($productId) use ($cartRuleId, $now) {
                     return [
                         'cart_rule_id' => $cartRuleId,
@@ -520,10 +535,9 @@ class CartRuleRepository extends Repository
                         'created_at' => $now,
                         'updated_at' => $now
                     ];
-                }, array_keys($productIds));
+                }, $idsToAdd);
 
                 $cartRuleProductRepo->insertOrIgnore($batchData);
-                // Log::info("插入新关联记录: cart_rule_id={$cartRuleId}, 数量=" . count($batchData));
             }
         });
 

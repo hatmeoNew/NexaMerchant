@@ -37,6 +37,7 @@ class CartRule extends Model implements CartRuleContract
         'apply_to_shipping',
         'free_shipping',
         'sort_order',
+        'is_global'
     ];
 
     protected $casts = [
