@@ -296,7 +296,7 @@ class PostOdoo extends Command
                     return true;
                 } else {
                     echo $id . " post failed \r\n";
-                    Utils::sendFeishu($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
+                    Utils::sendFeishuErp($response_data['message'] . ' --order_id=' . $id . ' website:' . $postOrder['website_name']);
                     return false;
                 }
             }
@@ -305,12 +305,12 @@ class PostOdoo extends Command
             $statusCode = $response->getStatusCode();
             $message = "接口{$odoo_url}异常，请及时检查. status code:{$statusCode}" . PHP_EOL;
             $message .= '--order_id=' . $id . ' website:' . $postOrder['website_name'];
-            Utils::sendFeishu($message);
+            Utils::sendFeishuErp($message);
             echo $message;
             return false;
         } catch (ClientException $e) {
             Log::error(json_encode($e->getMessage()));
-            Utils::sendFeishu($e->getMessage() . '--' . $id . " fix check it ");
+            Utils::sendFeishuErp($e->getMessage() . '--' . $id . " fix check it ");
             echo $e->getMessage() . " post failed";
             return false;
         }
