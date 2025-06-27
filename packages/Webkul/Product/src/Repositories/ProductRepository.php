@@ -535,4 +535,33 @@ class ProductRepository extends Repository
 
         return $query->max('min_price') ?? 0;
     }
+
+    /**
+     * 获取推荐商品逻辑
+     * @param int product_id 商品ID
+     * 先获取商品所属分类
+     * 再获取分类下的商品，并排除当前商品
+     */
+    public function getRecommendProduct($id)
+    {
+        $product = $this->findOrFail($id);
+        if (!$product) {
+            return [];
+        }
+        $categoryIds = $product->categories->pluck('id')->toArray();
+        if (empty($categoryIds)) {
+            return [];
+        }
+        $recommendProducts = $this->model
+            ->whereHas('categories', function ($query) use ($categoryIds) {
+                $query->whereIn('id', $categoryIds);
+            })
+            ->where('id', '!=', $id)
+            ->where('status', 1)
+            ->with(['images'])
+            ->take(10)
+            ->get();
+
+        return $recommendProducts;
+    }
 }
