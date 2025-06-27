@@ -538,11 +538,10 @@ class ProductRepository extends Repository
 
     /**
      * 获取推荐商品逻辑
-     * @param int product_id 商品ID
      * 先获取商品所属分类
      * 再获取分类下的商品，并排除当前商品
      */
-    public function getRecommendProduct($id)
+    public function getRecommendProduct($id, $limit = 10)
     {
         $product = $this->findOrFail($id);
         if (!$product) {
@@ -550,7 +549,7 @@ class ProductRepository extends Repository
         }
         $categoryIds = $product->categories->pluck('id')->toArray();
         if (empty($categoryIds)) {
-            return [];
+            return $this->getRandomProducts($id);
         }
         $recommendProducts = $this->model
             ->whereHas('categories', function ($query) use ($categoryIds) {
@@ -559,9 +558,21 @@ class ProductRepository extends Repository
             ->where('id', '!=', $id)
             ->where('status', 1)
             ->with(['images'])
-            ->take(10)
+            ->take($limit)
             ->get();
 
         return $recommendProducts;
+    }
+
+    /**
+     * 随机获取商品，并排除指定商品
+     */
+    public function getRandomProducts($notId, $limit = 10)
+    {
+        return $this->model
+            ->where('id', '!=', $notId)
+            ->inRandomOrder()
+            ->take($limit)
+            ->get();
     }
 }
