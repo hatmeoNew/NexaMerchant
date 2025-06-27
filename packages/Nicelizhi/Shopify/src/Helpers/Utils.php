@@ -102,7 +102,7 @@ final class Utils {
         //var_dump($response, $argc);
     }
 
-    public static function sendFeishuErp($text)
+    public static function sendFeishuErp($text, $color = 'green')
     {
         $url = config("odoo_api.feishu_noticle_erp_url");
 
@@ -110,7 +110,7 @@ final class Utils {
 
         $text = $text;//."\r\n".config("app.url");
 
-        $argc = self::template1($text);
+        $argc = self::template1($text, $color);
 
         $header = [];
         $header[] = "Content-Type:application/json";
@@ -121,7 +121,7 @@ final class Utils {
         ]);
     }
 
-    public static function template1($message): array
+    public static function template1($message, $color): array
     {
         return [
             'msg_type' => 'interactive',
@@ -143,7 +143,7 @@ final class Utils {
                     ]
                 ],
                 'header'   => [
-                    'template' => 'green',
+                    'template' => $color,
                     'title'    => [
                         'content' => $message,
                         'tag'     => 'plain_text'
