@@ -182,6 +182,7 @@ class PostOdoo extends Command
             "first_name" => $shipping_address->first_name,
             "last_name"  => $shipping_address->last_name,
             "email"     => $shipping_address->email,
+            "phone"    => $shipping_address->phone,
         ];
         $postOrder['customer'] = $customer;
 
