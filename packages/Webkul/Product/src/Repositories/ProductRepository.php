@@ -540,39 +540,56 @@ class ProductRepository extends Repository
      * 获取推荐商品逻辑
      * 先获取商品所属分类
      * 再获取分类下的商品，并排除当前商品
+     * 如果没有分类，则随机获取商品
      */
     public function getRecommendProduct($id, $limit = 10)
     {
+        // 查找商品并处理不存在的情况
         $product = $this->findOrFail($id);
-        if (!$product) {
-            return [];
-        }
+
+        // 获取商品分类ID
         $categoryIds = $product->categories->pluck('id')->toArray();
-        if (empty($categoryIds)) {
-            return $this->getRandomProducts($id);
-        }
-        $recommendProducts = $this->model
-            ->whereHas('categories', function ($query) use ($categoryIds) {
-                $query->whereIn('id', $categoryIds);
-            })
+
+        // 构建基础查询，排除当前商品
+        $query = $this->model
             ->where('id', '!=', $id)
-            ->where('status', 1)
-            ->with(['images'])
-            ->take($limit)
-            ->get();
+            ->whereHas('product_flats', function ($query) {
+                $query->whereNotNull('url_key')->where('url_key', '!=', '');
+            })
+            ->whereHas('images', function ($query) {
+                $query->whereNotNull('path')->where('path', '!=', '');
+            });
 
-        return $recommendProducts;
-    }
+        // 根据是否有分类ID选择不同的查询条件
+        if (empty($categoryIds)) {
+            // 没有分类时随机选择商品
+            $query->inRandomOrder();
+        } else {
+            // 有分类时选择相同分类下的商品
+            $query->whereHas('categories', function ($query) use ($categoryIds) {
+                $query->whereIn('id', $categoryIds);
+            });
 
-    /**
-     * 随机获取商品，并排除指定商品
-     */
-    public function getRandomProducts($notId, $limit = 10)
-    {
-        return $this->model
-            ->where('id', '!=', $notId)
-            ->inRandomOrder()
-            ->take($limit)
-            ->get();
+            // 添加排序逻辑，例如按销量或评分排序
+            // $query->orderBy('sales', 'desc');
+        }
+
+        // 执行查询并转换结果格式
+        $result = $query->take($limit)
+            ->get()
+            ->map(function ($product) {
+                $flat = $product->product_flats->first(); // 获取集合中的第一个记录
+
+                return [
+                    'id' => $product->id,
+                    'name' => $flat ? $flat->name : '',
+                    'price' => $flat ? core()->currency($flat->price) : 0,
+                    'url_key' => $flat ? $flat->url_key : '',
+                    'images' => $product->images->pluck('path')->first(),
+                ];
+            })
+            ->toArray();
+
+        return $result;
     }
 }
