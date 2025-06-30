@@ -580,7 +580,6 @@ class ProductRepository extends Repository
         });
 
         $utm = '?utm_source=Klaviyo&utm_medium=campaign&utm_campaign=' . $source . '&utm_term=&utm_klv_profile_id=Ved7iv&_kx=v-KNAaO84UAg5ZUXYCGolQ.Vvhr6Q';
-        $utm = '?utm_source=Klaviyo&utm_medium=campaign&utm_campaign=' . $source . '&utm_term=&utm_klv_profile_id=Ved7iv&_kx=v-KNAaO84UAg5ZUXYCGolQ.Vvhr6Q';
 
         // 执行查询并转换结果格式
         $result = $query->take($limit)
