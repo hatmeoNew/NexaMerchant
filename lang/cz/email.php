@@ -21,6 +21,7 @@ return [
     'shipment_items' => 'Položky v této zásilce',
     'tracking_number' => 'číslo zásilky:',
     'your_order_on_the_way' => 'Vaše objednávka je na cestě',
+    'your_order_on_the_way_2' => 'Vaše objednávka je na cestě. Sledovat zásilku můžete pro zobrazení stavu doručení.',
     'contact_us' => 'Pokud máte jakékoli dotazy, kontaktujte nás prosím na adrese: ',
     'customer_information' => 'Informace o zákazníkovi',
 ];

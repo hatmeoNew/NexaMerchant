@@ -21,6 +21,7 @@ return [
     'shipment_items' => 'Artikel in dieser Sendung',
     'tracking_number' => 'Sendungsverfolgungsnummer:',
     'your_order_on_the_way' => 'Ihre Bestellung ist unterwegs',
+    'your_order_on_the_way_2' => 'Ihre Bestellung ist unterwegs. Verfolgen Sie Ihre Sendung, um den Lieferstatus zu sehen.',
     'contact_us' => 'Wenn Sie Fragen haben, kontaktieren Sie uns bitte unter: ',
     'customer_information' => 'Kundeninformation',
 ];

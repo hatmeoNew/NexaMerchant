@@ -21,6 +21,7 @@ return [
     'shipment_items' => 'Articles dans cette expédition',
     'tracking_number' => 'numéro de suivi:',
     'your_order_on_the_way' => 'Votre commande est en route',
+    'your_order_on_the_way_2' => 'Votre commande est en route. Suivez votre expédition pour voir l\'état de la livraison.',
     'contact_us' => 'Si vous avez des questions, veuillez nous contacter à: ',
     'customer_information' => 'Informations sur le client',
 ];
