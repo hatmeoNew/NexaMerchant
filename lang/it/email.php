@@ -2,5 +2,20 @@
 
 return [
     'shipped_confirmation' => 'Conferma di spedizione ordine',
-    'new_order_confirmation' => 'Conferma di nuovo ordine'
+    'new_order_confirmation' => 'Conferma di nuovo ordine',
+    'recommend_products' => 'Potresti anche apprezzare',
+    'order' => 'Ordine',
+    'thank_you' => 'Grazie per il tuo acquisto!',
+    'shipping_address' => 'Indirizzo di spedizione',
+    'billing_address' => 'Indirizzo di fatturazione',
+    'payment' => 'Pagamento',
+    'order_number' => 'Numero d\'ordine',
+    'order_date' => 'Data dell\'ordine',
+    'order_total' => 'Totale dell\'ordine',
+    'shipped_notice' => 'Stiamo preparando il tuo ordine per la spedizione. Ti informeremo quando sarà stato inviato.',
+    'order_summary' => 'Riepilogo dell\'ordine',
+    'shipment_items' => 'Articoli in questa spedizione',
+    'tracking_number' => 'numero di tracciamento:',
+    'your_order_on_the_way' => 'Il tuo ordine è in arrivo',
+    'contact_us' => 'Se hai domande, contattaci all\'indirizzo: ' . env('SHOP_EMAIL') . '.',
 ];

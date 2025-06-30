@@ -1,6 +1,21 @@
 <?php
 
 return [
-    'shipped_confirmation' => 'Confirmación de envío de pedido',
-    'new_order_confirmation' => 'Confirmación de nuevo pedido'
+    'shipped_confirmation' => 'Shipped Order Confirmation',
+    'new_order_confirmation' => 'Confirmación de nuevo pedido',
+    'recommend_products' => 'También te puede interesar',
+    'order' => 'Pedido',
+    'thank_you' => 'Gracias por su compra!',
+    'shipping_address' => 'Dirección de envío',
+    'billing_address' => 'Dirección de facturación',
+    'payment' => 'Pago',
+    'order_number' => 'Número de pedido',
+    'order_date' => 'Fecha del pedido',
+    'order_total' => 'Total del pedido',
+    'shipped_notice' => 'Estamos preparando su pedido para ser enviado. Le notificaremos cuando haya sido enviado.',
+    'order_summary' => 'Resumen del pedido',
+    'shipment_items' => 'Artículos en este envío',
+    'tracking_number' => 'número de seguimiento:',
+    'your_order_on_the_way' => 'Su pedido está en camino',
+    'contact_us' => 'Si tiene alguna pregunta, contáctenos en: ' . env('SHOP_EMAIL') . '.',
 ];

@@ -1,6 +1,21 @@
 <?php
 
 return [
-    'shipped_confirmation' => "Rendelés kiküldésének megerősítése",
-    'new_order_confirmation' => 'Új rendelés megerősítése',
+    'shipped_confirmation' => "Confirmation d'expédition de commande",
+    'new_order_confirmation' => 'Rendelés kiküldésének megerősítése',
+    'recommend_products' => 'Talán ezek is tetszhetnek',
+    'order' => 'Rendelés',
+    'thank_you' => 'Köszönjük a vásárlást!',
+    'shipping_address' => 'Szállítási cím',
+    'billing_address' => 'Számlázási cím',
+    'payment' => 'Fizetés',
+    'order_number' => 'Rendelés száma',
+    'order_date' => 'Rendelés dátuma',
+    'order_total' => 'Rendelés teljes összege',
+    'shipped_notice' => 'Rendelésed előkészítése folyamatban van. Értesítünk, amint elküldtük.',
+    'order_summary' => 'Rendelés összefoglaló',
+    'shipment_items' => 'Položky v této zásilce',
+    'tracking_number' => 'Nyomkövetési szám:',
+    'your_order_on_the_way' => 'A rendelésed úton van',
+    'contact_us' => 'Ha bármilyen kérdésed van, kérjük, lépj kapcsolatba velünk a következő címen: ' . env('SHOP_EMAIL') . '.',
 ];
