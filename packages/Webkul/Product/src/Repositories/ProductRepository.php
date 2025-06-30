@@ -553,6 +553,7 @@ class ProductRepository extends Repository
         // 构建基础查询，排除当前商品
         $query = $this->model
             ->where('id', '!=', $id)
+            ->where('type', 'configurable')
             ->whereHas('product_flats', function ($query) {
                 $query->whereNotNull('url_key')->where('url_key', '!=', '');
             })
@@ -563,7 +564,7 @@ class ProductRepository extends Repository
         // 根据是否有分类ID选择不同的查询条件
         if (empty($categoryIds)) {
             // 没有分类时随机选择商品
-            $query->inRandomOrder();
+            $query->inRandomOrder();//->orderBy('id', 'desc');//
         } else {
             // 有分类时选择相同分类下的商品
             $query->whereHas('categories', function ($query) use ($categoryIds) {
@@ -574,18 +575,20 @@ class ProductRepository extends Repository
             // $query->orderBy('sales', 'desc');
         }
 
+        $utm = '?utm_source=Klaviyo&utm_medium=campaign&utm_campaign=recommend&utm_term=&utm_klv_profile_id=Ved7iv&_kx=v-KNAaO84UAg5ZUXYCGolQ.Vvhr6Q';
+
         // 执行查询并转换结果格式
         $result = $query->take($limit)
             ->get()
-            ->map(function ($product) {
+            ->map(function ($product) use ($utm) {
                 $flat = $product->product_flats->first(); // 获取集合中的第一个记录
 
                 return [
                     'id' => $product->id,
                     'name' => $flat ? $flat->name : '',
                     'price' => $flat ? core()->currency($flat->price) : 0,
-                    'url_key' => $flat ? $flat->url_key : '',
-                    'images' => $product->images->pluck('path')->first(),
+                    'url' => $flat ? env('SHOP_URL') . '/products/' . $flat->url_key . $utm : '',
+                    'image' => $product->images->pluck('path')->first(),
                 ];
             })
             ->toArray();

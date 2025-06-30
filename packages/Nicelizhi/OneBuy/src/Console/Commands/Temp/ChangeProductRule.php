@@ -156,39 +156,48 @@ class ChangeProductRule extends Command
                 continue;
             }
 
-            try {
-                $ruleIds = Redis::sMembers('product-quantity-rules-' . $product_id);
-                if ($ruleIds) {
-                    // 排除$upselling50Id
-                    $ruleIds = array_filter($ruleIds, function($item) use ($upselling50Id) {
-                        return $item !== $upselling50Id;
-                    });
-                    if ($ruleIds) {
-                        $cartRuleModel->whereIn('id', $ruleIds)->delete();
-                    }
-                }
-            } catch (\Exception $e) {
-                echo "执行 SMEMBERS 失败: " . $e->getMessage();
+            $url = config('app.url') . "/api/v1/admin/promotions/cart-rules/" . $product_id . "/product-quantity-rules";
+            // $this->info($url);
+            $ruleInfo = json_decode($key, true);
+
+            if (count($ruleInfo) == 4) {
+                continue;
             }
 
-            // delete table rows
-            $cartRuleProduct->where('product_id', $product_id)->delete();
+            if (count($ruleInfo) < 4) {
+                dump('error price============================================= ' . $product_id);
 
-            // delete the redis key
-            Redis::del('product-quantity-price-' . $product_id);
-            Redis::del('product-quantity-rules-' . $product_id);
+                try {
+                    $ruleIds = Redis::sMembers('product-quantity-rules-' . $product_id);
+                    if ($ruleIds) {
+                        // 排除$upselling50Id
+                        $ruleIds = array_filter($ruleIds, function($item) use ($upselling50Id) {
+                            return $item !== $upselling50Id;
+                        });
+                        if ($ruleIds) {
+                            $cartRuleModel->whereIn('id', $ruleIds)->delete();
+                        }
+                    }
+                } catch (\Exception $e) {
+                    echo "执行 SMEMBERS 失败: " . $e->getMessage();
+                }
 
-            $url = config('app.url') . "/api/v1/admin/promotions/cart-rules/" . $product_id . "/product-quantity-rules";
-            $this->info($url);
-            $ruleInfo = json_decode($key, true);
+                // delete table rows
+                $cartRuleProduct->where('product_id', $product_id)->delete();
+
+                // delete the redis key
+                Redis::del('product-quantity-price-' . $product_id);
+                Redis::del('product-quantity-rules-' . $product_id);
+
+                continue;
+            }
+
+            continue;
 
             $postRules = [];
             $i = 1;
             $usePrice = [];
-            if (count($ruleInfo) > 4) {
-                dump('Too many rules for product ID============================================= ' . $product_id);
-                continue;
-            }
+
             foreach ($ruleInfo as $price) {
                 if (in_array(round($price, 2), $usePrice)) {
                     continue;
