@@ -127,7 +127,7 @@ class AirwallexController extends Controller
                         // send order to shopify
                         $queue = config('app.name').':orders';
 
-                        if (config('onebuy.is_sync_erp')) {
+                        if (1 || config('onebuy.is_sync_erp')) {
                             Artisan::queue((new PostOdoo())->getName(), ['--order_id'=> $order->id])->onConnection('rabbitmq')->onQueue(config('app.name') . ':odoo_order');
                         } else {
                             Artisan::queue((new Post())->getName(), ['--order_id'=> $order->id])->onConnection("rabbitmq")->onQueue($queue);
