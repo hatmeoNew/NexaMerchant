@@ -168,7 +168,8 @@ class ProductRepository extends Repository
 
         if (! $product) {
             throw (new ModelNotFoundException)->setModel(
-                get_class($this->model), $slug
+                get_class($this->model),
+                $slug
             );
         }
 
@@ -235,7 +236,7 @@ class ProductRepository extends Repository
                         ->where('product_price_indices.customer_group_id', $customerGroup->id);
                 });
 
-            if(!empty($params['category_url'])) {
+            if (!empty($params['category_url'])) {
                 // Get category id from url
                 $category_id = DB::table('category_translations')->where('slug', $params['category_url'])->value('category_id');
                 $params['category_id'] = $category_id;
@@ -392,8 +393,10 @@ class ProductRepository extends Repository
         $countQuery = clone $query->model;
 
         $count = collect(
-            DB::select("select count(id) as aggregate from ({$countQuery->select('products.id')->reorder('products.id')->toSql()}) c",
-                $countQuery->getBindings())
+            DB::select(
+                "select count(id) as aggregate from ({$countQuery->select('products.id')->reorder('products.id')->toSql()}) c",
+                $countQuery->getBindings()
+            )
         )->pluck('aggregate')->first();
 
         $items = [];
@@ -463,10 +466,15 @@ class ProductRepository extends Repository
 
         $items = $indices['total'] ? $query->get() : [];
 
-        $results = new LengthAwarePaginator($items, $indices['total'], $limit, $currentPage, [
-            'path'  => request()->url(),
-            'query' => request()->query(),
-        ]
+        $results = new LengthAwarePaginator(
+            $items,
+            $indices['total'],
+            $limit,
+            $currentPage,
+            [
+                'path'  => request()->url(),
+                'query' => request()->query(),
+            ]
         );
 
         return $results;
@@ -542,7 +550,7 @@ class ProductRepository extends Repository
      * 再获取分类下的商品，并排除当前商品
      * 如果没有分类，则随机获取商品
      */
-    public function getRecommendProduct($id, $limit = 10)
+    public function getRecommendProduct($id, $limit = 10, $source = 'recommend')
     {
         // 查找商品并处理不存在的情况
         $product = $this->findOrFail($id);
@@ -564,18 +572,15 @@ class ProductRepository extends Repository
         // 根据是否有分类ID选择不同的查询条件
         if (empty($categoryIds)) {
             // 没有分类时随机选择商品
-            $query->inRandomOrder();//->orderBy('id', 'desc');//
-        } else {
-            // 有分类时选择相同分类下的商品
-            $query->whereHas('categories', function ($query) use ($categoryIds) {
-                $query->whereIn('id', $categoryIds);
-            });
-
-            // 添加排序逻辑，例如按销量或评分排序
-            // $query->orderBy('sales', 'desc');
+            $categoryIds = app('Webkul\Category\Models\Category')->pluck('id')->toArray();
         }
 
-        $utm = '?utm_source=Klaviyo&utm_medium=campaign&utm_campaign=recommend&utm_term=&utm_klv_profile_id=Ved7iv&_kx=v-KNAaO84UAg5ZUXYCGolQ.Vvhr6Q';
+        $query->whereHas('categories', function ($query) use ($categoryIds) {
+            $query->whereIn('id', $categoryIds);
+        });
+
+        $utm = '?utm_source=Klaviyo&utm_medium=campaign&utm_campaign=' . $source . '&utm_term=&utm_klv_profile_id=Ved7iv&_kx=v-KNAaO84UAg5ZUXYCGolQ.Vvhr6Q';
+        $utm = '?utm_source=Klaviyo&utm_medium=campaign&utm_campaign=' . $source . '&utm_term=&utm_klv_profile_id=Ved7iv&_kx=v-KNAaO84UAg5ZUXYCGolQ.Vvhr6Q';
 
         // 执行查询并转换结果格式
         $result = $query->take($limit)
@@ -587,7 +592,7 @@ class ProductRepository extends Repository
                     'id' => $product->id,
                     'name' => $flat ? $flat->name : '',
                     'price' => $flat ? core()->currency($flat->price) : 0,
-                    'url' => $flat ? env('SHOP_URL') . '/products/' . $flat->url_key . $utm : '',
+                    'url' => $flat ? env('SHOP_URL') . '/products/' . $flat->url_key . $utm : env('SHOP_URL'),
                     'image' => $product->images->pluck('path')->first(),
                 ];
             })
