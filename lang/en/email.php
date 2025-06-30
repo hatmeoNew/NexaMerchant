@@ -21,6 +21,7 @@ return [
     'shipment_items' => 'Items in this shipment',
     'tracking_number' => 'tracking number:',
     'your_order_on_the_way' => 'Your order is on the way',
+    'your_order_on_the_way_2' => 'Your order is on the way. You can track it using the tracking number provided above.',
     'contact_us' => 'If you have any questions, please contact us at: ',
     'customer_information' => 'Customer Information',
 ];

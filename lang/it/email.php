@@ -21,6 +21,7 @@ return [
     'shipment_items' => 'Articoli in questa spedizione',
     'tracking_number' => 'numero di tracciamento:',
     'your_order_on_the_way' => 'Il tuo ordine è in arrivo',
+    'your_order_on_the_way_2' => 'Il tuo ordine è in arrivo. Puoi tracciarlo utilizzando il numero di tracciamento fornito sopra.',
     'contact_us' => 'Se hai domande, contattaci all\'indirizzo: ',
     'customer_information' => 'Informazioni cliente',
 ];
