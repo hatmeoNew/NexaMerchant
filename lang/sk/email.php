@@ -11,7 +11,11 @@ return [
     'payment' => 'Platba',
     'order_number' => 'Číslo objednávky',
     'order_date' => 'Dátum objednávky',
-    'order_total' => 'Celková suma objednávky',
+    'subtotal' => 'Medzisúčet',
+    'shipping' => 'Doprava',
+    'tax' => 'Daň',
+    'discount' => 'Zľava',
+    'total' => 'Celkom',
     'shipped_notice' => 'Pripravujeme vašu objednávku na odoslanie. Oznámime vám, keď bude odoslaná.',
     'order_summary' => 'Zhrnutie objednávky',
     'shipment_items' => 'Položky v tejto zásielke',
@@ -19,4 +23,3 @@ return [
     'your_order_on_the_way' => 'Vaša objednávka je na ceste',
     'contact_us' => 'Ak máte akékoľvek otázky, kontaktujte nás prosím na adrese: ' . env('SHOP_EMAIL') . '.',
 ];
-
