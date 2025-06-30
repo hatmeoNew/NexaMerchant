@@ -21,5 +21,6 @@ return [
     'shipment_items' => 'Položky v tejto zásielke',
     'tracking_number' => 'Sledovacie číslo:',
     'your_order_on_the_way' => 'Vaša objednávka je na ceste',
-    'contact_us' => 'Ak máte akékoľvek otázky, kontaktujte nás prosím na adrese: ' . env('SHOP_EMAIL') . '.',
+    'contact_us' => 'Ak máte akékoľvek otázky, kontaktujte nás prosím na adrese: ',
+    'customer_information' => 'Informácie o zákazníkovi',
 ];

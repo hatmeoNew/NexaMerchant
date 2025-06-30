@@ -22,4 +22,5 @@ return [
     'tracking_number' => '追跡番号:',
     'your_order_on_the_way' => 'あなたの注文は発送中です',
     'contact_us' => 'ご質問がある場合は、以下のメールアドレスまでお問い合わせください: ' . env('SHOP_EMAIL') . '.',
+    'customer_information' => '顧客情報',
 ];

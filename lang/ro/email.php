@@ -22,4 +22,5 @@ return [
     'tracking_number' => 'Număr de urmărire:',
     'your_order_on_the_way' => 'Comanda dvs. este pe drum',
     'contact_us' => 'Dacă aveți întrebări, vă rugăm să ne contactați la: ' . env('SHOP_EMAIL') . '.',
+    'customer_information' => 'Informații client',
 ];
