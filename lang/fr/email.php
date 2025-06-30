@@ -21,5 +21,6 @@ return [
     'shipment_items' => 'Articles dans cette expédition',
     'tracking_number' => 'numéro de suivi:',
     'your_order_on_the_way' => 'Votre commande est en route',
-    'contact_us' => 'Si vous avez des questions, veuillez nous contacter à: ' . env('SHOP_EMAIL') . '.',
+    'contact_us' => 'Si vous avez des questions, veuillez nous contacter à: ',
+    'customer_information' => 'Informations client',
 ];

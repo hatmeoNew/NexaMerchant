@@ -21,5 +21,6 @@ return [
     'shipment_items' => 'Položky v této zásilce',
     'tracking_number' => 'Nyomkövetési szám:',
     'your_order_on_the_way' => 'A rendelésed úton van',
-    'contact_us' => 'Ha bármilyen kérdésed van, kérjük, lépj kapcsolatba velünk a következő címen: ' . env('SHOP_EMAIL') . '.',
+    'contact_us' => 'Ha bármilyen kérdésed van, kérjük, lépj kapcsolatba velünk a következő címen: ',
+    'customer_information' => 'Vevői információk',
 ];

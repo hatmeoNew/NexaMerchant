@@ -21,5 +21,6 @@ return [
     'shipment_items' => 'Položky v této zásilce',
     'tracking_number' => 'číslo zásilky:',
     'your_order_on_the_way' => 'Vaše objednávka je na cestě',
-    'contact_us' => 'Pokud máte jakékoli dotazy, kontaktujte nás prosím na adrese: ' . env('SHOP_EMAIL') . '.',
+    'contact_us' => 'Pokud máte jakékoli dotazy, kontaktujte nás prosím na adrese: ',
+    'customer_information' => 'Informace o zákazníkovi',
 ];

@@ -22,5 +22,6 @@ return [
     'shipment_items' => 'Przedmioty w tej wysyłce',
     'tracking_number' => 'Numer śledzenia:',
     'your_order_on_the_way' => 'Twoje zamówienie jest w drodze',
-    'contact_us' => 'Jeśli masz jakiekolwiek pytania, skontaktuj się z nami pod adresem: ' . env('SHOP_EMAIL') . '.',
+    'contact_us' => 'Jeśli masz jakiekolwiek pytania, skontaktuj się z nami pod adresem: ',
+    'customer_information' => 'Informacje o kliencie',
 ];
