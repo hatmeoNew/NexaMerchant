@@ -179,6 +179,11 @@ class Order extends Model implements OrderContract
         return $this->hasMany(ShipmentProxy::modelClass());
     }
 
+    public function orderUtm(): HasOne
+    {
+        return $this->hasOne(\NexaMerchant\Apis\Models\OrderUtm::class, 'order_id');
+    }
+
     /**
      * Get the order invoices record associated with the order.
      */
@@ -404,11 +409,11 @@ class Order extends Model implements OrderContract
     }
 
     /**
-     * 
+     *
      * Checks if order need dispute or not
-     * 
+     *
      * @return bool
-     * 
+     *
      */
     public function canDispute(): bool
     {
