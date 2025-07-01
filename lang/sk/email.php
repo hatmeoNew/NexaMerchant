@@ -24,4 +24,5 @@ return [
     'your_order_on_the_way_2' => 'Vaša objednávka je na ceste. Sledovaním zásielky môžete zobraziť stav doručenia.',
     'contact_us' => 'Ak máte akékoľvek otázky, kontaktujte nás prosím na adrese: ',
     'customer_information' => 'Informácie o zákazníkovi',
+    'view_details' => 'Zobraziť podrobnosti',
 ];

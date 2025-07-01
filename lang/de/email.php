@@ -24,4 +24,5 @@ return [
     'your_order_on_the_way_2' => 'Ihre Bestellung ist auf dem Weg zu Ihnen. Wir werden Sie benachrichtigen, sobald sie versendet wurde.',
     'contact_us' => 'Wenn Sie Fragen haben, kontaktieren Sie uns bitte unter: ',
     'customer_information' => 'Kundeninformationen',
+    'view_details' => 'Details anzeigen',
 ];

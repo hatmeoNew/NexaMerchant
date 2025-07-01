@@ -24,4 +24,5 @@ return [
     'your_order_on_the_way_2' => 'あなたの注文は発送中です。配送状況を確認するには、追跡番号を使用してください。',
     'contact_us' => 'ご質問がある場合は、以下のメールアドレスまでお問い合わせください: ',
     'customer_information' => '顧客情報',
+    'view_details' => '詳細を見る',
 ];
