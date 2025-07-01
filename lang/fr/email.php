@@ -24,5 +24,6 @@ return [
     'your_order_on_the_way_2' => 'Votre commande est en route. Vous pouvez suivre votre envoi pour voir l\'état de la livraison.',
     'contact_us' => 'Si vous avez des questions, veuillez nous contacter à: ',
     'customer_information' => 'Informations client',
-    'view_details' => 'Voir les détails'
+    'view_details' => 'Voir les détails',
+    'buy_now' => 'Acheter maintenant'
 ];

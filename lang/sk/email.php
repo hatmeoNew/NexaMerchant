@@ -25,4 +25,5 @@ return [
     'contact_us' => 'Ak máte akékoľvek otázky, kontaktujte nás prosím na adrese: ',
     'customer_information' => 'Informácie o zákazníkovi',
     'view_details' => 'Zobraziť podrobnosti',
+    'buy_now' => 'Kúpiť teraz',
 ];

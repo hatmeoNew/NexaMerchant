@@ -25,4 +25,5 @@ return [
     'contact_us' => 'Dacă aveți întrebări, vă rugăm să ne contactați la: ',
     'customer_information' => 'Informații client',
     'view_details' => 'Vezi detalii',
+    'buy_now' => 'Cumpără acum',
 ];
