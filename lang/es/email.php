@@ -24,4 +24,5 @@ return [
     'your_order_on_the_way_2' => 'Su pedido está en camino. Haga seguimiento de su envío para ver el estado de la entrega.',
     'contact_us' => 'Si tiene alguna pregunta, contáctenos en: ',
     'customer_information' => 'Información del cliente',
+    'view_details' => 'Ver detalles',
 ];

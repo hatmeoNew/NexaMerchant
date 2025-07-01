@@ -24,4 +24,5 @@ return [
     'your_order_on_the_way_2' => 'Il tuo ordine è in arrivo. Traccia la tua spedizione per vedere lo stato della consegna.',
     'contact_us' => 'Se hai domande, contattaci all\'indirizzo: ',
     'customer_information' => 'Informazioni sul cliente',
+    'view_details' => 'Visualizza dettagli',
 ];

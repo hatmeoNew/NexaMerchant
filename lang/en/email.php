@@ -24,4 +24,5 @@ return [
     'your_order_on_the_way_2' => 'Your order is on the way. Track your shipment to see the delivery status.',
     'contact_us' => 'If you have any questions, please contact us at: ',
     'customer_information' => 'Customer Information',
+    'view_details' => 'View Details',
 ];

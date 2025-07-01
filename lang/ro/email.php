@@ -24,4 +24,5 @@ return [
     'your_order_on_the_way_2' => 'Comanda dvs. este pe drum. Urmăriți expedierea pentru a vedea starea livrării.',
     'contact_us' => 'Dacă aveți întrebări, vă rugăm să ne contactați la: ' . env('SHOP_EMAIL') . '.',
     'customer_information' => 'Informații client',
+    'view_details' => 'Vezi detalii',
 ];

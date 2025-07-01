@@ -25,4 +25,5 @@ return [
     'your_order_on_the_way_2' => 'Twoje zamówienie jest w drodze. Śledź swoją przesyłkę, aby zobaczyć status dostawy.',
     'contact_us' => 'Jeśli masz jakiekolwiek pytania, skontaktuj się z nami pod adresem: ',
     'customer_information' => 'Informacje o kliencie',
+    'view_details' => 'Zobacz szczegóły',
 ];
