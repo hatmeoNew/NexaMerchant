@@ -155,7 +155,9 @@ class PostOdoo extends Command
             $options = [];
             foreach ($shopifyProduct['variants'] as $variants) {
                 if ($variants['id'] == $shopify_variant_id) {
-                    // $additional['product_sku'] = $variants['sku'];
+                    if ($variants['sku']) {
+                        $additional['product_sku'] = $variants['sku'];
+                    }
 
                     if (!empty($variants['option1'])) {
                         $options['option1'] = $variants['option1'];
@@ -258,7 +260,7 @@ class PostOdoo extends Command
         $state_code = $shipping_address->state;
         if (!empty($state_code)) {
             // 表示AT市场在odoo无区域信息
-            if (in_array($shipping_address->country, ['AT', 'DE', 'CH', 'FR', 'BE'])) {
+            if (in_array($shipping_address->country, ['AT', 'DE', 'CH', 'GB', 'FR', 'BE'])) {
                 $state_code = '';
             } else {
                 $state_code = $this->getOdooStateCode($shipping_address->country, $state_code, $shipping_address->city);
