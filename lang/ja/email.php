@@ -25,4 +25,5 @@ return [
     'contact_us' => 'ご質問がある場合は、以下のメールアドレスまでお問い合わせください: ',
     'customer_information' => '顧客情報',
     'view_details' => '詳細を見る',
+    'buy_now' => '今すぐ購入',
 ];

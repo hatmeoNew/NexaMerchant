@@ -25,4 +25,5 @@ return [
     'contact_us' => 'Si vous avez des questions, veuillez nous contacter à: ',
     'customer_information' => 'Informations sur le client',
     'view_details' => 'Voir les détails',
+    'buy_now' => 'Acheter maintenant',
 ];

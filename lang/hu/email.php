@@ -25,4 +25,5 @@ return [
     'contact_us' => 'Ha bármilyen kérdésed van, kérjük, lépj kapcsolatba velünk a következő címen: ',
     'customer_information' => 'Vevői információk',
     'view_details' => 'Részletek megtekintése',
+    'buy_now' => 'Vásárlás most',
 ];

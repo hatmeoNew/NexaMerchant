@@ -25,4 +25,5 @@ return [
     'contact_us' => 'Se hai domande, contattaci all\'indirizzo: ',
     'customer_information' => 'Informazioni sul cliente',
     'view_details' => 'Visualizza dettagli',
+    'buy_now' => 'Acquista ora',
 ];
