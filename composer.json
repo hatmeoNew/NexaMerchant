@@ -73,7 +73,7 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^4.0",
         "maatwebsite/excel": "^3.1.46",
-        "hatmeo/apis": "^1.5.4",
+        "hatmeo/apis": "^1.5.5",
         "nexa-merchant/apps": "^1.0",
         "nexa-merchant/blog": "^1.1.5",
         "hatmeo/checkoutcod": "dev-main",
