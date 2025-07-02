@@ -29,5 +29,7 @@ return [
     'continue_shopping' => 'Pokračovať v nákupe',
     'order_items' => 'Objednané produkty',
     'cash_on_delivery' => 'Platba pri doručení',
-    'unsubscribe' => 'Ak už nechcete dostávať tieto e-maily, ',
+    'paypal_payment' => 'Platba cez PayPal',
+    'visa_mastercard_payment' => 'Platba Visa & MasterCard',
+    'unsubscribe' => 'Ak už nechcete dostávať tieto e-maily,',
 ];
