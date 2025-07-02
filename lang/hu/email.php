@@ -29,5 +29,5 @@ return [
     'cash_on_delivery' => 'Készpénzes fizetés átvételkor',
     'paypal_payment' => 'PayPal fizetés',
     'visa_mastercard_payment' => 'Visa és MasterCard fizetés',
-    'unsubscribe' => 'Ha már nem szeretnél ilyen e-maileket kapni',
+    'unsubscribe' => 'Ha már nem szeretnél ilyen e-maileket kapni,',
 ];
