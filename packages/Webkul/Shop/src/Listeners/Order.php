@@ -7,6 +7,7 @@ use Webkul\Shop\Mail\Order\CanceledNotification;
 use Webkul\Shop\Mail\Order\CommentedNotification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Artisan;
+use Webkul\Sales\Models\Order as OrderModel;
 use NexaMerchant\Feeds\Console\Commands\Klaviyo\SendKlaviyoEvent;
 
 class Order extends Base
@@ -25,7 +26,7 @@ class Order extends Base
                 return;
             }
             Log::info('order->status:' . $order->status . ' order->id:' . $order->id);
-            if (config('onebuy.is_sync_klaviyo')) {
+            if ($order->status == OrderModel::STATUS_PROCESSING) {
                 Log::info('klaviyo_event_place_order222');
                 Artisan::queue((new SendKlaviyoEvent())->getName(), ['--order_id'=> $order->id, '--metric_type' => 100])->onConnection('rabbitmq')->onQueue(config('app.name') . ':klaviyo_event_place_order');
             } else {
