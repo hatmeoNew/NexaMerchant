@@ -26,4 +26,8 @@ return [
     'customer_information' => 'Informații client',
     'view_details' => 'Vezi detalii',
     'buy_now' => 'Cumpără acum',
+    'cash_on_delivery' => 'Plată la livrare',
+    'paypal_payment' => 'Plată PayPal',
+    'visa_mastercard_payment' => 'Plată cu Visa și MasterCard',
+    'unsubscribe' => 'Nu mai doriți să primiți aceste e-mailuri?',
 ];

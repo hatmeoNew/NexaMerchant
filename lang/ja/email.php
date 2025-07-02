@@ -26,4 +26,8 @@ return [
     'customer_information' => '顧客情報',
     'view_details' => '詳細を見る',
     'buy_now' => '今すぐ購入',
+    'cash_on_delivery' => '代金引換',
+    'paypal_payment' => 'PayPal決済',
+    'visa_mastercard_payment' => 'Visa & MasterCard決済',
+    'unsubscribe' => 'このメールを受け取りたくない場合は、',
 ];

@@ -25,5 +25,9 @@ return [
     'contact_us' => 'Ak máte akékoľvek otázky, kontaktujte nás prosím na adrese: ',
     'customer_information' => 'Informácie o zákazníkovi',
     'view_details' => 'Zobraziť podrobnosti',
-    'buy_now' => 'Kúp teraz'
+    'buy_now' => 'Kúp teraz',
+    'cash_on_delivery' => 'Dobierka',
+    'paypal_payment' => 'Platba PayPal',
+    'visa_mastercard_payment' => 'Platba Visa & MasterCard',
+    'unsubscribe' => 'Ak už nechcete dostávať tieto e-maily,',
 ];

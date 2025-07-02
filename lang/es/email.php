@@ -26,4 +26,8 @@ return [
     'customer_information' => 'Información del cliente',
     'view_details' => 'Ver detalles',
     'buy_now' => 'Comprar ahora',
+    'cash_on_delivery' => 'Pago contra reembolso',
+    'paypal_payment' => 'Pago con PayPal',
+    'visa_mastercard_payment' => 'Pago con Visa y MasterCard',
+    'unsubscribe' => '¿Ya no desea recibir estos correos electrónicos?',
 ];

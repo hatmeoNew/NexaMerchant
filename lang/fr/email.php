@@ -26,4 +26,8 @@ return [
     'customer_information' => 'Informations sur le client',
     'view_details' => 'Voir les détails',
     'buy_now' => 'Acheter maintenant',
+    'cash_on_delivery' => 'Paiement à la livraison',
+    'paypal_payment' => 'Paiement PayPal',
+    'visa_mastercard_payment' => 'Paiement Visa & MasterCard',
+    'unsubscribe' => 'Si vous ne souhaitez plus recevoir ces e-mails,',
 ];
