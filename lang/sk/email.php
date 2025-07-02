@@ -26,4 +26,8 @@ return [
     'customer_information' => 'Informácie o zákazníkovi',
     'view_details' => 'Zobraziť podrobnosti',
     'buy_now' => 'Kúpiť teraz',
+    'continue_shopping' => 'Pokračovať v nákupe',
+    'order_items' => 'Objednané produkty',
+    'cash_on_delivery' => 'Platba pri doručení',
+    'unsubscribe' => 'Ak už nechcete dostávať tieto e-maily, ',
 ];

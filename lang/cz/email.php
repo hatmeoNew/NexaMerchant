@@ -26,4 +26,8 @@ return [
     'customer_information' => 'Informace o zákazníkovi',
     'view_details' => 'Zobrazit podrobnosti',
     'buy_now' => 'Koupit nyní',
+    'cash_on_delivery' => 'Platba při dodání',
+    'paypal_payment' => 'Platba přes PayPal',
+    'visa_mastercard_payment' => 'Platba Visa & MasterCard',
+    'unsubscribe' => 'Pokud si nepřejete dostávat další e-maily, můžete se odhlásit kliknutím na následující odkaz: ',
 ];

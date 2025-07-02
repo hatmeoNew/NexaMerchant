@@ -26,4 +26,8 @@ return [
     'customer_information' => 'Vevői információk',
     'view_details' => 'Részletek megtekintése',
     'buy_now' => 'Vásárlás most',
+    'cash_on_delivery' => 'Készpénzes fizetés átvételkor',
+    'paypal_payment' => 'PayPal fizetés',
+    'visa_mastercard_payment' => 'Visa és MasterCard fizetés',
+    'unsubscribe' => 'Ha már nem szeretnél ilyen e-maileket kapni'
 ];

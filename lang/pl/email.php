@@ -26,5 +26,9 @@ return [
     'contact_us' => 'Jeśli masz jakiekolwiek pytania, skontaktuj się z nami pod adresem: ',
     'customer_information' => 'Informacje o kliencie',
     'view_details' => 'Zobacz szczegóły',
-    'buy_now' => 'Kup teraz'
+    'buy_now' => 'Kup teraz',
+    'cash_on_delivery' => 'Płatność przy odbiorze',
+    'paypal_payment' => 'Płatność PayPal',
+    'visa_mastercard_payment' => 'Płatność Visa & MasterCard',
+    'unsubscribe' => 'Jeśli nie chcesz już otrzymywać tych e-maili ',
 ];

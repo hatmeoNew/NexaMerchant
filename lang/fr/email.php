@@ -25,5 +25,9 @@ return [
     'contact_us' => 'Si vous avez des questions, veuillez nous contacter à: ',
     'customer_information' => 'Informations client',
     'view_details' => 'Voir les détails',
-    'buy_now' => 'Acheter maintenant'
+    'buy_now' => 'Acheter maintenant',
+    'cash_on_delivery' => 'Paiement à la livraison',
+    'paypal_payment' => 'Paiement PayPal',
+    'visa_mastercard_payment' => 'Paiement Visa & MasterCard',
+    'unsubscribe' => 'Vous ne souhaitez plus recevoir ces e-mails ?',
 ];
